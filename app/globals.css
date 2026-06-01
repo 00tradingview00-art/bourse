@@ -1,0 +1,58 @@
+
+@import "tailwindcss";
+
+
+:root {
+  --ink: #0f0f0f;
+  --ink-2: #3a3a3a;
+  --ink-3: #6b6b6b;
+  --ink-4: #9a9a9a;
+  --paper: #fafaf7;
+  --paper-2: #f2f2ee;
+  --paper-3: #e8e8e2;
+  --accent: #1a4a2e;
+  --accent-light: #e8f0eb;
+  --accent-mid: #2d6b42;
+  --red: #c0392b;
+  --red-light: #fdf0ee;
+  --gold: #b8922a;
+  --gold-light: #fdf6e3;
+  --border: #e0e0d8;
+  --serif: 'Libre Baskerville', Georgia, serif;
+  --sans: 'DM Sans', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-serif { font-family: var(--serif) !important; }
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.ticker-animate { animation: ticker 45s linear infinite; }
+.ticker-animate:hover { animation-play-state: paused; }
+.live-dot { animation: pulse-dot 1.8s ease-in-out infinite; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fade-up 0.5s ease forwards; }
