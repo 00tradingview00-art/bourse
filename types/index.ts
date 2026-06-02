@@ -33,3 +33,17 @@ export interface Feature {
   title: string
   description: string
 }
+
+export interface BriefMetadata {
+  edition: number
+  date: string
+  dateShort: string
+  headline: string
+  excerpt: string
+  tags: { label: string; variant: 'green' | 'gold' | 'red' | 'default' }[]
+  readTime: number
+  slug: string
+  generationMethod?: string
+  humanReviewed?: boolean
+  generatedAt?: string
+}

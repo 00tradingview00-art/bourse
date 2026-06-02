@@ -1,0 +1,53 @@
+name: Daily Brief
+
+on:
+  schedule:
+    - cron: '30 5 * * 1-5'  # 5:30 AM UTC = 6:30 AM CET, weekdays
+  workflow_dispatch:          # manual trigger for testing
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Claude SDK
+        run: npm install --no-save @anthropic-ai/sdk
+
+      - name: Generate brief
+        run: node scripts/generate-brief.mjs
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Commit and push
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "Bourse Brief Bot"
+          git add content/briefs/
+          EDITION=$(cat .edition_tmp 2>/dev/null || echo "?")
+          git diff --staged --quiet || git commit -m "brief: edition ${EDITION} - $(date +%Y-%m-%d)"
+          git push
+
+      - name: Send newsletter
+        run: node scripts/send-newsletter.mjs
+        env:
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          BREVO_LIST_ID: ${{ secrets.BREVO_LIST_ID }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Brief generation failed on $(date)" >> /dev/stderr
+          # Add Slack webhook or email alert here if needed

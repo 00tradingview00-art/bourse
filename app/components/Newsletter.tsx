@@ -4,13 +4,33 @@ import { useState } from 'react'
 
 const BADGES = ['AEX', 'DAX', 'CAC 40', 'FTSE 100', 'ECB', 'EUR/USD', 'EUR/INR']
 
+type State = 'idle' | 'loading' | 'check-email' | 'already-subscribed' | 'error'
+
 export default function Newsletter() {
   const [email, setEmail] = useState('')
-  const [submitted, setSubmitted] = useState(false)
+  const [state, setState] = useState<State>('idle')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (email) setSubmitted(true)
+    if (!email || state === 'loading') return
+    setState('loading')
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setState('error')
+      } else if (data.alreadySubscribed) {
+        setState('already-subscribed')
+      } else {
+        setState('check-email')
+      }
+    } catch {
+      setState('error')
+    }
   }
 
   return (
@@ -26,7 +46,7 @@ export default function Newsletter() {
           Join investors across Europe getting the Bourse Brief — independent market intelligence delivered at 6:30 AM CET before the opening bell.
         </p>
 
-        {!submitted ? (
+        {state === 'idle' || state === 'loading' ? (
           <form onSubmit={handleSubmit} style={{ display: 'flex', maxWidth: '420px', margin: '0 auto 16px' }}>
             <input
               type="email"
@@ -34,27 +54,41 @@ export default function Newsletter() {
               onChange={e => setEmail(e.target.value)}
               placeholder="your@email.com"
               required
+              disabled={state === 'loading'}
               style={{
                 flex: 1, background: '#1a1a1a', border: '1px solid #333', borderRight: 'none',
                 color: '#fff', fontFamily: 'var(--sans)', fontSize: '14px',
                 padding: '13px 16px', borderRadius: '3px 0 0 3px', outline: 'none',
+                opacity: state === 'loading' ? 0.6 : 1,
               }}
             />
             <button
               type="submit"
+              disabled={state === 'loading'}
               style={{
-                background: 'var(--accent)', color: '#fff', border: 'none',
+                background: state === 'loading' ? '#2d6b42' : 'var(--accent)',
+                color: '#fff', border: 'none',
                 fontFamily: 'var(--sans)', fontSize: '13px', fontWeight: 500,
                 letterSpacing: '0.04em', padding: '13px 22px',
-                borderRadius: '0 3px 3px 0', cursor: 'pointer', whiteSpace: 'nowrap',
+                borderRadius: '0 3px 3px 0', cursor: state === 'loading' ? 'default' : 'pointer',
+                whiteSpace: 'nowrap', transition: 'background 0.15s',
               }}
             >
-              Subscribe Free
+              {state === 'loading' ? '...' : 'Subscribe Free'}
             </button>
           </form>
-        ) : (
+        ) : state === 'check-email' ? (
           <div style={{ maxWidth: '420px', margin: '0 auto 16px', padding: '16px', background: 'rgba(22,163,74,0.1)', border: '1px solid rgba(74,222,128,0.3)', borderRadius: '3px', color: '#4ade80', fontSize: '14px', fontWeight: 500 }}>
-            ✓ You&apos;re on the list. First brief arrives tomorrow at 6:30 AM CET.
+            ✓ Check your inbox to confirm your subscription.
+          </div>
+        ) : state === 'already-subscribed' ? (
+          <div style={{ maxWidth: '420px', margin: '0 auto 16px', padding: '16px', background: 'rgba(184,146,42,0.1)', border: '1px solid rgba(184,146,42,0.3)', borderRadius: '3px', color: 'var(--gold)', fontSize: '14px' }}>
+            You&apos;re already subscribed. Check your inbox for the Bourse Brief.
+          </div>
+        ) : (
+          <div style={{ maxWidth: '420px', margin: '0 auto 16px', padding: '16px', background: 'rgba(192,57,43,0.1)', border: '1px solid rgba(192,57,43,0.3)', borderRadius: '3px', color: 'var(--red)', fontSize: '14px' }}>
+            Something went wrong. Please try again or email{' '}
+            <a href="mailto:hello@bourse.io" style={{ color: 'inherit', textDecoration: 'underline' }}>hello@bourse.io</a>.
           </div>
         )}
 

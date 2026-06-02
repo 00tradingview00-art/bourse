@@ -8,24 +8,39 @@ import CoverageSection from './components/CoverageSection'
 import Newsletter from './components/Newsletter'
 import Footer from './components/Footer'
 import HeroLeft from './components/HeroLeft'
-import { BRIEFS } from '@/lib/data'
+import { fetchMarkets, getStaticMarkets } from '@/lib/fetchMarkets'
+import { fetchBriefs } from '@/lib/fetchBriefs'
 
-export default function Home() {
-  const todaysBrief = BRIEFS[0]
+async function getMarkets() {
+  try {
+    return await fetchMarkets()
+  } catch {
+    return getStaticMarkets()
+  }
+}
+
+export default async function Home() {
+  const [{ tickerData, dashboardData, fetchedAt }, briefs] = await Promise.all([
+    getMarkets(),
+    fetchBriefs(),
+  ])
+  const todaysBrief = briefs[0]
+  const brent = tickerData.find(m => m.ticker === 'BZ=F')
+
   return (
     <>
-      <Ticker />
+      <Ticker tickerItems={tickerData} />
       <Navbar />
       <section style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 32px 60px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 420px', gap: '80px', alignItems: 'start' }}>
           <HeroLeft />
-          <TodaysBrief brief={todaysBrief} />
+          <TodaysBrief brief={todaysBrief} markets={dashboardData} />
         </div>
       </section>
-      <MarketDashboard />
+      <MarketDashboard markets={dashboardData} timestamp={fetchedAt} />
       <FeaturesGrid />
-      <BriefsArchive />
-      <CoverageSection />
+      <BriefsArchive briefs={briefs} />
+      <CoverageSection markets={dashboardData} brent={brent} />
       <Newsletter />
       <Footer />
     </>

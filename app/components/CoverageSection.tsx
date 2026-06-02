@@ -1,8 +1,14 @@
 'use client'
 
-import { EXCHANGES, DASHBOARD_MARKETS } from '@/lib/data'
+import { EXCHANGES } from '@/lib/data'
+import type { MarketData } from '@/types'
 
-export default function CoverageSection() {
+interface Props {
+  markets: MarketData[]
+  brent?: MarketData
+}
+
+export default function CoverageSection({ markets, brent }: Props) {
   return (
     <section id="coverage" className="max-w-[1200px] mx-auto px-8 py-20">
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
@@ -39,7 +45,7 @@ export default function CoverageSection() {
             Today&apos;s exchange performance
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {DASHBOARD_MARKETS.map((m) => {
+            {markets.map((m) => {
               const pct = Math.abs(parseFloat(m.changePct))
               const isUp = m.direction === 'up'
               return (
@@ -68,7 +74,10 @@ export default function CoverageSection() {
           <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid #222' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
               <div style={{ fontSize: '11px', color: '#444' }}>Brent Crude</div>
-              <div style={{ fontSize: '16px', fontWeight: 500, color: '#4ade80' }}>$104.20 <span style={{ fontSize: '12px' }}>+1.32%</span></div>
+              <div style={{ fontSize: '16px', fontWeight: 500, color: brent?.direction === 'down' ? '#f87171' : '#4ade80' }}>
+                {brent?.value ?? '—'}{' '}
+                <span style={{ fontSize: '12px' }}>{brent?.changePct ?? ''}</span>
+              </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ fontSize: '11px', color: '#444' }}>ECB Rate (Jun 11)</div>

@@ -1,16 +1,21 @@
 'use client'
 
-import { DASHBOARD_MARKETS } from '@/lib/data'
+import type { MarketData } from '@/types'
 
-export default function MarketDashboard() {
+interface Props {
+  markets: MarketData[]
+  timestamp: string
+}
+
+export default function MarketDashboard({ markets, timestamp }: Props) {
   return (
     <section id="markets" style={{ background: '#fff', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '40px 0' }}>
       <div className="max-w-[1200px] mx-auto px-8">
         <div style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: '20px' }}>
-          European market snapshot · 2 June 2026, 09:47 CET
+          European market snapshot · {timestamp}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '1px', background: 'var(--border)', border: '1px solid var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
-          {DASHBOARD_MARKETS.map((m) => (
+          {markets.map((m) => (
             <div
               key={m.name}
               style={{ background: 'var(--paper)', padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: '4px', transition: 'background 0.15s', cursor: 'default' }}

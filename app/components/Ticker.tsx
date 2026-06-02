@@ -1,9 +1,13 @@
 'use client'
 
-import { TICKER_ITEMS } from '@/lib/data'
+import type { MarketData } from '@/types'
 
-export default function Ticker() {
-  const doubled = [...TICKER_ITEMS, ...TICKER_ITEMS]
+interface Props {
+  tickerItems: MarketData[]
+}
+
+export default function Ticker({ tickerItems }: Props) {
+  const doubled = [...tickerItems, ...tickerItems]
 
   return (
     <div

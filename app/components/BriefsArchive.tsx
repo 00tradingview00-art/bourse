@@ -1,8 +1,12 @@
 'use client'
 
-import { BRIEFS } from '@/lib/data'
+import type { BriefMetadata } from '@/types'
 
-export default function BriefsArchive() {
+interface Props {
+  briefs: BriefMetadata[]
+}
+
+export default function BriefsArchive({ briefs }: Props) {
   return (
     <section id="briefs" style={{ background: 'var(--paper-2)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '80px 0' }}>
       <div className="max-w-[1200px] mx-auto px-8">
@@ -19,7 +23,7 @@ export default function BriefsArchive() {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {BRIEFS.map((brief, i) => (
+          {briefs.slice(0, 5).map((brief, i) => (
             <a
               key={brief.edition}
               href={`/briefs/${brief.slug}`}
@@ -29,7 +33,7 @@ export default function BriefsArchive() {
                 gap: '24px',
                 alignItems: 'center',
                 padding: '20px 0',
-                borderBottom: i < BRIEFS.length - 1 ? '1px solid var(--border)' : 'none',
+                borderBottom: i < Math.min(briefs.length, 5) - 1 ? '1px solid var(--border)' : 'none',
                 textDecoration: 'none',
                 color: 'inherit',
               }}

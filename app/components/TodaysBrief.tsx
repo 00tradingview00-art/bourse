@@ -1,7 +1,6 @@
 'use client'
 
-import type { Brief } from '@/types'
-import { DASHBOARD_MARKETS } from '@/lib/data'
+import type { Brief, MarketData } from '@/types'
 
 const TAG_STYLES: Record<string, React.CSSProperties> = {
   green: { background: 'var(--accent-light)', color: 'var(--accent)', border: 'none' },
@@ -12,11 +11,10 @@ const TAG_STYLES: Record<string, React.CSSProperties> = {
 
 interface Props {
   brief: Brief
+  markets: MarketData[]
 }
 
-export default function TodaysBrief({ brief }: Props) {
-  const featured = DASHBOARD_MARKETS.slice(0, 6)
-
+export default function TodaysBrief({ brief, markets }: Props) {
   return (
     <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden', boxShadow: '0 2px 20px rgba(0,0,0,0.06)' }}>
       {/* Header */}
@@ -37,7 +35,7 @@ export default function TodaysBrief({ brief }: Props) {
 
       {/* Mini market strip */}
       <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border)', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-        {featured.map((m) => (
+        {markets.slice(0, 6).map((m) => (
           <div key={m.name} style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
             <div style={{ fontSize: '10px', color: 'var(--ink-4)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{m.name}</div>
             <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--ink)', fontVariantNumeric: 'tabular-nums' }}>{m.value}</div>
