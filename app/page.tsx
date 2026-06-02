@@ -25,7 +25,7 @@ export default async function Home() {
     fetchBriefs(),
   ])
   const todaysBrief = briefs[0]
-  const brent = tickerData.find(m => m.ticker === 'BZ=F')
+  const brent = tickerData.find(m => m.ticker === 'BRENT')
 
   return (
     <>

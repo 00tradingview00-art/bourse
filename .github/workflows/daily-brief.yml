@@ -29,6 +29,7 @@ jobs:
         run: node scripts/generate-brief.mjs
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
 
       - name: Commit and push
         run: |
