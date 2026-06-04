@@ -1,6 +1,19 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import type { Brief, MarketData } from '@/types'
+
+function useMarketsOpen() {
+  const [open, setOpen] = useState(false)
+  useEffect(() => {
+    const cet = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Amsterdam' }))
+    const day = cet.getDay()
+    if (day === 0 || day === 6) return
+    const mins = cet.getHours() * 60 + cet.getMinutes()
+    setOpen(mins >= 9 * 60 && mins < 17 * 60 + 30)
+  }, [])
+  return open
+}
 
 const TAG_STYLES: Record<string, React.CSSProperties> = {
   green: { background: 'var(--accent-light)', color: 'var(--accent)', border: 'none' },
@@ -15,6 +28,8 @@ interface Props {
 }
 
 export default function TodaysBrief({ brief, markets }: Props) {
+  const marketsOpen = useMarketsOpen()
+
   return (
     <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden', boxShadow: '0 2px 20px rgba(0,0,0,0.06)' }}>
       {/* Header */}
@@ -27,9 +42,9 @@ export default function TodaysBrief({ brief, markets }: Props) {
             {brief.date}
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#4ade80', letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 500 }}>
-          <div className="live-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80' }} />
-          Markets Open
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: marketsOpen ? '#4ade80' : '#888', letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 500 }}>
+          <div className={marketsOpen ? 'live-dot' : undefined} style={{ width: '6px', height: '6px', borderRadius: '50%', background: marketsOpen ? '#4ade80' : '#555' }} />
+          {marketsOpen ? 'Markets Open' : 'Markets Closed'}
         </div>
       </div>
 

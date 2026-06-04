@@ -32,12 +32,12 @@ export const TICKER_ITEMS: MarketData[] = [
 ]
 
 export const DASHBOARD_MARKETS: MarketData[] = [
-  { name: 'AEX', ticker: '^AEX', value: '1,034.9', change: '+8.1', changePct: '+0.79%', direction: 'up', country: 'NL', flag: '🇳🇱' },
-  { name: 'DAX', ticker: '^GDAXI', value: '22,491', change: '+70.3', changePct: '+0.31%', direction: 'up', country: 'DE', flag: '🇩🇪' },
-  { name: 'CAC 40', ticker: '^FCHI', value: '7,812', change: '+41.8', changePct: '+0.54%', direction: 'up', country: 'FR', flag: '🇫🇷' },
-  { name: 'FTSE 100', ticker: '^FTSE', value: '8,743', change: '-15.7', changePct: '-0.18%', direction: 'down', country: 'UK', flag: '🇬🇧' },
-  { name: 'IBEX 35', ticker: '^IBEX', value: '13,214', change: '+93.2', changePct: '+0.71%', direction: 'up', country: 'ES', flag: '🇪🇸' },
-  { name: 'FTSE MIB', ticker: 'FTSEMIB.MI', value: '37,882', change: '-124', changePct: '-0.33%', direction: 'down', country: 'IT', flag: '🇮🇹' },
+  { name: 'AEX',      ticker: '^AEX',       value: '1,037.1',  change: '-6.9',   changePct: '-0.66%', direction: 'down', country: 'NL', flag: '🇳🇱' },
+  { name: 'DAX',      ticker: '^GDAXI',     value: '24,934.9', change: '+138.9', changePct: '+0.56%', direction: 'up',   country: 'DE', flag: '🇩🇪' },
+  { name: 'CAC 40',   ticker: '^FCHI',      value: '8,226.4',  change: '+76.0',  changePct: '+0.93%', direction: 'up',   country: 'FR', flag: '🇫🇷' },
+  { name: 'FTSE 100', ticker: '^FTSE',      value: '10,274.7', change: '-57.6',  changePct: '-0.56%', direction: 'down', country: 'UK', flag: '🇬🇧' },
+  { name: 'IBEX 35',  ticker: '^IBEX',      value: '18,279.3', change: '+103.3', changePct: '+0.57%', direction: 'up',   country: 'ES', flag: '🇪🇸' },
+  { name: 'FTSE MIB', ticker: 'FTSEMIB.MI', value: '49,893',   change: '-146',   changePct: '-0.29%', direction: 'down', country: 'IT', flag: '🇮🇹' },
 ]
 
 export const BRIEFS: Brief[] = [
