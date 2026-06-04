@@ -176,19 +176,19 @@ async function fetchFrankfurter(): Promise<MarketData[]> {
     if (!res.ok) return []
     const json = await res.json()
     const rates: Record<string, number> = json.rates ?? {}
-    return Object.entries(rates).map(([ccy, rate]) => {
+    return Object.entries(rates).flatMap(([ccy, rate]): MarketData[] => {
       const meta = FX_META[ccy]
-      if (!meta) return null
+      if (!meta) return []
       const { prefix = '', decimals } = meta
-      return {
+      return [{
         name: meta.name,
         ticker: `EUR${ccy}`,
         value: `${prefix}${rate.toFixed(decimals)}`,
         change: '—',
         changePct: '—',
         direction: 'flat' as const,
-      }
-    }).filter((x): x is MarketData => x !== null)
+      }]
+    })
   } catch {
     return []
   }
