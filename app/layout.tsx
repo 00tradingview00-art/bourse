@@ -3,10 +3,10 @@ import Script from 'next/script'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Bourse — European Market Intelligence',
+  title: 'Boursee — European Market Intelligence',
   description: 'Independent daily research on Euronext, DAX, FTSE and the ECB. Delivered at 6:30 AM CET. For the 400 million Europeans who invest.',
   openGraph: {
-    title: 'Bourse — European Market Intelligence',
+    title: 'Boursee — European Market Intelligence',
     description: 'Independent daily research on Euronext, DAX, FTSE and the ECB.',
     type: 'website',
   },

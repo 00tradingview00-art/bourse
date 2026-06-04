@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export const metadata = {
-  title: 'Subscription Confirmed — Bourse',
+  title: 'Subscription Confirmed — Boursee',
 }
 
 export default function ConfirmedPage() {
@@ -17,7 +17,7 @@ export default function ConfirmedPage() {
             You&apos;re subscribed.
           </h1>
           <p style={{ fontSize: '15px', color: 'var(--ink-3)', lineHeight: 1.7, marginBottom: '32px' }}>
-            Your subscription is confirmed. Your first Bourse Brief arrives tomorrow morning at 6:30 AM CET — independent European market intelligence, before the opening bell.
+            Your subscription is confirmed. Your first Boursee Brief arrives tomorrow morning at 6:30 AM CET — independent European market intelligence, before the opening bell.
           </p>
           <Link
             href="/"
@@ -33,7 +33,7 @@ export default function ConfirmedPage() {
               textDecoration: 'none',
             }}
           >
-            Back to Bourse
+            Back to Boursee
           </Link>
         </div>
       </main>

@@ -137,7 +137,7 @@ export const FEATURES: Feature[] = [
     num: '05',
     icon: '📊',
     title: 'Expat Investor Layer',
-    description: 'Box 3 aware portfolio context, 30% ruling tax implications, UCITS ETF intelligence, and dividend withholding analysis. Investing in Europe is complex — Bourse makes it clear.',
+    description: 'Box 3 aware portfolio context, 30% ruling tax implications, UCITS ETF intelligence, and dividend withholding analysis. Investing in Europe is complex — Boursee makes it clear.',
   },
   {
     num: '06',

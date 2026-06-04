@@ -22,7 +22,7 @@ export default function Navbar() {
           style={{ fontFamily: 'var(--serif)', fontSize: '22px', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.02em' }}
           className="no-underline"
         >
-          Bourse<span style={{ color: 'var(--accent)' }}>.</span>
+          Boursee<span style={{ color: 'var(--accent)' }}>.</span>
         </Link>
 
         <ul className="hidden md:flex items-center gap-7 list-none">

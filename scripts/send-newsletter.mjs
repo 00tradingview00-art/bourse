@@ -42,7 +42,7 @@ function buildEmailHtml(meta, siteUrl) {
   <!-- Header -->
   <div style="background:#0f0f0f;padding:24px 32px;display:flex;justify-content:space-between;align-items:center;">
     <div style="color:#fff;font-size:22px;font-weight:700;letter-spacing:-0.02em;">
-      Bourse<span style="color:#4ade80;">.</span>
+      Boursee<span style="color:#4ade80;">.</span>
     </div>
     <div style="color:#666;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;">
       Edition #${String(meta.edition).padStart(3, '0')} · ${meta.dateShort}
@@ -75,7 +75,7 @@ function buildEmailHtml(meta, siteUrl) {
     <p style="font-size:11px;color:#9a9a9a;margin:0;">
       <a href="${unsubscribeUrl}" style="color:#9a9a9a;">Unsubscribe</a> ·
       <a href="${siteUrl}/privacy" style="color:#9a9a9a;">Privacy</a> ·
-      © 2026 Bourse
+      © 2026 Boursee
     </p>
   </div>
 </div>
@@ -95,16 +95,16 @@ async function main() {
   console.log(`  Brief: Edition #${meta.edition} — ${meta.headline.slice(0, 60)}...`)
 
   const html = buildEmailHtml(meta, siteUrl)
-  const subject = `Bourse Brief #${meta.edition} · ${meta.dateShort} — ${meta.headline.slice(0, 60)}`
+  const subject = `Boursee Brief #${meta.edition} · ${meta.dateShort} — ${meta.headline.slice(0, 60)}`
 
   console.log('→ Creating Brevo campaign...')
   const createRes = await fetch('https://api.brevo.com/v3/emailCampaigns', {
     method: 'POST',
     headers: { 'api-key': apiKey, 'Content-Type': 'application/json', 'Accept': 'application/json' },
     body: JSON.stringify({
-      name: `Bourse Brief #${meta.edition} - ${meta.dateShort}`,
+      name: `Boursee Brief #${meta.edition} - ${meta.dateShort}`,
       subject,
-      sender: { name: 'Bourse', email: 'brief@bourse.io' },
+      sender: { name: 'Boursee', email: 'brief@bourse.io' },
       type: 'classic',
       htmlContent: html,
       recipients: { listIds: [parseInt(listId, 10)] },

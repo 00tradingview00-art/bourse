@@ -43,7 +43,7 @@ export default function Newsletter() {
           Your European markets.<br />Every morning.
         </h2>
         <p style={{ fontSize: '15px', color: '#888', lineHeight: 1.6, marginBottom: '32px' }}>
-          Join investors across Europe getting the Bourse Brief — independent market intelligence delivered at 6:30 AM CET before the opening bell.
+          Join investors across Europe getting the Boursee Brief — independent market intelligence delivered at 6:30 AM CET before the opening bell.
         </p>
 
         {state === 'idle' || state === 'loading' ? (
@@ -83,7 +83,7 @@ export default function Newsletter() {
           </div>
         ) : state === 'already-subscribed' ? (
           <div style={{ maxWidth: '420px', margin: '0 auto 16px', padding: '16px', background: 'rgba(184,146,42,0.1)', border: '1px solid rgba(184,146,42,0.3)', borderRadius: '3px', color: 'var(--gold)', fontSize: '14px' }}>
-            You&apos;re already subscribed. Check your inbox for the Bourse Brief.
+            You&apos;re already subscribed. Check your inbox for the Boursee Brief.
           </div>
         ) : (
           <div style={{ maxWidth: '420px', margin: '0 auto 16px', padding: '16px', background: 'rgba(192,57,43,0.1)', border: '1px solid rgba(192,57,43,0.3)', borderRadius: '3px', color: 'var(--red)', fontSize: '14px' }}>

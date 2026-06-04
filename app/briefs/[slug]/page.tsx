@@ -40,7 +40,7 @@ export default async function BriefPage({ params }: { params: Promise<{ slug: st
 
           {/* Breadcrumb */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--ink-4)', marginBottom: '32px' }}>
-            <Link href="/" style={{ color: 'var(--ink-4)', textDecoration: 'none' }}>Bourse</Link>
+            <Link href="/" style={{ color: 'var(--ink-4)', textDecoration: 'none' }}>Boursee</Link>
             <span>›</span>
             <Link href="/briefs" style={{ color: 'var(--ink-4)', textDecoration: 'none' }}>Daily Brief</Link>
             <span>›</span>
@@ -64,7 +64,7 @@ export default async function BriefPage({ params }: { params: Promise<{ slug: st
               Market Analysis · General information only · Not personalised investment advice
             </span>
             <span style={{ fontSize: '11px', color: 'var(--ink-4)' }}>
-              Data may be delayed · Published {metadata.dateShort} by Bourse Editorial
+              Data may be delayed · Published {metadata.dateShort} by Boursee Editorial
             </span>
             <Link href="/disclaimer" style={{ fontSize: '11px', color: 'var(--accent)', textDecoration: 'none' }}>
               See full disclaimer →

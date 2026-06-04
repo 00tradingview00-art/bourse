@@ -21,7 +21,7 @@ export default function Footer() {
       <div className="max-w-[1200px] mx-auto" style={{ padding: '48px 32px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px' }}>
         <div>
           <div style={{ fontFamily: 'var(--serif)', fontSize: '20px', fontWeight: 700, color: '#fff', letterSpacing: '-0.02em' }}>
-            Bourse<span style={{ color: '#4ade80' }}>.</span>
+            Boursee<span style={{ color: '#4ade80' }}>.</span>
           </div>
           <div style={{ fontSize: '12px', color: '#444', marginTop: '4px' }}>
             European market intelligence. In plain English.
@@ -41,7 +41,7 @@ export default function Footer() {
         </ul>
         <div style={{ textAlign: 'right', fontSize: '11px', color: '#333', lineHeight: 1.6 }}>
           Covering Euronext · Xetra · LSE · Nasdaq Nordic<br />
-          © 2026 Bourse. Not investment advice.
+          © 2026 Boursee. Not investment advice.
         </div>
       </div>
 

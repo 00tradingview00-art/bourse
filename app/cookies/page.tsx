@@ -2,8 +2,8 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export const metadata = {
-  title: 'Cookie Policy — Bourse',
-  description: 'Bourse does not use tracking cookies. Details of our cookieless analytics approach.',
+  title: 'Cookie Policy — Boursee',
+  description: 'Boursee does not use tracking cookies. Details of our cookieless analytics approach.',
 }
 
 export default function CookiesPage() {
@@ -25,10 +25,10 @@ export default function CookiesPage() {
             <section>
               <div style={{ background: 'var(--accent-light)', border: '1px solid var(--accent)', borderRadius: '4px', padding: '20px 24px', marginBottom: '24px' }}>
                 <p style={{ fontSize: '15px', color: 'var(--accent)', fontWeight: 600, marginBottom: '4px' }}>
-                  Bourse does not use tracking cookies.
+                  Boursee does not use tracking cookies.
                 </p>
                 <p style={{ fontSize: '14px', color: 'var(--ink-3)', lineHeight: 1.7 }}>
-                  No cookie consent banner is required. Your browsing on Bourse generates no cross-site tracking data.
+                  No cookie consent banner is required. Your browsing on Boursee generates no cross-site tracking data.
                 </p>
               </div>
             </section>
@@ -40,7 +40,7 @@ export default function CookiesPage() {
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
                 Cookies are small text files stored in your browser by websites you visit. They can be used to
                 remember preferences, track user behaviour across sites, or serve targeted advertising.
-                Bourse does not use cookies for any of these purposes.
+                Boursee does not use cookies for any of these purposes.
               </p>
             </section>
 
@@ -83,7 +83,7 @@ export default function CookiesPage() {
                 If We Introduce Cookies in Future
               </h2>
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                If Bourse ever introduces features that require cookies (for example, user accounts or
+                If Boursee ever introduces features that require cookies (for example, user accounts or
                 preference storage), this policy will be updated and a consent mechanism will be added
                 before any cookies are set. We will inform subscribers of material changes by email.
               </p>

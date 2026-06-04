@@ -2,8 +2,8 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export const metadata = {
-  title: 'Disclaimer — Bourse',
-  description: 'Important information about the nature of content published on Bourse.',
+  title: 'Disclaimer — Boursee',
+  description: 'Important information about the nature of content published on Boursee.',
 }
 
 export default function DisclaimerPage() {
@@ -27,7 +27,7 @@ export default function DisclaimerPage() {
                 Nature of Content
               </h2>
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                The content published on Bourse is for general informational and educational purposes only.
+                The content published on Boursee is for general informational and educational purposes only.
                 It does not constitute investment advice, a personal recommendation, or an offer or solicitation
                 to buy or sell any financial instrument.
               </p>
@@ -38,7 +38,7 @@ export default function DisclaimerPage() {
                 Regulatory Status
               </h2>
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                Bourse is not authorised or regulated by the AFM (Autoriteit Financiële Markten) or any other
+                Boursee is not authorised or regulated by the AFM (Autoriteit Financiële Markten) or any other
                 financial regulatory authority as an investment firm or financial adviser. Nothing on this
                 platform should be relied upon as the basis for any investment decision.
               </p>
@@ -59,7 +59,7 @@ export default function DisclaimerPage() {
                 General Information Only
               </h2>
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                Any market analysis, data, or commentary published on Bourse represents general market
+                Any market analysis, data, or commentary published on Boursee represents general market
                 information only and has not been prepared having regard to your specific investment objectives,
                 financial situation, or needs. Before making any investment decision, you should seek
                 independent professional financial advice from a licensed adviser.
@@ -71,9 +71,9 @@ export default function DisclaimerPage() {
                 Data Accuracy
               </h2>
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                Data and prices shown are indicative and may be delayed. Bourse makes no representation as to
+                Data and prices shown are indicative and may be delayed. Boursee makes no representation as to
                 the accuracy, completeness, or timeliness of market data. Market data is sourced from third-party
-                providers and Bourse accepts no liability for errors or omissions.
+                providers and Boursee accepts no liability for errors or omissions.
               </p>
             </section>
 
@@ -82,8 +82,8 @@ export default function DisclaimerPage() {
                 Third-Party References
               </h2>
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                Bourse may reference third-party products, services, or financial instruments. These references
-                do not constitute endorsements. Bourse has no fiduciary relationship with users of this platform.
+                Boursee may reference third-party products, services, or financial instruments. These references
+                do not constitute endorsements. Boursee has no fiduciary relationship with users of this platform.
               </p>
             </section>
 
@@ -99,7 +99,7 @@ export default function DisclaimerPage() {
 
             <div style={{ borderTop: '1px solid var(--border)', paddingTop: '24px' }}>
               <p style={{ fontSize: '13px', color: 'var(--ink-4)', lineHeight: 1.8 }}>
-                © 2026 Bourse. Published in the Netherlands. For questions, contact{' '}
+                © 2026 Boursee. Published in the Netherlands. For questions, contact{' '}
                 <a href="mailto:hello@bourse.io" style={{ color: 'var(--accent)', textDecoration: 'none' }}>hello@bourse.io</a>.
               </p>
             </div>

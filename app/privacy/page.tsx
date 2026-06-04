@@ -2,8 +2,8 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export const metadata = {
-  title: 'Privacy Policy — Bourse',
-  description: 'How Bourse collects, uses, and protects your personal data under GDPR.',
+  title: 'Privacy Policy — Boursee',
+  description: 'How Boursee collects, uses, and protects your personal data under GDPR.',
 }
 
 export default function PrivacyPage() {
@@ -27,7 +27,7 @@ export default function PrivacyPage() {
                 1. Data Controller
               </h2>
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                Bourse is operated by Prabal Kapoor. For data protection enquiries, contact:{' '}
+                Boursee is operated by Prabal Kapoor. For data protection enquiries, contact:{' '}
                 <a href="mailto:privacy@bourse.io" style={{ color: 'var(--accent)', textDecoration: 'none' }}>privacy@bourse.io</a>.
               </p>
             </section>
@@ -132,7 +132,7 @@ export default function PrivacyPage() {
                 7. Cookies
               </h2>
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                Bourse does not use cookies for tracking or analytics. We use Plausible Analytics, which is
+                Boursee does not use cookies for tracking or analytics. We use Plausible Analytics, which is
                 cookieless by design. See our{' '}
                 <a href="/cookies" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Cookie Policy</a>{' '}
                 for full details.

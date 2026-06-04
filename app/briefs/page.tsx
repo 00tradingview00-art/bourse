@@ -9,8 +9,8 @@ const TAG_COLORS: Record<string, string> = {
 }
 
 export const metadata = {
-  title: 'Daily Brief Archive — Bourse',
-  description: 'All editions of the Bourse European market intelligence daily brief.',
+  title: 'Daily Brief Archive — Boursee',
+  description: 'All editions of the Boursee European market intelligence daily brief.',
 }
 
 export default async function BriefsPage() {

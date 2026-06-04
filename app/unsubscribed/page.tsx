@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export const metadata = {
-  title: 'Unsubscribed — Bourse',
+  title: 'Unsubscribed — Boursee',
 }
 
 export default function UnsubscribedPage() {
@@ -16,7 +16,7 @@ export default function UnsubscribedPage() {
             You&apos;ve been unsubscribed.
           </h1>
           <p style={{ fontSize: '15px', color: 'var(--ink-3)', lineHeight: 1.7, marginBottom: '12px' }}>
-            You have been removed from the Bourse Brief mailing list. You will not receive any further emails from us.
+            You have been removed from the Boursee Brief mailing list. You will not receive any further emails from us.
           </p>
           <p style={{ fontSize: '14px', color: 'var(--ink-4)', lineHeight: 1.7, marginBottom: '32px' }}>
             Your data will be deleted within 30 days in accordance with our{' '}
@@ -38,7 +38,7 @@ export default function UnsubscribedPage() {
               textDecoration: 'none',
             }}
           >
-            Back to Bourse
+            Back to Boursee
           </Link>
         </div>
       </main>

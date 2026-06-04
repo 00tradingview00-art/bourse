@@ -2,8 +2,8 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export const metadata = {
-  title: 'Terms of Service — Bourse',
-  description: 'Terms and conditions governing use of the Bourse platform.',
+  title: 'Terms of Service — Boursee',
+  description: 'Terms and conditions governing use of the Boursee platform.',
 }
 
 export default function TermsPage() {
@@ -27,9 +27,9 @@ export default function TermsPage() {
                 1. Nature of the Service
               </h2>
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                Bourse provides general market information, data, and analysis for informational and educational
+                Boursee provides general market information, data, and analysis for informational and educational
                 purposes only. The service does not constitute investment advice, financial advice, or a personal
-                recommendation to buy or sell any financial instrument. Bourse is not a regulated investment firm
+                recommendation to buy or sell any financial instrument. Boursee is not a regulated investment firm
                 and is not authorised by the AFM (Autoriteit Financiële Markten).
               </p>
             </section>
@@ -39,8 +39,8 @@ export default function TermsPage() {
                 2. No Warranty on Data Accuracy
               </h2>
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                Market data displayed on Bourse is sourced from third-party providers and may be delayed,
-                incomplete, or inaccurate. Bourse makes no warranty, express or implied, as to the accuracy,
+                Market data displayed on Boursee is sourced from third-party providers and may be delayed,
+                incomplete, or inaccurate. Boursee makes no warranty, express or implied, as to the accuracy,
                 timeliness, or completeness of any data, prices, or analysis. You should verify all market data
                 independently before making any decisions.
               </p>
@@ -51,7 +51,7 @@ export default function TermsPage() {
                 3. Limitation of Liability
               </h2>
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                To the fullest extent permitted by applicable law, Bourse and its operators shall not be liable
+                To the fullest extent permitted by applicable law, Boursee and its operators shall not be liable
                 for any direct, indirect, incidental, special, consequential, or exemplary damages arising from
                 your use of or inability to use the service, including but not limited to financial losses
                 resulting from reliance on content published on this platform.
@@ -83,8 +83,8 @@ export default function TermsPage() {
                 5. Intellectual Property
               </h2>
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                All content on Bourse — including market briefs, analysis, and editorial text — is the intellectual
-                property of Bourse and its operators. Market data (prices, indices) is publicly sourced and not
+                All content on Boursee — including market briefs, analysis, and editorial text — is the intellectual
+                property of Boursee and its operators. Market data (prices, indices) is publicly sourced and not
                 claimed as proprietary. You may quote brief excerpts for non-commercial purposes with attribution.
               </p>
             </section>
@@ -94,7 +94,7 @@ export default function TermsPage() {
                 6. Newsletter Subscription
               </h2>
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                By subscribing to the Bourse newsletter, you consent to receive daily market intelligence emails.
+                By subscribing to the Boursee newsletter, you consent to receive daily market intelligence emails.
                 You may unsubscribe at any time via the link included in every email. Your email address will be
                 processed in accordance with our{' '}
                 <a href="/privacy" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Privacy Policy</a>.
@@ -106,7 +106,7 @@ export default function TermsPage() {
                 7. Changes to the Service
               </h2>
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                Bourse reserves the right to modify, suspend, or discontinue any part of the service at any time
+                Boursee reserves the right to modify, suspend, or discontinue any part of the service at any time
                 without notice. We are not liable to you or any third party for any modification, suspension, or
                 discontinuation of the service.
               </p>
@@ -117,7 +117,7 @@ export default function TermsPage() {
                 8. Governing Law and Disputes
               </h2>
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                These terms are governed by the laws of the Netherlands. Any dispute arising from use of Bourse
+                These terms are governed by the laws of the Netherlands. Any dispute arising from use of Boursee
                 shall first be subject to good-faith negotiation. If unresolved, disputes shall be submitted to
                 the competent courts of the Netherlands.
               </p>

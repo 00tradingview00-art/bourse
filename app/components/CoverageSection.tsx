@@ -21,7 +21,7 @@ export default function CoverageSection({ markets, brent }: Props) {
             Every major<br />European exchange.
           </h2>
           <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.7, marginBottom: '32px' }}>
-            From Amsterdam to Milan, Paris to Oslo — Bourse covers the full breadth of European capital markets in one daily brief and a unified screener. No exchange left behind.
+            From Amsterdam to Milan, Paris to Oslo — Boursee covers the full breadth of European capital markets in one daily brief and a unified screener. No exchange left behind.
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
             {EXCHANGES.map((ex) => (

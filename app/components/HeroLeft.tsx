@@ -22,7 +22,7 @@ export default function HeroLeft() {
       </h1>
 
       <p style={{ fontSize: '17px', fontWeight: 300, color: 'var(--ink-2)', lineHeight: 1.65, maxWidth: '520px', marginBottom: '36px' }}>
-        Bourse delivers independent intelligence on Euronext, DAX, FTSE and the ECB — every morning at 6:30 AM CET. Research-grade analysis built for the 400 million Europeans who invest, and the millions more who should.
+        Boursee delivers independent intelligence on Euronext, DAX, FTSE and the ECB — every morning at 6:30 AM CET. Research-grade analysis built for the 400 million Europeans who invest, and the millions more who should.
       </p>
 
       <div style={{ display: 'flex', gap: '12px', marginBottom: '48px', flexWrap: 'wrap' }}>
