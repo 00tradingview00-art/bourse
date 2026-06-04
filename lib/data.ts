@@ -54,7 +54,7 @@ export const BRIEFS: Brief[] = [
       { label: 'Macro', variant: 'default' },
     ],
     readTime: 4,
-    slug: 'edition-029',
+    slug: '2026-06-02-oil-near-104-eurozone-equities-hold-ecb',
   },
   {
     edition: 28,
@@ -68,7 +68,7 @@ export const BRIEFS: Brief[] = [
       { label: 'CAC 40', variant: 'default' },
     ],
     readTime: 4,
-    slug: 'edition-028',
+    slug: '2026-05-29-post-fed-relief-euro-holds-rate-anxiety',
   },
   {
     edition: 27,
@@ -82,7 +82,7 @@ export const BRIEFS: Brief[] = [
       { label: 'Commodities', variant: 'gold' },
     ],
     readTime: 3,
-    slug: 'edition-027',
+    slug: '2026-05-28-venezuela-shock-reverses-european-equities-recover',
   },
   {
     edition: 26,
@@ -96,7 +96,7 @@ export const BRIEFS: Brief[] = [
       { label: 'Tech', variant: 'default' },
     ],
     readTime: 5,
-    slug: 'edition-026',
+    slug: '2026-05-27-adyen-q1-beat-supports-payments-sector',
   },
   {
     edition: 25,
@@ -110,7 +110,7 @@ export const BRIEFS: Brief[] = [
       { label: 'Macro', variant: 'default' },
     ],
     readTime: 4,
-    slug: 'edition-025',
+    slug: '2026-05-26-dollar-weakness-lifts-euro-exporters-ecb',
   },
 ]
 

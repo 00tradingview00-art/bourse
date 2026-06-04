@@ -16,6 +16,67 @@ import Anthropic from '@anthropic-ai/sdk'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const BRIEFS_DIR = join(__dirname, '..', 'content', 'briefs')
 
+// ─── Time window guard ───────────────────────────────────────────
+// Brief runs at 05:30 UTC (06:30 CET). Allow 04:00–09:00 UTC.
+// Bypass with FORCE_RUN=1 for manual dispatch.
+function checkTimeWindow() {
+  if (process.env.FORCE_RUN === '1') return
+  const utcHour = new Date().getUTCHours()
+  if (utcHour < 4 || utcHour >= 9) {
+    console.error(`✗ Time window guard: UTC hour ${utcHour} is outside 04:00–09:00. Exiting.`)
+    console.error('  Use FORCE_RUN=1 to bypass for manual runs.')
+    process.exit(1)
+  }
+}
+
+// ─── Slug generation ─────────────────────────────────────────────
+const SLUG_STOP = new Set([
+  'a','an','the','and','or','but','in','on','at','to','for','of','with',
+  'by','from','is','are','was','were','be','been','has','have','had',
+  'as','its','near','into','after','over','that','this','not','no',
+])
+
+function makeSlug(dateStr, headline) {
+  const words = headline
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w.length > 1 && !SLUG_STOP.has(w))
+    .slice(0, 6)
+  const raw = `${dateStr}-${words.join('-')}`
+  if (raw.length <= 70) return raw
+  const cut = raw.slice(0, 70)
+  return cut.slice(0, cut.lastIndexOf('-'))
+}
+
+function toDateStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+// ─── Claude output validation ────────────────────────────────────
+const REFUSAL_PATTERNS = [
+  /^skip\b/i,
+  /i('m| am) (not able|unable) to/i,
+  /i cannot/i,
+  /as an ai/i,
+]
+
+function stripCodeFences(text) {
+  return text
+    .replace(/^```[a-z]*\r?\n?/gm, '')
+    .replace(/^```\s*$/gm, '')
+    .trim()
+}
+
+function validateClaudeOutput(text, label) {
+  const cleaned = stripCodeFences(text)
+  if (cleaned.length < 30) throw new Error(`Claude output too short for "${label}": ${JSON.stringify(cleaned)}`)
+  for (const pattern of REFUSAL_PATTERNS) {
+    if (pattern.test(cleaned)) throw new Error(`Claude refused to generate "${label}": ${cleaned.slice(0, 80)}`)
+  }
+  return cleaned
+}
+
 const YAHOO_SYMBOLS = [
   '^AEX', '^GDAXI', '^FCHI', '^FTSE', '^IBEX',
   'EURUSD=X', 'EURINR=X', 'EURGBP=X',
@@ -112,7 +173,7 @@ async function getNextEdition() {
   }
 }
 
-async function callClaude(client, prompt, maxTokens = 200) {
+async function callClaude(client, prompt, label, maxTokens = 200) {
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
       const msg = await client.messages.create({
@@ -122,10 +183,12 @@ async function callClaude(client, prompt, maxTokens = 200) {
 Use declarative sentences. Cite specific numbers from the data provided.
 Do not use phrases like "it's worth noting", "as we can see", or "AI-powered".
 FT editorial tone. European market focus. No padding or fluff.
-Never use the words "AI-generated" or "AI-powered" in any context.`,
+Never use the words "AI-generated" or "AI-powered" in any context.
+If you cannot produce quality output for any reason, respond with exactly: SKIP`,
         messages: [{ role: 'user', content: prompt }],
       })
-      return msg.content[0].text.trim()
+      const raw = msg.content[0].text.trim()
+      return validateClaudeOutput(raw, label)
     } catch (err) {
       if (attempt === 3) throw err
       const backoff = 3500 * attempt
@@ -152,6 +215,8 @@ async function main() {
     throw new Error('ANTHROPIC_API_KEY is required')
   }
 
+  checkTimeWindow()
+
   console.log('→ Fetching market data from Yahoo Finance...')
   const data = await fetchAllMarkets()
   const symbolCount = Object.keys(data).length
@@ -162,64 +227,86 @@ async function main() {
 
   const client = new Anthropic()
   const edition = await getNextEdition()
-  const slug = `edition-${String(edition).padStart(3, '0')}`
   const today = new Date()
   const { date, dateShort } = formatDate(today)
 
   console.log(`→ Generating brief #${edition} for ${dateShort}...`)
 
-  // Call 1: Market summary (Opening section)
-  console.log('  Claude call 1/4: Opening...')
+  // Call 1: Opening
+  console.log('  Claude call 1/6: Opening...')
   const opening = await callClaude(client,
     `Write the Opening section of a European market intelligence brief. 2-3 sentences.
 Indices today: ${indicesSummary}
 FX: ${fxSummary}
 Highlight the single most significant market move and why it matters for European investors.`,
-    250
+    'opening', 250
   )
   await delay(3500)
 
-  // Call 2: Commodity and macro
-  console.log('  Claude call 2/4: Commodities & macro...')
+  // Call 2: Commodities & macro
+  console.log('  Claude call 2/6: Commodities & macro...')
   const commoditySection = await callClaude(client,
     `Write 1-2 sentences on commodities and macro context for a European market brief.
 Data: ${commoditySummary}
-ECB rate: 2.00%, next meeting June 11, 25bp hike 90% priced.
 Connect the data to European equities impact.`,
-    180
+    'commodities', 180
   )
   await delay(3500)
 
   // Call 3: Key stock move
-  console.log('  Claude call 3/4: Key stock move...')
+  console.log('  Claude call 3/6: Key stock move...')
   const stockSection = await callClaude(client,
     `Write 1-2 sentences on the key AEX stock move today for a European market brief.
 Data: ${stocksSummary}
 Name the biggest mover and give brief context.`,
-    150
+    'stocks', 150
   )
   await delay(3500)
 
   // Call 4: What to watch
-  console.log('  Claude call 4/4: What to watch...')
+  console.log('  Claude call 4/6: What to watch...')
   const watchSection = await callClaude(client,
-    `Write a "What to watch today" section for a European market brief. 2-3 bullet points.
-Current context: ECB June 11 meeting approaching, Brent at ${brent?.price?.toFixed(2) ?? 'elevated'}, EUR/USD at ${eurUsd?.price?.toFixed(4) ?? 'current levels'}.
-Format as plain sentences without bullet characters.`,
-    200
+    `Write a "What to watch today" section for a European market brief. 2-3 concise points.
+Context: Brent at ${brent?.price?.toFixed(2) ?? 'current'}, EUR/USD at ${eurUsd?.price?.toFixed(4) ?? 'current'}.
+Format as plain sentences, no bullet characters.`,
+    'watch', 200
+  )
+  await delay(3500)
+
+  // Call 5: Headline (original — never copy market data verbatim)
+  console.log('  Claude call 5/6: Headline...')
+  const rawHeadline = await callClaude(client,
+    `Write a single newspaper headline (max 90 characters) for today's European market brief.
+Key facts: ${indicesSummary}. ${commoditySummary}.
+Rules: original wording (not copied from data), no quotes, no colon after first word, title case.
+Respond with ONLY the headline text — nothing else.`,
+    'headline', 60
+  )
+  await delay(3500)
+
+  // Validate and truncate headline at word boundary
+  const headlineRaw = rawHeadline.replace(/^["']|["']$/g, '').trim()
+  const headlineTrunc = headlineRaw.length <= 90
+    ? headlineRaw
+    : headlineRaw.slice(0, 90).replace(/\s\S+$/, '')
+
+  // Call 6: Excerpt
+  console.log('  Claude call 6/6: Excerpt...')
+  const excerptRaw = await callClaude(client,
+    `Write a 1-sentence summary (max 160 characters) of today's European market brief for use as a preview snippet.
+Key facts: ${indicesSummary}. ${commoditySummary}.
+Respond with ONLY the sentence — nothing else.`,
+    'excerpt', 80
   )
 
-  // Derive tags from market data (no Claude involved)
-  const tags = deriveTags(aex, brent, eurUsd)
+  const excerpt = excerptRaw.slice(0, 200).trim() + (excerptRaw.length > 200 ? '…' : '')
 
-  // Estimate read time (250 words/min, rough content estimate)
+  // Derive tags from market data (rule engine — no Claude)
+  const tags = deriveTags(aex, brent, eurUsd)
   const readTime = 4
 
-  // Extract headline from opening (first sentence)
-  const headline = opening.split('.')[0].replace(/^[^A-Z]*/, '').trim().slice(0, 110)
-
-  // Excerpt from opening paragraph
-  const excerpt = opening.slice(0, 200).trim() + (opening.length > 200 ? '…' : '')
+  // Date-based slug with word-boundary truncation
+  const slug = makeSlug(toDateStr(today), headlineTrunc)
 
   // Write .edition_tmp for the commit message step in CI
   await writeFile(join(__dirname, '..', '.edition_tmp'), String(edition))
@@ -229,7 +316,7 @@ Format as plain sentences without bullet characters.`,
   edition: ${edition},
   date: '${date}',
   dateShort: '${dateShort}',
-  headline: '${headline.replace(/'/g, "\\'")}',
+  headline: '${headlineTrunc.replace(/'/g, "\\'")}',
   excerpt: '${excerpt.replace(/'/g, "\\'")}',
   tags: ${JSON.stringify(tags, null, 2).split('\n').join('\n  ')},
   readTime: ${readTime},

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getBriefSlugs } from '@/lib/fetchBriefs'
+import { getBriefSlugs, fetchBriefs } from '@/lib/fetchBriefs'
 import ReadingProgress from './ReadingProgress'
 import type { BriefMetadata } from '@/types'
 
@@ -31,6 +31,12 @@ export default async function BriefPage({ params }: { params: Promise<{ slug: st
   } catch {
     return notFound()
   }
+
+  // Prev / next (sorted descending by edition — [0] is newest)
+  const allBriefs = await fetchBriefs()
+  const idx = allBriefs.findIndex(b => b.slug === slug)
+  const newer = idx > 0 ? allBriefs[idx - 1] : null      // lower index = newer
+  const older = idx < allBriefs.length - 1 ? allBriefs[idx + 1] : null
 
   return (
     <>
@@ -110,17 +116,36 @@ export default async function BriefPage({ params }: { params: Promise<{ slug: st
             <BriefContent />
           </article>
 
-          {/* Nav between editions */}
-          <div style={{ marginTop: '64px', paddingTop: '32px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Link
-              href="/briefs"
-              style={{ fontSize: '13px', color: 'var(--accent)', textDecoration: 'none', fontWeight: 500 }}
-            >
-              ← All editions
-            </Link>
-            <div style={{ fontSize: '11px', color: 'var(--ink-4)', textAlign: 'right', lineHeight: 1.6 }}>
-              Content is for informational purposes only.<br />
-              Not personalised investment advice.
+          {/* Prev / Next navigation */}
+          <div style={{ marginTop: '64px', paddingTop: '32px', borderTop: '1px solid var(--border)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+              <div>
+                {older && (
+                  <Link href={`/briefs/${older.slug}`} style={{ textDecoration: 'none' }}>
+                    <div style={{ fontSize: '10px', color: 'var(--ink-4)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '6px' }}>← Previous</div>
+                    <div style={{ fontSize: '13px', color: 'var(--ink-2)', fontWeight: 500, lineHeight: 1.4 }}>{older.headline}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '4px' }}>{older.dateShort}</div>
+                  </Link>
+                )}
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                {newer && (
+                  <Link href={`/briefs/${newer.slug}`} style={{ textDecoration: 'none' }}>
+                    <div style={{ fontSize: '10px', color: 'var(--ink-4)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '6px' }}>Next →</div>
+                    <div style={{ fontSize: '13px', color: 'var(--ink-2)', fontWeight: 500, lineHeight: 1.4 }}>{newer.headline}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '4px' }}>{newer.dateShort}</div>
+                  </Link>
+                )}
+              </div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Link href="/briefs" style={{ fontSize: '13px', color: 'var(--accent)', textDecoration: 'none', fontWeight: 500 }}>
+                ← All editions
+              </Link>
+              <div style={{ fontSize: '11px', color: 'var(--ink-4)', textAlign: 'right', lineHeight: 1.6 }}>
+                Content is for informational purposes only.<br />
+                Not personalised investment advice.
+              </div>
             </div>
           </div>
 

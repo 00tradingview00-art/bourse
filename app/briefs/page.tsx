@@ -8,6 +8,8 @@ const TAG_COLORS: Record<string, string> = {
   default: 'var(--ink-4)',
 }
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Daily Brief Archive — Boursee',
   description: 'All editions of the Boursee European market intelligence daily brief.',
