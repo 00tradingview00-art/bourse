@@ -1,19 +1,34 @@
 import type { MarketData, Brief, Exchange, Feature } from '@/types'
 
 export const TICKER_ITEMS: MarketData[] = [
-  { name: 'AEX', ticker: '^AEX', value: '1,034.9', change: '+8.1', changePct: '+0.79%', direction: 'up' },
-  { name: 'CAC 40', ticker: '^FCHI', value: '7,812.3', change: '+41.8', changePct: '+0.54%', direction: 'up' },
-  { name: 'DAX', ticker: '^GDAXI', value: '22,491.6', change: '+70.3', changePct: '+0.31%', direction: 'up' },
-  { name: 'FTSE 100', ticker: '^FTSE', value: '8,743.1', change: '-15.7', changePct: '-0.18%', direction: 'down' },
-  { name: 'IBEX 35', ticker: '^IBEX', value: '13,214.0', change: '+93.2', changePct: '+0.71%', direction: 'up' },
-  { name: 'EUR/USD', ticker: 'EURUSD=X', value: '1.1672', change: '-0.0014', changePct: '-0.12%', direction: 'down' },
-  { name: 'EUR/INR', ticker: 'EURINR=X', value: '₹111.48', change: '+0.24', changePct: '+0.22%', direction: 'up' },
-  { name: 'ASML', ticker: 'ASML.AS', value: '€694.20', change: '+7.84', changePct: '+1.14%', direction: 'up' },
-  { name: 'Adyen', ticker: 'ADYEN.AS', value: '€1,412', change: '+12.2', changePct: '+0.87%', direction: 'up' },
-  { name: 'Shell', ticker: 'SHELL.AS', value: '€29.14', change: '-0.13', changePct: '-0.43%', direction: 'down' },
-  { name: 'Brent', ticker: 'BZ=F', value: '$104.20', change: '+1.36', changePct: '+1.32%', direction: 'up' },
-  { name: 'Gold', ticker: 'GC=F', value: '$3,421', change: '-10.7', changePct: '-0.31%', direction: 'down' },
-  { name: 'ECB Rate', ticker: '', value: '2.00%', change: 'Jun 11', changePct: '▲ +25bp', direction: 'up' },
+  // European indices
+  { name: 'AEX',           ticker: '^AEX',       value: '1,037.1',  change: '-6.9',    changePct: '-0.66%', direction: 'down' },
+  { name: 'DAX',           ticker: '^GDAXI',     value: '24,934.9', change: '+138.9',  changePct: '+0.56%', direction: 'up' },
+  { name: 'CAC 40',        ticker: '^FCHI',      value: '8,226.4',  change: '+76.0',   changePct: '+0.93%', direction: 'up' },
+  { name: 'FTSE 100',      ticker: '^FTSE',      value: '10,274.7', change: '-57.6',   changePct: '-0.56%', direction: 'down' },
+  { name: 'IBEX 35',       ticker: '^IBEX',      value: '18,279.3', change: '+103.3',  changePct: '+0.57%', direction: 'up' },
+  { name: 'FTSE MIB',      ticker: 'FTSEMIB.MI', value: '49,893',   change: '-146',    changePct: '-0.29%', direction: 'down' },
+  { name: 'Euro Stoxx 50', ticker: '^SX5E',      value: '5,318.2',  change: '+22.4',   changePct: '+0.42%', direction: 'up' },
+  // Global
+  { name: 'S&P 500',       ticker: '^GSPC',      value: '5,842.0',  change: '+18.3',   changePct: '+0.31%', direction: 'up' },
+  { name: 'Nasdaq 100',    ticker: '^NDX',       value: '21,134.5', change: '+94.2',   changePct: '+0.45%', direction: 'up' },
+  // Amsterdam stocks
+  { name: 'ASML',          ticker: 'ASML.AS',    value: '€1,454.8', change: '-30.4',   changePct: '-2.05%', direction: 'down' },
+  { name: 'Adyen',         ticker: 'ADYEN.AS',   value: '€860',     change: '+11.8',   changePct: '+1.39%', direction: 'up' },
+  { name: 'Shell',         ticker: 'SHELL.AS',   value: '€37.31',   change: '-0.52',   changePct: '-1.37%', direction: 'down' },
+  // Commodities
+  { name: 'Brent',         ticker: 'BZ=F',       value: '$95.38',   change: '-2.34',   changePct: '-2.48%', direction: 'down' },
+  { name: 'WTI',           ticker: 'CL=F',       value: '$91.20',   change: '-1.98',   changePct: '-2.13%', direction: 'down' },
+  { name: 'Nat Gas',       ticker: 'NG=F',       value: '$2.847',   change: '+0.031',  changePct: '+1.10%', direction: 'up' },
+  { name: 'Gold',          ticker: 'GC=F',       value: '$3,318',   change: '+12.4',   changePct: '+0.37%', direction: 'up' },
+  { name: 'Silver',        ticker: 'SI=F',       value: '$32.84',   change: '-0.21',   changePct: '-0.64%', direction: 'down' },
+  { name: 'Copper',        ticker: 'HG=F',       value: '$4.641',   change: '+0.047',  changePct: '+1.02%', direction: 'up' },
+  // FX
+  { name: 'EUR/USD',       ticker: 'EURUSD',     value: '1.1641',   change: '—',       changePct: '—',      direction: 'flat' },
+  { name: 'EUR/GBP',       ticker: 'EURGBP',     value: '0.8412',   change: '—',       changePct: '—',      direction: 'flat' },
+  { name: 'EUR/INR',       ticker: 'EURINR',     value: '₹111.40',  change: '—',       changePct: '—',      direction: 'flat' },
+  // Rates
+  { name: 'ECB Rate',      ticker: '',           value: '2.00%',    change: 'Jun 11',  changePct: '▲ +25bp', direction: 'up' },
 ]
 
 export const DASHBOARD_MARKETS: MarketData[] = [
