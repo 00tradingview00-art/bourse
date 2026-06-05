@@ -10,7 +10,7 @@ interface Props {
 export default function MarketDashboard({ markets, timestamp }: Props) {
   return (
     <section id="markets" style={{ background: '#fff', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '40px 0' }}>
-      <div className="max-w-[1200px] mx-auto px-8">
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 32px' }}>
         <div style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: '20px' }}>
           European market snapshot · {timestamp}
         </div>

@@ -16,7 +16,7 @@ export default function Navbar() {
       style={{ borderBottom: '1px solid var(--border)', background: 'var(--paper)' }}
       className="sticky top-0 z-50"
     >
-      <div className="max-w-[1200px] mx-auto px-8 h-[60px] flex items-center justify-between">
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 32px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Link
           href="/"
           style={{ fontFamily: 'var(--serif)', fontSize: '22px', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.02em' }}
@@ -25,7 +25,7 @@ export default function Navbar() {
           Boursee<span style={{ color: 'var(--accent)' }}>.</span>
         </Link>
 
-        <ul className="hidden md:flex items-center gap-7 list-none">
+        <ul style={{ display: 'flex', alignItems: 'center', gap: '28px', listStyle: 'none' }}>
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
               <a

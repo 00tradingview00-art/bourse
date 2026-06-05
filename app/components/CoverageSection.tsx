@@ -10,7 +10,7 @@ interface Props {
 
 export default function CoverageSection({ markets, brent }: Props) {
   return (
-    <section id="coverage" className="max-w-[1200px] mx-auto px-8 py-20">
+    <section id="coverage" style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 32px' }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
         {/* Left */}
         <div>

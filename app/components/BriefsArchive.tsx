@@ -9,7 +9,7 @@ interface Props {
 export default function BriefsArchive({ briefs }: Props) {
   return (
     <section id="briefs" style={{ background: 'var(--paper-2)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '80px 0' }}>
-      <div className="max-w-[1200px] mx-auto px-8">
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 32px' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '36px' }}>
           <h2 style={{ fontFamily: 'var(--serif)', fontSize: '28px', fontWeight: 700, letterSpacing: '-0.02em' }}>
             Recent briefs

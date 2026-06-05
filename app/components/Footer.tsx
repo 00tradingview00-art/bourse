@@ -18,7 +18,7 @@ const LEGAL_LINKS = [
 export default function Footer() {
   return (
     <footer id="about" style={{ background: '#080808' }}>
-      <div className="max-w-[1200px] mx-auto" style={{ padding: '48px 32px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 32px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px' }}>
         <div>
           <div style={{ fontFamily: 'var(--serif)', fontSize: '20px', fontWeight: 700, color: '#fff', letterSpacing: '-0.02em' }}>
             Boursee<span style={{ color: '#4ade80' }}>.</span>
@@ -45,7 +45,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="max-w-[1200px] mx-auto" style={{ padding: '16px 32px 32px', borderTop: '1px solid #141414', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '16px 32px 32px', borderTop: '1px solid #141414', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
         <p style={{ fontSize: '11px', color: '#2a2a2a', lineHeight: 1.6, maxWidth: '560px' }}>
           Content is for informational purposes only and does not constitute investment advice or a personal recommendation.
           Not regulated by the AFM. Past performance is not indicative of future results.
