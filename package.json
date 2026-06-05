@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.100.1",
     "@fontsource-variable/dm-sans": "^5.2.8",
     "@fontsource/libre-baskerville": "^5.2.10",
     "@mdx-js/loader": "^3.1.1",
