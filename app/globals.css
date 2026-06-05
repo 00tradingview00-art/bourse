@@ -83,6 +83,12 @@ article a { color: var(--accent); text-decoration: underline; text-underline-off
 article h2 + p,
 article h2 ~ p { }
 
+/* ── Responsive: mobile hamburger ───────────────────────────── */
+@media (max-width: 768px) {
+  .mobile-hamburger { display: block !important; }
+  .desktop-nav      { display: none !important; }
+}
+
 .bridge-entry {
   display: flex;
   gap: 10px;

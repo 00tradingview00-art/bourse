@@ -1,13 +1,14 @@
 import Ticker from './components/Ticker'
 import Navbar from './components/Navbar'
+import MarketPulse from './components/MarketPulse'
+import MarketMovers from './components/MarketMovers'
 import TodaysBrief from './components/TodaysBrief'
-import MarketDashboard from './components/MarketDashboard'
 import FeaturesGrid from './components/FeaturesGrid'
 import BriefsArchive from './components/BriefsArchive'
+import ScreenerTeaser from './components/ScreenerTeaser'
 import CoverageSection from './components/CoverageSection'
 import Newsletter from './components/Newsletter'
 import Footer from './components/Footer'
-import HeroLeft from './components/HeroLeft'
 import { fetchMarkets, getStaticMarkets } from '@/lib/fetchMarkets'
 import { fetchBriefs } from '@/lib/fetchBriefs'
 
@@ -25,22 +26,50 @@ export default async function Home() {
     fetchBriefs(),
   ])
   const todaysBrief = briefs[0]
-  const brent = tickerData.find(m => m.ticker === 'BZ=F')
+  const brent   = tickerData.find(m => m.ticker === 'BZ=F')
+  const eurUsd  = tickerData.find(m => m.name === 'EUR/USD')
+  const ecbRate = tickerData.find(m => m.name === 'ECB Rate')
 
   return (
     <>
       <Ticker tickerItems={tickerData} />
       <Navbar />
-      <section style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 32px 60px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 420px', gap: '80px', alignItems: 'start' }}>
-          <HeroLeft />
-          <TodaysBrief brief={todaysBrief} markets={dashboardData} />
+
+      {/* Live market pulse — above the fold, data first */}
+      <MarketPulse
+        markets={dashboardData}
+        timestamp={fetchedAt}
+        ecbRate={ecbRate}
+        eurUsd={eurUsd}
+        brent={brent}
+      />
+
+      {/* Today's intelligence: brief + movers */}
+      <section style={{ background: 'var(--paper)', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 32px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.13em', textTransform: 'uppercase', color: 'var(--accent-mid)', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ width: '20px', height: '1px', background: 'var(--accent-mid)', display: 'inline-block' }} />
+            Today's Intelligence
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '28px', alignItems: 'start' }}>
+            <TodaysBrief brief={todaysBrief} markets={dashboardData} />
+            <MarketMovers />
+          </div>
         </div>
       </section>
-      <MarketDashboard markets={dashboardData} timestamp={fetchedAt} />
-      <FeaturesGrid />
+
+      {/* RSI signal spotlight */}
+      <ScreenerTeaser />
+
+      {/* Brief archive */}
       <BriefsArchive briefs={briefs} />
+
+      {/* Intelligence feature grid */}
+      <FeaturesGrid />
+
+      {/* Exchange coverage */}
       <CoverageSection markets={dashboardData} brent={brent} />
+
       <Newsletter />
       <Footer />
     </>

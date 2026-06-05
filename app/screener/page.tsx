@@ -80,7 +80,7 @@ export default async function ScreenerPage() {
           {data.stocks.length === 0 ? (
             <EmptyState />
           ) : (
-            <ScreenerClient stocks={data.stocks} />
+            <ScreenerClient stocks={data.stocks} updatedAt={data.updatedAt} />
           )}
         </div>
       </main>
