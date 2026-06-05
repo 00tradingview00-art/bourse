@@ -16,16 +16,18 @@ import Anthropic from '@anthropic-ai/sdk'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const BRIEFS_DIR = join(__dirname, '..', 'content', 'briefs')
 
-// ─── Time window guard ───────────────────────────────────────────
-// Brief runs at 05:30 UTC (06:30 CET). Allow 04:00–09:00 UTC.
-// Bypass with FORCE_RUN=1 for manual dispatch.
-function checkTimeWindow() {
+// ─── Duplicate guard ─────────────────────────────────────────────
+// Replaces the old UTC time-window guard. GitHub Actions can run
+// 30–60+ minutes late, so a rigid time window causes false failures.
+// Instead: skip if a brief for today's CET date already exists.
+async function checkAlreadyRun() {
   if (process.env.FORCE_RUN === '1') return
-  const utcHour = new Date().getUTCHours()
-  if (utcHour < 4 || utcHour >= 9) {
-    console.error(`✗ Time window guard: UTC hour ${utcHour} is outside 04:00–09:00. Exiting.`)
-    console.error('  Use FORCE_RUN=1 to bypass for manual runs.')
-    process.exit(1)
+  const todayStr = toDateStr(new Date())  // YYYY-MM-DD in CET
+  let files = []
+  try { files = await readdir(BRIEFS_DIR) } catch {}
+  if (files.some(f => f.startsWith(todayStr))) {
+    console.log(`✓ Brief for ${todayStr} already exists — skipping.`)
+    process.exit(0)
   }
 }
 
@@ -215,7 +217,7 @@ async function main() {
     throw new Error('ANTHROPIC_API_KEY is required')
   }
 
-  checkTimeWindow()
+  await checkAlreadyRun()
 
   console.log('→ Fetching market data from Yahoo Finance...')
   const data = await fetchAllMarkets()

@@ -3,13 +3,20 @@ name: Daily Brief
 on:
   schedule:
     - cron: '30 5 * * 1-5'  # 5:30 AM UTC = 6:30 AM CET, weekdays
-  workflow_dispatch:          # manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force run even if brief already exists today'
+        required: false
+        default: 'false'
 
 jobs:
   generate:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
     steps:
       - name: Checkout
@@ -21,33 +28,52 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
+          cache: 'npm'
 
-      - name: Install Claude SDK
-        run: npm install --no-save @anthropic-ai/sdk
+      - name: Install dependencies
+        run: npm ci
 
       - name: Generate brief
         run: node scripts/generate-brief.mjs
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          FORCE_RUN: ${{ github.event.inputs.force == 'true' && '1' || '0' }}
 
       - name: Commit and push
+        id: commit
         run: |
           git config user.email "actions@github.com"
           git config user.name "Bourse Brief Bot"
-          git add content/briefs/
+          git add content/briefs/ .edition_tmp 2>/dev/null || true
           EDITION=$(cat .edition_tmp 2>/dev/null || echo "?")
-          git diff --staged --quiet || git commit -m "brief: edition ${EDITION} - $(date +%Y-%m-%d)"
-          git push
+          if git diff --staged --quiet; then
+            echo "Nothing to commit"
+            echo "published=false" >> $GITHUB_OUTPUT
+          else
+            git commit -m "brief: edition ${EDITION} - $(date +%Y-%m-%d)"
+            git push
+            echo "published=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Send newsletter
+        if: steps.commit.outputs.published == 'true'
+        continue-on-error: true
         run: node scripts/send-newsletter.mjs
         env:
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
           BREVO_LIST_ID: ${{ secrets.BREVO_LIST_ID }}
           NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
 
-      - name: Notify on failure
+      - name: Alert on failure
         if: failure()
+        continue-on-error: true
         run: |
-          echo "Brief generation failed on $(date)" >> /dev/stderr
-          # Add Slack webhook or email alert here if needed
+          curl -s -X POST https://api.brevo.com/v3/smtp/email \
+            -H "api-key: ${{ secrets.BREVO_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "sender": { "name": "Boursee Bot", "email": "noreply@boursee.com" },
+              "to": [{ "email": "00tradingview00@gmail.com" }],
+              "subject": "Boursee: Daily brief generation failed",
+              "htmlContent": "<p>Brief generation failed on '"$(date +'%d %b %Y')"'. Check <a href=\"https://github.com/00tradingview00-art/bourse/actions\">GitHub Actions</a>.</p>"
+            }' || true
