@@ -166,9 +166,16 @@ function deriveTags(aex, brent, eurUsd) {
 async function getNextEdition() {
   try {
     const files = await readdir(BRIEFS_DIR)
-    const editions = files
-      .filter(f => f.match(/^edition-(\d+)\.mdx$/))
-      .map(f => parseInt(f.match(/edition-(\d+)/)[1]))
+    const mdxFiles = files.filter(f => f.endsWith('.mdx'))
+    const editions = await Promise.all(
+      mdxFiles.map(async f => {
+        try {
+          const content = await readFile(join(BRIEFS_DIR, f), 'utf8')
+          const m = content.match(/edition:\s*(\d+)/)
+          return m ? parseInt(m[1]) : 0
+        } catch { return 0 }
+      })
+    )
     return Math.max(0, ...editions) + 1
   } catch {
     return 1
