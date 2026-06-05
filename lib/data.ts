@@ -141,6 +141,7 @@ export const FEATURES: Feature[] = [
     icon: '🌍',
     title: 'Macro–Equity Bridge',
     description: 'Crude up → Shell and TotalEnergies implications. ECB hike → ING and ABN AMRO read-through. Gas prices → ArcelorMittal margin impact. We connect the macro tape to your European holdings.',
+    href: '/macro-bridge',
   },
   {
     num: '04',

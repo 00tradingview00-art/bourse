@@ -299,8 +299,34 @@ Respond with ONLY the headline text — nothing else.`,
     ? headlineRaw
     : headlineRaw.slice(0, 90).replace(/\s\S+$/, '')
 
-  // Call 6: Excerpt
-  console.log('  Claude call 6/6: Excerpt...')
+  // Call 6: Macro–Equity Bridge
+  console.log('  Claude call 6/7: Macro–Equity Bridge...')
+  const bridgeSection = await callClaude(client,
+    `Write a Macro–Equity Bridge for today's European market brief.
+
+This section explicitly connects today's macro signals to specific European stocks and sectors.
+
+Format: exactly 3-4 entries. Each entry is ONE line only:
+**[Signal with value]** → [Specific European stock(s) in parentheses with ticker]: [mechanism, max 20 words]
+
+Example format (do not copy these):
+**Crude −1.2%** → Shell (SHELL.AS), TotalEnergies (TTE.PA): lower feedstock cost improves refining margins near-term
+**EUR/USD +0.3% at 1.166** → ASML (ASML.AS), Adyen (ADYEN.AS): euro strength trims dollar-revenue on repatriation
+**ECB hold** → ING (INGA.AS), ABN AMRO (ABN.AS): flat short-end yield limits NII expansion this quarter
+
+Use ONLY today's actual data — do not invent moves:
+Indices: ${indicesSummary}
+FX: ${fxSummary}
+Commodities: ${commoditySummary}
+Key stocks: ${stocksSummary}
+
+Rules: name real Euronext/LSE tickers in parentheses. Give the MECHANISM not just direction. Bold the signal. Each entry on its own line. No intro or outro text — entries only.`,
+    'bridge', 400
+  )
+  await delay(3500)
+
+  // Call 7: Excerpt
+  console.log('  Claude call 7/7: Excerpt...')
   const excerptRaw = await callClaude(client,
     `Write a 1-sentence summary (max 160 characters) of today's European market brief for use as a preview snippet.
 Key facts: ${indicesSummary}. ${commoditySummary}.
@@ -344,6 +370,10 @@ ${commoditySection}
 ## Key stock move
 
 ${stockSection}
+
+## Macro–Equity Bridge
+
+${bridgeSection}
 
 ## What to watch today
 

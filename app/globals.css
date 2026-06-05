@@ -60,3 +60,39 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 .fade-up { animation: fade-up 0.5s ease forwards; }
+
+/* ── Brief article prose ─────────────────────────────────────── */
+article h2 {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin: 40px 0 14px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+article h2:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+article p { font-size: 16px; color: var(--ink-2); line-height: 1.75; margin-bottom: 18px; }
+article strong { color: var(--ink); font-weight: 600; }
+article a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ── Macro–Equity Bridge entries ────────────────────────────── */
+/* Each entry is a <p> inside the bridge section.
+   The signal (bold) gets a green pill; the arrow → gets accent colour. */
+article h2 + p,
+article h2 ~ p { }
+
+.bridge-entry {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 12px 16px;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-light);
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 10px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}

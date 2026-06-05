@@ -32,6 +32,7 @@ export interface Feature {
   icon: string
   title: string
   description: string
+  href?: string
 }
 
 export interface BriefMetadata {

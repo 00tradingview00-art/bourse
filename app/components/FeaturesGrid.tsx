@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { FEATURES } from '@/lib/data'
 
 export default function FeaturesGrid() {
@@ -15,23 +16,30 @@ export default function FeaturesGrid() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: 'var(--border)', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden' }}>
-        {FEATURES.map((f) => (
-          <div
-            key={f.num}
-            style={{ background: 'var(--paper)', padding: '32px 28px', transition: 'background 0.2s' }}
-            onMouseEnter={e => (e.currentTarget.style.background = '#fff')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'var(--paper)')}
-          >
-            <div style={{ fontSize: '11px', color: 'var(--ink-4)', letterSpacing: '0.1em', marginBottom: '16px' }}>{f.num}</div>
-            <div style={{ fontSize: '24px', marginBottom: '14px', display: 'block' }}>{f.icon}</div>
-            <h3 style={{ fontFamily: 'var(--serif)', fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginBottom: '10px', lineHeight: 1.2 }}>
-              {f.title}
-            </h3>
-            <p style={{ fontSize: '13px', color: 'var(--ink-3)', lineHeight: 1.65 }}>
-              {f.description}
-            </p>
-          </div>
-        ))}
+        {FEATURES.map((f) => {
+          const inner = (
+            <div
+              key={f.num}
+              style={{ background: 'var(--paper)', padding: '32px 28px', transition: 'background 0.2s', height: '100%', position: 'relative' }}
+              onMouseEnter={e => (e.currentTarget.style.background = '#fff')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'var(--paper)')}
+            >
+              <div style={{ fontSize: '11px', color: 'var(--ink-4)', letterSpacing: '0.1em', marginBottom: '16px' }}>{f.num}</div>
+              <div style={{ fontSize: '24px', marginBottom: '14px', display: 'block' }}>{f.icon}</div>
+              <h3 style={{ fontFamily: 'var(--serif)', fontSize: '18px', fontWeight: 700, color: 'var(--ink)', marginBottom: '10px', lineHeight: 1.2 }}>
+                {f.title}
+                {f.href && <span style={{ fontSize: '12px', color: 'var(--accent)', marginLeft: '8px', fontFamily: 'var(--sans)', fontWeight: 400 }}>Live →</span>}
+              </h3>
+              <p style={{ fontSize: '13px', color: 'var(--ink-3)', lineHeight: 1.65 }}>
+                {f.description}
+              </p>
+            </div>
+          )
+
+          return f.href
+            ? <Link key={f.num} href={f.href} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>{inner}</Link>
+            : <div key={f.num}>{inner}</div>
+        })}
       </div>
     </section>
   )
