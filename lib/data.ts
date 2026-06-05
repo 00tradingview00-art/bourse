@@ -135,6 +135,7 @@ export const FEATURES: Feature[] = [
     icon: '🔍',
     title: 'European Screener',
     description: 'Filter AEX, AMX, DAX, CAC and FTSE stocks by RSI, MACD, SuperTrend, volume signals and earnings proximity. Built natively for Euronext tickers — not a global tool retrofitted for Europe.',
+    href: '/screener',
   },
   {
     num: '03',

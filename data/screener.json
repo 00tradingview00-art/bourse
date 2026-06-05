@@ -1,0 +1,6 @@
+{
+  "updatedAt": "2026-06-05T16:30:00.000Z",
+  "count": 0,
+  "stocks": [],
+  "_note": "Populated daily by scripts/update-screener.mjs via GitHub Actions after European market close."
+}
