@@ -337,7 +337,7 @@ export default function ScreenerClient({
 
       {/* Attribution */}
       <div style={{ marginTop: '16px', padding: '12px 16px', background: 'var(--paper-2)', border: '1px solid var(--border)', borderRadius: '3px', fontSize: '12px', color: 'var(--ink-4)', lineHeight: 1.6, display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: '8px' }}>
-        <span>Data sourced from Yahoo Finance public API. Prices may be delayed up to 15 minutes. General information only, not investment advice.</span>
+        <span>Prices may be delayed up to 15 minutes. General information only, not investment advice.</span>
         {updatedLabel && <span>Screener computed: {updatedLabel}</span>}
       </div>
 

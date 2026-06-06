@@ -64,7 +64,7 @@ export default function MarketPulse({ markets, timestamp, ecbRate, eurUsd, brent
             European Market Snapshot · {timestamp}
           </div>
           <div style={{ fontSize: '11px', color: 'var(--ink-4)' }}>
-            Prices sourced from Yahoo Finance · may be delayed up to 15 min ·{' '}
+            Prices may be delayed up to 15 min ·{' '}
             <Link href="/disclaimer" style={{ color: 'var(--accent)', textDecoration: 'none' }}>disclaimer →</Link>
           </div>
         </div>

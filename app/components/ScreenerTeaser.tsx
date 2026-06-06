@@ -142,7 +142,7 @@ export default async function ScreenerTeaser() {
         {/* Footer */}
         <div style={{ marginTop: '12px', fontSize: '11px', color: 'var(--ink-4)', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px' }}>
           <span>RSI(14) · MACD(12,26,9) · SuperTrend(10,3) · {stockCount} stocks screened</span>
-          {updatedLabel && <span>Yahoo Finance · {updatedLabel} · 15 min delay</span>}
+          {updatedLabel && <span>Updated {updatedLabel} · prices may be delayed</span>}
         </div>
       </div>
     </section>

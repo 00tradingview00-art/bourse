@@ -240,7 +240,7 @@ export default async function MacroBridgePage() {
           {/* Disclaimer */}
           <div style={{ marginTop: '48px', padding: '16px 20px', background: 'var(--paper-2)', border: '1px solid var(--border)', borderLeft: '3px solid var(--border)', borderRadius: '3px', fontSize: '12px', color: 'var(--ink-3)', lineHeight: 1.6 }}>
             Analysis produced for general information purposes only under Article 24 MiFID II. Not personalised investment advice. Connections are structural in nature and do not constitute a forecast or recommendation.
-            Prices sourced from Yahoo Finance · may be delayed up to 15 minutes.{' '}
+            Prices may be delayed up to 15 minutes.{' '}
             <Link href="/disclaimer" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Full disclaimer →</Link>
           </div>
         </div>

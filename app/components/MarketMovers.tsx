@@ -106,7 +106,7 @@ export default async function MarketMovers() {
 
       {updatedLabel && (
         <div style={{ padding: '10px 20px', borderTop: '1px solid var(--border)', fontSize: '11px', color: 'var(--ink-4)' }}>
-          Yahoo Finance · {updatedLabel} · 15 min delay
+          Updated {updatedLabel} · prices may be delayed
         </div>
       )}
     </div>
