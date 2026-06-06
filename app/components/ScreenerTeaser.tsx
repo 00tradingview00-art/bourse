@@ -3,6 +3,7 @@ import { join } from 'path'
 import Link from 'next/link'
 
 interface ScreenerStock {
+  type?: string
   ticker: string
   name: string
   exchange: string
@@ -15,7 +16,9 @@ interface ScreenerStock {
 
 interface ScreenerData {
   updatedAt: string
-  stocks: ScreenerStock[]
+  stockCount?: number
+  instruments?: ScreenerStock[]
+  stocks?: ScreenerStock[]
 }
 
 async function loadScreener(): Promise<ScreenerData | null> {
@@ -27,7 +30,6 @@ async function loadScreener(): Promise<ScreenerData | null> {
   }
 }
 
-// Mini RSI zone track (simplified version for teaser)
 function RSIMini({ rsi }: { rsi: number | null }) {
   if (rsi == null) return <span style={{ color: 'var(--ink-4)', fontSize: '13px' }}>—</span>
   const numColor = rsi < 30 ? '#16a34a' : rsi > 70 ? '#dc2626' : 'var(--ink-3)'
@@ -59,15 +61,20 @@ function TrendPill({ trend }: { trend: string | null }) {
 
 export default async function ScreenerTeaser() {
   const data = await loadScreener()
-  if (!data || data.stocks.length === 0) return null
+  const all = data?.instruments ?? data?.stocks ?? []
+  if (all.length === 0) return null
 
-  const oversold   = data.stocks.filter(s => s.rsiSignal === 'oversold').sort((a, b) => (a.rsi ?? 99) - (b.rsi ?? 99)).slice(0, 3)
-  const overbought = data.stocks.filter(s => s.rsiSignal === 'overbought').sort((a, b) => (b.rsi ?? 0) - (a.rsi ?? 0)).slice(0, 3)
+  // Show stocks only in teaser
+  const stocks = all.filter(s => s.type !== 'etf')
+  const stockCount = data?.stockCount ?? stocks.length
+
+  const oversold   = stocks.filter(s => s.rsiSignal === 'oversold').sort((a, b) => (a.rsi ?? 99) - (b.rsi ?? 99)).slice(0, 3)
+  const overbought = stocks.filter(s => s.rsiSignal === 'overbought').sort((a, b) => (b.rsi ?? 0) - (a.rsi ?? 0)).slice(0, 3)
   const highlights = [...oversold, ...overbought]
 
   if (highlights.length === 0) return null
 
-  const updatedLabel = data.updatedAt
+  const updatedLabel = data?.updatedAt
     ? new Date(data.updatedAt).toLocaleString('en-GB', {
         day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
         timeZone: 'Europe/Amsterdam',
@@ -96,7 +103,6 @@ export default async function ScreenerTeaser() {
 
         {/* Table */}
         <div style={{ border: '1px solid var(--border)', borderRadius: '4px', overflow: 'hidden', background: '#fff' }}>
-          {/* Header row */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px 110px 110px 90px', gap: '0', padding: '10px 20px', background: 'var(--paper)', borderBottom: '1px solid var(--border)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)' }}>
             <div>Stock</div>
             <div>RSI(14)</div>
@@ -107,6 +113,7 @@ export default async function ScreenerTeaser() {
 
           {highlights.map((s, i) => {
             const zone = s.rsiSignal === 'oversold' ? { label: 'Oversold', bg: '#f0fdf4', border: '#16a34a' } : { label: 'Overbought', bg: '#fff1f1', border: '#dc2626' }
+            const exchangeLabel = s.exchange === 'FTSE_MIB' ? 'FTSE MIB' : s.exchange
             return (
               <div
                 key={s.ticker}
@@ -115,7 +122,7 @@ export default async function ScreenerTeaser() {
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{ fontWeight: 600, fontSize: '14px', color: 'var(--ink)' }}>{s.name}</span>
-                    <span style={{ fontSize: '11px', background: 'var(--accent-light)', color: 'var(--accent)', padding: '1px 6px', borderRadius: '2px', fontWeight: 500 }}>{s.exchange}</span>
+                    <span style={{ fontSize: '11px', background: 'var(--accent-light)', color: 'var(--accent)', padding: '1px 6px', borderRadius: '2px', fontWeight: 500 }}>{exchangeLabel}</span>
                     <span style={{ fontSize: '10px', fontWeight: 600, padding: '2px 7px', borderRadius: '2px', background: 'transparent', color: zone.border, border: `1px solid ${zone.border}` }}>
                       {zone.label}
                     </span>
@@ -134,7 +141,7 @@ export default async function ScreenerTeaser() {
 
         {/* Footer */}
         <div style={{ marginTop: '12px', fontSize: '11px', color: 'var(--ink-4)', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px' }}>
-          <span>RSI(14) · MACD(12,26,9) · SuperTrend(10,3) · 50 stocks screened</span>
+          <span>RSI(14) · MACD(12,26,9) · SuperTrend(10,3) · {stockCount} stocks screened</span>
           {updatedLabel && <span>Yahoo Finance · {updatedLabel} · 15 min delay</span>}
         </div>
       </div>

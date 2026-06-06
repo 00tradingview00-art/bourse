@@ -3,6 +3,7 @@ import { join } from 'path'
 import Link from 'next/link'
 
 interface ScreenerStock {
+  type?: string
   ticker: string
   name: string
   exchange: string
@@ -15,7 +16,8 @@ interface ScreenerStock {
 
 interface ScreenerData {
   updatedAt: string
-  stocks: ScreenerStock[]
+  instruments?: ScreenerStock[]
+  stocks?: ScreenerStock[]
 }
 
 async function loadScreener(): Promise<ScreenerData | null> {
@@ -33,21 +35,23 @@ function signalLabel(s: ScreenerStock): { text: string; color: string; bg: strin
   if (bull >= 3) return { text: '▲▲ Strong Bull', color: '#166534', bg: '#dcfce7' }
   if (bull === 2) return { text: '▲ Bull',         color: '#16a34a', bg: '#f0fdf4' }
   if (bear === 2) return { text: '▼ Bear',         color: '#c0392b', bg: '#fff1f1' }
-  if (bear >= 3) return { text: '▼▼ Strong Bear', color: '#991b1b', bg: '#fee2e2' }
+  if (bear >= 3)  return { text: '▼▼ Strong Bear', color: '#991b1b', bg: '#fee2e2' }
   return { text: '→ Neutral', color: 'var(--ink-4)', bg: 'var(--paper-2)' }
 }
 
 export default async function MarketMovers() {
   const data = await loadScreener()
-  if (!data || data.stocks.length === 0) return null
+  const all = data?.instruments ?? data?.stocks ?? []
+  if (all.length === 0) return null
 
-  // Filter stocks with a valid changePct (exclude extreme outliers >50% which are likely data errors)
-  const valid = data.stocks.filter(s => Math.abs(s.changePct) < 50)
+  // Show stocks only in market movers (not ETFs)
+  const stocks = all.filter(s => s.type !== 'etf')
+  const valid  = stocks.filter(s => Math.abs(s.changePct) < 50)
   const sorted = [...valid].sort((a, b) => b.changePct - a.changePct)
   const gainers = sorted.slice(0, 3)
   const losers  = sorted.slice(-3).reverse()
 
-  const updatedLabel = data.updatedAt
+  const updatedLabel = data?.updatedAt
     ? new Date(data.updatedAt).toLocaleString('en-GB', {
         day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
         timeZone: 'Europe/Amsterdam',
@@ -56,13 +60,14 @@ export default async function MarketMovers() {
 
   function Row({ s, isGainer }: { s: ScreenerStock; isGainer: boolean }) {
     const sig = signalLabel(s)
+    const exchangeLabel = s.exchange === 'FTSE_MIB' ? 'FTSE MIB' : s.exchange
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 0', borderBottom: '1px solid var(--border)' }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontWeight: 600, fontSize: '14px', color: 'var(--ink)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}</div>
           <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '1px' }}>
             <span style={{ fontFamily: 'monospace' }}>{s.ticker}</span>
-            <span style={{ marginLeft: '6px', background: 'var(--accent-light)', color: 'var(--accent)', padding: '1px 5px', borderRadius: '2px', fontFamily: 'inherit' }}>{s.exchange}</span>
+            <span style={{ marginLeft: '6px', background: 'var(--accent-light)', color: 'var(--accent)', padding: '1px 5px', borderRadius: '2px', fontFamily: 'inherit' }}>{exchangeLabel}</span>
           </div>
         </div>
         <div style={{ textAlign: 'right', flexShrink: 0 }}>

@@ -4,12 +4,13 @@ import Navbar from '@/app/components/Navbar'
 import Footer from '@/app/components/Footer'
 import ScreenerClient from './ScreenerClient'
 
-export const revalidate = 3600 // re-render at most every hour; data updates daily
+export const revalidate = 3600
 
 export interface ScreenerStock {
+  type: 'stock' | 'etf'
   ticker: string
   name: string
-  exchange: 'AEX' | 'DAX' | 'CAC' | 'FTSE'
+  exchange: 'AEX' | 'DAX' | 'CAC' | 'FTSE' | 'IBEX' | 'FTSE_MIB' | 'XETRA' | 'LSE' | 'EURONEXT'
   sector: string
   price: number
   change: number
@@ -26,24 +27,31 @@ export interface ScreenerStock {
 
 interface ScreenerData {
   updatedAt: string
-  count: number
-  stocks: ScreenerStock[]
+  stockCount?: number
+  etfCount?: number
+  count?: number
+  instruments?: ScreenerStock[]
+  stocks?: ScreenerStock[]
 }
 
-async function loadScreenerData(): Promise<ScreenerData> {
+async function loadScreenerData(): Promise<{ instruments: ScreenerStock[]; stockCount: number; etfCount: number; updatedAt: string }> {
   try {
     const raw = await readFile(join(process.cwd(), 'data', 'screener.json'), 'utf8')
-    return JSON.parse(raw)
+    const data: ScreenerData = JSON.parse(raw)
+    const instruments = data.instruments ?? data.stocks ?? []
+    const stockCount = data.stockCount ?? instruments.filter(i => i.type === 'stock' || !i.type).length
+    const etfCount   = data.etfCount   ?? instruments.filter(i => i.type === 'etf').length
+    return { instruments, stockCount, etfCount, updatedAt: data.updatedAt ?? '' }
   } catch {
-    return { updatedAt: '', count: 0, stocks: [] }
+    return { instruments: [], stockCount: 0, etfCount: 0, updatedAt: '' }
   }
 }
 
 export default async function ScreenerPage() {
-  const data = await loadScreenerData()
+  const { instruments, stockCount, etfCount, updatedAt } = await loadScreenerData()
 
-  const updatedLabel = data.updatedAt
-    ? new Date(data.updatedAt).toLocaleString('en-GB', {
+  const updatedLabel = updatedAt
+    ? new Date(updatedAt).toLocaleString('en-GB', {
         day: 'numeric', month: 'short', year: 'numeric',
         hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Amsterdam',
       }) + ' CET'
@@ -64,12 +72,12 @@ export default async function ScreenerPage() {
             <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(26px, 3vw, 38px)', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--ink)', marginBottom: '12px', lineHeight: 1.15 }}>
               European Screener
             </h1>
-            <p style={{ fontSize: '15px', color: 'var(--ink-3)', maxWidth: '540px', lineHeight: 1.65 }}>
-              AEX, DAX, CAC and FTSE 100 stocks screened daily for RSI, MACD, SuperTrend and volume signals. Updated after each European close.
+            <p style={{ fontSize: '15px', color: 'var(--ink-3)', maxWidth: '600px', lineHeight: 1.65 }}>
+              AEX, DAX, CAC 40, FTSE 100, IBEX 35 and FTSE MIB — {stockCount > 0 ? `${stockCount} stocks` : 'stocks'}{etfCount > 0 ? ` and ${etfCount} ETFs` : ''} screened daily for RSI, MACD, SuperTrend and volume signals.
             </p>
             {updatedLabel && (
               <p style={{ fontSize: '12px', color: 'var(--ink-4)', marginTop: '12px' }}>
-                Data as of {updatedLabel} · {data.count} stocks
+                Data as of {updatedLabel} · {stockCount} stocks · {etfCount} ETFs
               </p>
             )}
           </div>
@@ -77,10 +85,15 @@ export default async function ScreenerPage() {
 
         {/* Screener table — client component handles filters + sort */}
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 32px 96px' }}>
-          {data.stocks.length === 0 ? (
+          {instruments.length === 0 ? (
             <EmptyState />
           ) : (
-            <ScreenerClient stocks={data.stocks} updatedAt={data.updatedAt} />
+            <ScreenerClient
+              stocks={instruments}
+              updatedAt={updatedAt}
+              stockCount={stockCount}
+              etfCount={etfCount}
+            />
           )}
         </div>
       </main>

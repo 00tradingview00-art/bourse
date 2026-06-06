@@ -3,35 +3,56 @@
 import { useState, useMemo } from 'react'
 import type { ScreenerStock } from './page'
 
-type Exchange   = 'ALL' | 'AEX' | 'DAX' | 'CAC' | 'FTSE'
-type RsiFilter  = 'ALL' | 'oversold' | 'neutral' | 'overbought'
-type TrendFilter = 'ALL' | 'bullish' | 'bearish'
-type VolumeFilter = 'ALL' | 'surge' | 'high' | 'normal' | 'low'
-type SortKey    = 'name' | 'price' | 'changePct' | 'rsi' | 'macdHist' | 'volumeRatio'
-type SortDir    = 'asc' | 'desc'
+type InstrumentType = 'ALL' | 'stock' | 'etf'
+type StockExchange  = 'ALL' | 'AEX' | 'DAX' | 'CAC' | 'FTSE' | 'IBEX' | 'FTSE_MIB'
+type EtfExchange    = 'ALL' | 'XETRA' | 'LSE' | 'EURONEXT'
+type RsiFilter      = 'ALL' | 'oversold' | 'neutral' | 'overbought'
+type TrendFilter    = 'ALL' | 'bullish' | 'bearish'
+type VolumeFilter   = 'ALL' | 'surge' | 'high' | 'normal' | 'low'
+type SortKey        = 'name' | 'price' | 'changePct' | 'rsi' | 'macdHist' | 'volumeRatio'
+type SortDir        = 'asc' | 'desc'
 
-// ── Signal score: 3 indicators each contributing ±1 ────────────────
 function computeSignal(s: ScreenerStock): { label: string; color: string; bg: string } {
   const bull = [s.rsiSignal === 'oversold', s.macdTrend === 'bullish', s.supertrend === 'bullish'].filter(Boolean).length
   const bear = [s.rsiSignal === 'overbought', s.macdTrend === 'bearish', s.supertrend === 'bearish'].filter(Boolean).length
-  if (bull >= 3)                      return { label: '▲▲ Strong Bull', color: '#166534', bg: '#dcfce7' }
-  if (bull === 2 && bear === 0)       return { label: '▲ Bull',         color: '#16a34a', bg: '#f0fdf4' }
-  if (bear >= 3)                      return { label: '▼▼ Strong Bear', color: '#991b1b', bg: '#fee2e2' }
-  if (bear === 2 && bull === 0)       return { label: '▼ Bear',         color: '#c0392b', bg: '#fff1f1' }
+  if (bull >= 3)                return { label: '▲▲ Strong Bull', color: '#166534', bg: '#dcfce7' }
+  if (bull === 2 && bear === 0) return { label: '▲ Bull',         color: '#16a34a', bg: '#f0fdf4' }
+  if (bear >= 3)                return { label: '▼▼ Strong Bear', color: '#991b1b', bg: '#fee2e2' }
+  if (bear === 2 && bull === 0) return { label: '▼ Bear',         color: '#c0392b', bg: '#fff1f1' }
   return { label: '→ Neutral', color: 'var(--ink-4)', bg: 'var(--paper-2)' }
 }
 
-// ── Chip ───────────────────────────────────────────────────────────
-const CHIP_BASE: React.CSSProperties = { fontSize: '13px', fontWeight: 500, padding: '6px 14px', borderRadius: '3px', cursor: 'pointer', border: '1px solid transparent', transition: 'all 0.15s', display: 'inline-block', background: 'none', fontFamily: 'var(--sans)' }
+const CHIP_BASE: React.CSSProperties = {
+  fontSize: '13px', fontWeight: 500, padding: '6px 14px', borderRadius: '3px',
+  cursor: 'pointer', border: '1px solid transparent', transition: 'all 0.15s',
+  display: 'inline-block', background: 'none', fontFamily: 'var(--sans)',
+}
+
 function Chip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
-    <button onClick={onClick} style={{ ...CHIP_BASE, ...(active ? { background: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' } : { background: 'var(--paper)', color: 'var(--ink-3)', borderColor: 'var(--border)' }) }}>
+    <button onClick={onClick} style={{ ...CHIP_BASE, ...(active
+      ? { background: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' }
+      : { background: 'var(--paper)', color: 'var(--ink-3)', borderColor: 'var(--border)' }) }}>
       {label}
     </button>
   )
 }
 
-// ── RSI zone track ─────────────────────────────────────────────────
+function TypeTab({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button onClick={onClick} style={{
+      fontSize: '13px', fontWeight: active ? 600 : 400, padding: '8px 18px',
+      borderRadius: '3px', cursor: 'pointer', border: '1px solid transparent',
+      transition: 'all 0.15s', fontFamily: 'var(--sans)',
+      ...(active
+        ? { background: 'var(--ink)', color: '#fff', borderColor: 'var(--ink)' }
+        : { background: 'var(--paper)', color: 'var(--ink-3)', borderColor: 'var(--border)' }),
+    }}>
+      {label}
+    </button>
+  )
+}
+
 function RSICell({ rsi }: { rsi: number | null }) {
   if (rsi == null) return <span style={{ color: 'var(--ink-4)', fontSize: '14px' }}>—</span>
   const numColor = rsi < 30 ? '#16a34a' : rsi > 70 ? '#dc2626' : 'var(--ink-2)'
@@ -72,17 +93,44 @@ function VolBadge({ signal, ratio }: { signal: string; ratio: number | null }) {
   return <span style={{ fontSize: '13px', color, fontWeight: signal === 'surge' ? 600 : 400 }}>{label}</span>
 }
 
-export default function ScreenerClient({ stocks, updatedAt }: { stocks: ScreenerStock[]; updatedAt?: string }) {
-  const [exchange, setExchange]   = useState<Exchange>('ALL')
+function ExchangeBadge({ exchange }: { exchange: string }) {
+  const label = exchange === 'FTSE_MIB' ? 'FTSE MIB' : exchange
+  return (
+    <span style={{ fontSize: '12px', fontWeight: 500, background: 'var(--accent-light)', color: 'var(--accent)', padding: '3px 9px', borderRadius: '3px' }}>
+      {label}
+    </span>
+  )
+}
+
+export default function ScreenerClient({
+  stocks,
+  updatedAt,
+  stockCount,
+  etfCount,
+}: {
+  stocks: ScreenerStock[]
+  updatedAt?: string
+  stockCount?: number
+  etfCount?: number
+}) {
+  const [instrType, setInstrType] = useState<InstrumentType>('ALL')
+  const [stockExch, setStockExch] = useState<StockExchange>('ALL')
+  const [etfExch,   setEtfExch]   = useState<EtfExchange>('ALL')
   const [rsiFilter, setRsi]       = useState<RsiFilter>('ALL')
   const [macdFilter, setMacd]     = useState<TrendFilter>('ALL')
-  const [stFilter, setSt]         = useState<TrendFilter>('ALL')
+  const [stFilter,  setSt]        = useState<TrendFilter>('ALL')
   const [volFilter, setVol]       = useState<VolumeFilter>('ALL')
-  const [sector, setSector]       = useState('ALL')
-  const [sortKey, setSortKey]     = useState<SortKey>('name')
-  const [sortDir, setSortDir]     = useState<SortDir>('asc')
+  const [sector,    setSector]    = useState('ALL')
+  const [sortKey,   setSortKey]   = useState<SortKey>('name')
+  const [sortDir,   setSortDir]   = useState<SortDir>('asc')
 
-  const sectors = useMemo(() => ['ALL', ...Array.from(new Set(stocks.map(s => s.sector))).sort()], [stocks])
+  const derivedStockCount = stockCount ?? stocks.filter(s => s.type === 'stock' || !s.type).length
+  const derivedEtfCount   = etfCount   ?? stocks.filter(s => s.type === 'etf').length
+
+  const sectors = useMemo(() => {
+    const base = stocks.filter(s => instrType === 'ALL' || s.type === instrType || (!s.type && instrType === 'stock'))
+    return ['ALL', ...Array.from(new Set(base.map(s => s.sector))).sort()]
+  }, [stocks, instrType])
 
   function toggleSort(key: SortKey) {
     if (sortKey === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
@@ -91,7 +139,15 @@ export default function ScreenerClient({ stocks, updatedAt }: { stocks: Screener
 
   const filtered = useMemo(() => {
     return stocks
-      .filter(s => exchange === 'ALL' || s.exchange === exchange)
+      .filter(s => {
+        if (instrType === 'stock') return s.type === 'stock' || !s.type
+        if (instrType === 'etf')   return s.type === 'etf'
+        return true
+      })
+      .filter(s => {
+        if (instrType === 'etf') return etfExch === 'ALL' || s.exchange === etfExch
+        return stockExch === 'ALL' || s.exchange === stockExch
+      })
       .filter(s => sector === 'ALL' || s.sector === sector)
       .filter(s => rsiFilter === 'ALL' || s.rsiSignal === rsiFilter)
       .filter(s => macdFilter === 'ALL' || s.macdTrend === macdFilter)
@@ -103,7 +159,7 @@ export default function ScreenerClient({ stocks, updatedAt }: { stocks: Screener
         if (typeof av === 'string' && typeof bv === 'string') return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av)
         return sortDir === 'asc' ? (av as number) - (bv as number) : (bv as number) - (av as number)
       })
-  }, [stocks, exchange, sector, rsiFilter, macdFilter, stFilter, volFilter, sortKey, sortDir])
+  }, [stocks, instrType, stockExch, etfExch, sector, rsiFilter, macdFilter, stFilter, volFilter, sortKey, sortDir])
 
   const thStyle: React.CSSProperties = { padding: '12px 16px', fontSize: '12px', fontWeight: 500, letterSpacing: '0.07em', textTransform: 'uppercase', color: 'var(--ink-4)' }
 
@@ -124,20 +180,41 @@ export default function ScreenerClient({ stocks, updatedAt }: { stocks: Screener
     <div>
       {/* Key facts strip */}
       <div style={{ padding: '10px 16px', background: 'var(--paper-2)', border: '1px solid var(--border)', borderRadius: '4px', marginBottom: '20px', fontSize: '12px', color: 'var(--ink-4)', display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center' }}>
-        <span style={{ fontWeight: 500, color: 'var(--ink-3)' }}>{stocks.length} stocks</span>
-        <span>AEX · DAX · CAC 40 · FTSE 100</span>
+        <span style={{ fontWeight: 500, color: 'var(--ink-3)' }}>{derivedStockCount} stocks · {derivedEtfCount} ETFs</span>
+        <span>AEX · DAX · CAC 40 · FTSE 100 · IBEX 35 · FTSE MIB</span>
         <span>RSI(14) · MACD(12,26,9) · SuperTrend(10,3) · Volume vs 20-day avg</span>
         {updatedLabel && <span style={{ marginLeft: 'auto' }}>Computed {updatedLabel}</span>}
       </div>
 
-      {/* Filter rows */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '20px', alignItems: 'center' }}>
-        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-          {(['ALL', 'AEX', 'DAX', 'CAC', 'FTSE'] as Exchange[]).map(e => (
-            <Chip key={e} label={e === 'ALL' ? 'All exchanges' : e} active={exchange === e} onClick={() => setExchange(e)} />
+      {/* Instrument type tabs */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+        <TypeTab label={`All (${stocks.length})`}            active={instrType === 'ALL'}   onClick={() => { setInstrType('ALL');   setStockExch('ALL'); setEtfExch('ALL'); setSector('ALL') }} />
+        <TypeTab label={`Stocks (${derivedStockCount})`}     active={instrType === 'stock'} onClick={() => { setInstrType('stock'); setEtfExch('ALL');   setSector('ALL') }} />
+        <TypeTab label={`ETFs (${derivedEtfCount})`}         active={instrType === 'etf'}   onClick={() => { setInstrType('etf');   setStockExch('ALL'); setSector('ALL') }} />
+      </div>
+
+      {/* Exchange filter — stocks view */}
+      {instrType !== 'etf' && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '16px', alignItems: 'center' }}>
+          <span style={{ fontSize: '12px', color: 'var(--ink-4)', fontWeight: 500, marginRight: '2px' }}>Index</span>
+          {(['ALL', 'AEX', 'DAX', 'CAC', 'FTSE', 'IBEX', 'FTSE_MIB'] as StockExchange[]).map(e => (
+            <Chip key={e} label={e === 'ALL' ? 'All' : e === 'FTSE_MIB' ? 'FTSE MIB' : e} active={stockExch === e} onClick={() => setStockExch(e)} />
           ))}
         </div>
-        <div style={{ width: '1px', height: '28px', background: 'var(--border)', flexShrink: 0 }} />
+      )}
+
+      {/* Exchange filter — ETF view */}
+      {instrType === 'etf' && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '16px', alignItems: 'center' }}>
+          <span style={{ fontSize: '12px', color: 'var(--ink-4)', fontWeight: 500, marginRight: '2px' }}>Listed on</span>
+          {(['ALL', 'XETRA', 'LSE', 'EURONEXT'] as EtfExchange[]).map(e => (
+            <Chip key={e} label={e === 'ALL' ? 'All' : e} active={etfExch === e} onClick={() => setEtfExch(e)} />
+          ))}
+        </div>
+      )}
+
+      {/* Signal + indicator filters */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '16px', alignItems: 'center' }}>
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
           <span style={{ fontSize: '12px', color: 'var(--ink-4)', fontWeight: 500 }}>RSI</span>
           {(['ALL', 'oversold', 'neutral', 'overbought'] as RsiFilter[]).map(r => (
@@ -177,7 +254,7 @@ export default function ScreenerClient({ stocks, updatedAt }: { stocks: Screener
 
       {/* Result count */}
       <div style={{ fontSize: '13px', color: 'var(--ink-4)', marginBottom: '16px' }}>
-        {filtered.length} stock{filtered.length !== 1 ? 's' : ''} shown
+        {filtered.length} {instrType === 'etf' ? 'ETF' : instrType === 'stock' ? 'stock' : 'instrument'}{filtered.length !== 1 ? 's' : ''} shown
       </div>
 
       {/* Table */}
@@ -186,6 +263,7 @@ export default function ScreenerClient({ stocks, updatedAt }: { stocks: Screener
           <thead style={{ borderBottom: '1px solid var(--border)', background: 'var(--paper)' }}>
             <tr>
               <SortTh sk="name">Name</SortTh>
+              <th style={thStyle}>Type</th>
               <th style={thStyle}>Exch</th>
               <th style={thStyle}>Sector</th>
               <SortTh sk="price">Price</SortTh>
@@ -200,8 +278,8 @@ export default function ScreenerClient({ stocks, updatedAt }: { stocks: Screener
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={10} style={{ textAlign: 'center', padding: '48px', color: 'var(--ink-4)', fontSize: '14px' }}>
-                  No stocks match the current filters
+                <td colSpan={11} style={{ textAlign: 'center', padding: '48px', color: 'var(--ink-4)', fontSize: '14px' }}>
+                  No instruments match the current filters
                 </td>
               </tr>
             ) : (
@@ -217,7 +295,12 @@ export default function ScreenerClient({ stocks, updatedAt }: { stocks: Screener
                       <div style={{ fontSize: '12px', color: 'var(--ink-4)', fontFamily: 'monospace', marginTop: '2px' }}>{s.ticker}</div>
                     </td>
                     <td style={{ padding: '14px 16px' }}>
-                      <span style={{ fontSize: '12px', fontWeight: 500, background: 'var(--accent-light)', color: 'var(--accent)', padding: '3px 9px', borderRadius: '3px' }}>{s.exchange}</span>
+                      <span style={{ fontSize: '11px', fontWeight: 500, background: s.type === 'etf' ? '#fef3c7' : 'var(--paper-2)', color: s.type === 'etf' ? '#92400e' : 'var(--ink-3)', padding: '2px 7px', borderRadius: '3px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                        {s.type === 'etf' ? 'ETF' : 'Stock'}
+                      </span>
+                    </td>
+                    <td style={{ padding: '14px 16px' }}>
+                      <ExchangeBadge exchange={s.exchange} />
                     </td>
                     <td style={{ padding: '14px 16px', color: 'var(--ink-3)', fontSize: '13px' }}>{s.sector}</td>
                     <td style={{ padding: '14px 16px', fontWeight: 600, color: 'var(--ink)', fontVariantNumeric: 'tabular-nums', fontSize: '14px' }}>
