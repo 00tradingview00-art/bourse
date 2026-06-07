@@ -325,14 +325,24 @@ async function fetchHistory(ticker) {
       const volumes    = (quote.volume ?? []).map(v => v ?? null)
 
       const valid = timestamps.map((_, i) => closes[i] != null && highs[i] != null && lows[i] != null)
+      const filteredCloses = closes.filter((_, i) => valid[i])
+      // Compute true daily change from last two OHLCV closes — more reliable than chartPreviousClose
+      const n = filteredCloses.length
+      const dailyChange    = n >= 2 ? filteredCloses[n - 1] - filteredCloses[n - 2] : 0
+      const dailyChangePct = n >= 2 && filteredCloses[n - 2] !== 0
+        ? parseFloat(((dailyChange / filteredCloses[n - 2]) * 100).toFixed(2))
+        : parseFloat(((meta.regularMarketChangePercent ?? 0)).toFixed(2))
+
       return {
         price:      meta.regularMarketPrice,
-        prevClose:  meta.chartPreviousClose,
+        prevClose:  n >= 2 ? filteredCloses[n - 2] : meta.chartPreviousClose,
+        dailyChange,
+        dailyChangePct,
         week52High: meta.fiftyTwoWeekHigh ?? null,
         week52Low:  meta.fiftyTwoWeekLow  ?? null,
         timestamps: timestamps.filter((_, i) => valid[i]),
         opens:   opens.filter((_, i)   => valid[i]),
-        closes:  closes.filter((_, i)  => valid[i]),
+        closes:  filteredCloses,
         highs:   highs.filter((_, i)   => valid[i]),
         lows:    lows.filter((_, i)    => valid[i]),
         volumes: volumes.filter((_, i) => valid[i]),
@@ -507,9 +517,8 @@ async function processStock(item, quotes, benchmarkReturns, index, total) {
   }
 
   const price     = data.price
-  const prevClose = data.prevClose
-  const change    = price - prevClose
-  const changePct = parseFloat(((change / prevClose) * 100).toFixed(2))
+  const change    = parseFloat(data.dailyChange.toFixed(2))
+  const changePct = data.dailyChangePct
 
   const rsi        = computeRSI(data.closes)
   const macd       = computeMACD(data.closes)
@@ -581,8 +590,7 @@ async function processEtf(item, index, total) {
   }
 
   const price     = data.price
-  const prevClose = data.prevClose
-  const changePct = parseFloat(((price - prevClose) / prevClose * 100).toFixed(2))
+  const changePct = data.dailyChangePct
 
   const rsi       = computeRSI(data.closes)
   const rsiSignal = rsi == null ? 'unknown' : rsi < 30 ? 'oversold' : rsi > 70 ? 'overbought' : 'neutral'

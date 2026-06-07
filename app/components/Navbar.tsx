@@ -53,7 +53,7 @@ export default function Navbar() {
 
           {/* Markets dropdown */}
           <div
-            style={{ position: 'relative', paddingBottom: '12px' }}
+            style={{ position: 'relative' }}
             onMouseEnter={() => setMarketsOpen(true)}
             onMouseLeave={() => setMarketsOpen(false)}
           >
@@ -64,20 +64,24 @@ export default function Navbar() {
               Markets ▾
             </button>
             {marketsOpen && (
-              <div style={DROPDOWN_STYLE}>
-                <DropdownItem href="/#markets"    label="Market Overview" />
-                <DropdownItem href="/screener"    label="Stock Screener" />
-                <DropdownItem href="/sectors"     label="Sector Heatmap" />
-                <DropdownItem href="/bonds"       label="Bond Yields" />
-                <DropdownItem href="/macro-bridge" label="Macro–Equity Bridge" />
-                <DropdownItem href="/brokers"     label="Broker Comparison" />
-              </div>
+              <>
+                {/* Invisible bridge prevents hover gap between button and dropdown */}
+                <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, height: '8px' }} />
+                <div style={DROPDOWN_STYLE}>
+                  <DropdownItem href="/#markets"    label="Market Overview" />
+                  <DropdownItem href="/screener"    label="Stock Screener" />
+                  <DropdownItem href="/sectors"     label="Sector Heatmap" />
+                  <DropdownItem href="/bonds"       label="Bond Yields" />
+                  <DropdownItem href="/macro-bridge" label="Macro–Equity Bridge" />
+                  <DropdownItem href="/brokers"     label="Broker Comparison" />
+                </div>
+              </>
             )}
           </div>
 
           {/* Research dropdown */}
           <div
-            style={{ position: 'relative', paddingBottom: '12px' }}
+            style={{ position: 'relative' }}
             onMouseEnter={() => setResearchOpen(true)}
             onMouseLeave={() => setResearchOpen(false)}
           >
@@ -88,12 +92,15 @@ export default function Navbar() {
               Research ▾
             </button>
             {researchOpen && (
-              <div style={DROPDOWN_STYLE}>
-                <DropdownItem href="/"            label="Today's Brief" />
-                <DropdownItem href="/briefs"      label="Brief Archive" />
-                <DropdownItem href="/guides"      label="Investor Guides" />
-                <DropdownItem href="/calculators" label="Tax Calculators" />
-              </div>
+              <>
+                <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, height: '8px' }} />
+                <div style={DROPDOWN_STYLE}>
+                  <DropdownItem href="/"            label="Today's Brief" />
+                  <DropdownItem href="/briefs"      label="Brief Archive" />
+                  <DropdownItem href="/guides"      label="Investor Guides" />
+                  <DropdownItem href="/calculators" label="Tax Calculators" />
+                </div>
+              </>
             )}
           </div>
 
