@@ -110,15 +110,16 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {/* Search */}
+          {/* Intelligence search */}
           <Link
             href="/search"
-            style={{ ...navLinkStyle, display: 'flex', alignItems: 'center', gap: '4px' }}
-            onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = 'var(--ink)')}
-            onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = 'var(--ink-3)')}
-            title="Search stocks & ETFs"
+            style={{ ...navLinkStyle, display: 'flex', alignItems: 'center', gap: '5px', border: '1px solid var(--border)', borderRadius: '4px', padding: '5px 10px', fontSize: '12px', color: 'var(--ink-3)' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--accent)'; (e.currentTarget as HTMLElement).style.color = 'var(--accent)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLElement).style.color = 'var(--ink-3)' }}
+            title="Ask Boursee — market intelligence"
           >
-            <span style={{ fontSize: '15px' }}>⌕</span>
+            <span style={{ fontSize: '11px' }}>✦</span>
+            Ask
           </Link>
 
           {/* CTA */}

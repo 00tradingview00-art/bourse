@@ -55,6 +55,12 @@ body {
 .ticker-animate:hover { animation-play-state: paused; }
 .live-dot { animation: pulse-dot 1.8s ease-in-out infinite; }
 
+@keyframes intelligence-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1); }
+}
+.intelligence-dot { animation: intelligence-pulse 1.2s ease-in-out infinite; }
+
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
