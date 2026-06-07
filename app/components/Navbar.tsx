@@ -68,6 +68,7 @@ export default function Navbar() {
                 <DropdownItem href="/#markets"    label="Market Overview" />
                 <DropdownItem href="/screener"    label="Stock Screener" />
                 <DropdownItem href="/macro-bridge" label="Macro–Equity Bridge" />
+                <DropdownItem href="/brokers"     label="Broker Comparison" />
               </div>
             )}
           </div>
@@ -140,6 +141,7 @@ export default function Navbar() {
             { label: 'Market Overview', href: '/#markets' },
             { label: 'Stock Screener', href: '/screener' },
             { label: 'Macro–Equity Bridge', href: '/macro-bridge' },
+            { label: 'Broker Comparison', href: '/brokers' },
             { label: 'ECB Watch', href: '/ecb-watch' },
             { label: 'Today\'s Brief', href: '/' },
             { label: 'Brief Archive', href: '/briefs' },
