@@ -80,17 +80,36 @@ function validateClaudeOutput(text, label) {
 }
 
 const YAHOO_SYMBOLS = [
-  '^AEX', '^GDAXI', '^FCHI', '^FTSE', '^IBEX',
+  '^AEX', '^GDAXI', '^FCHI', '^FTSE', '^IBEX', '^FTMIB', '^OMX',
   'EURUSD=X', 'EURINR=X', 'EURGBP=X',
   'BZ=F', 'GC=F',
+  // AEX
   'ASML.AS', 'ADYEN.AS', 'SHELL.AS',
+  // DAX
+  'SAP.DE', 'SIE.DE',
+  // CAC 40
+  'MC.PA', 'TTE.PA',
+  // FTSE 100
+  'AZN.L', 'SHEL.L',
+  // IBEX 35
+  'ITX.MC', 'IBE.MC',
+  // FTSE MIB
+  'ENEL.MI', 'UCG.MI',
+  // OMX Nordic
+  'ERIC-B.ST', 'VOLV-B.ST',
 ]
 
 const SYMBOL_NAMES = {
-  '^AEX': 'AEX', '^GDAXI': 'DAX', '^FCHI': 'CAC 40', '^FTSE': 'FTSE 100', '^IBEX': 'IBEX 35',
+  '^AEX': 'AEX', '^GDAXI': 'DAX', '^FCHI': 'CAC 40', '^FTSE': 'FTSE 100', '^IBEX': 'IBEX 35', '^FTMIB': 'FTSE MIB', '^OMX': 'OMX Nordic',
   'EURUSD=X': 'EUR/USD', 'EURINR=X': 'EUR/INR', 'EURGBP=X': 'EUR/GBP',
   'BZ=F': 'Brent Crude', 'GC=F': 'Gold',
   'ASML.AS': 'ASML', 'ADYEN.AS': 'Adyen', 'SHELL.AS': 'Shell',
+  'SAP.DE': 'SAP', 'SIE.DE': 'Siemens',
+  'MC.PA': 'LVMH', 'TTE.PA': 'TotalEnergies',
+  'AZN.L': 'AstraZeneca', 'SHEL.L': 'Shell (UK)',
+  'ITX.MC': 'Inditex', 'IBE.MC': 'Iberdrola',
+  'ENEL.MI': 'Enel', 'UCG.MI': 'UniCredit',
+  'ERIC-B.ST': 'Ericsson', 'VOLV-B.ST': 'Volvo',
 }
 
 const delay = ms => new Promise(r => setTimeout(r, ms))
@@ -133,27 +152,48 @@ async function fetchAllMarkets() {
   return data
 }
 
+function formatStockLine(m) {
+  if (!m) return null
+  const price = m.price < 10 ? m.price.toFixed(3) : m.price.toFixed(2)
+  return `${m.name}: ${price} (${m.changePct >= 0 ? '+' : ''}${m.changePct.toFixed(2)}%)`
+}
+
 function formatMarketSummary(data) {
-  const indices = ['^AEX', '^GDAXI', '^FCHI', '^FTSE'].map(s => data[s]).filter(Boolean)
+  const indices = ['^AEX', '^GDAXI', '^FCHI', '^FTSE', '^IBEX', '^FTMIB', '^OMX'].map(s => data[s]).filter(Boolean)
   const fx = ['EURUSD=X', 'EURINR=X'].map(s => data[s]).filter(Boolean)
   const commodities = ['BZ=F', 'GC=F'].map(s => data[s]).filter(Boolean)
-  const stocks = ['ASML.AS', 'ADYEN.AS', 'SHELL.AS'].map(s => data[s]).filter(Boolean)
+  const aexStocks   = ['ASML.AS', 'ADYEN.AS', 'SHELL.AS']
+  const otherStocks = ['SAP.DE', 'SIE.DE', 'MC.PA', 'TTE.PA', 'AZN.L', 'ITX.MC', 'IBE.MC', 'ENEL.MI', 'UCG.MI', 'ERIC-B.ST', 'VOLV-B.ST']
+  const allStocks = [...aexStocks, ...otherStocks].map(s => data[s]).filter(Boolean)
+  // Pick the 5 biggest movers (absolute changePct) across all exchanges
+  const topMovers = [...allStocks].sort((a, b) => Math.abs(b.changePct) - Math.abs(a.changePct)).slice(0, 5)
   return {
     indicesSummary: indices.map(m => `${m.name}: ${m.price.toFixed(1)} (${m.changePct >= 0 ? '+' : ''}${m.changePct.toFixed(2)}%)`).join(', '),
     fxSummary: fx.map(m => `${m.name}: ${m.price.toFixed(4)} (${m.changePct >= 0 ? '+' : ''}${m.changePct.toFixed(2)}%)`).join(', '),
     commoditySummary: commodities.map(m => `${m.name}: $${m.price.toFixed(2)} (${m.changePct >= 0 ? '+' : ''}${m.changePct.toFixed(2)}%)`).join(', '),
-    stocksSummary: stocks.map(m => `${m.name}: €${m.price.toFixed(2)} (${m.changePct >= 0 ? '+' : ''}${m.changePct.toFixed(2)}%)`).join(', '),
+    stocksSummary: topMovers.map(formatStockLine).filter(Boolean).join(', '),
     aex: data['^AEX'],
+    dax: data['^GDAXI'],
+    cac: data['^FCHI'],
+    ftse: data['^FTSE'],
+    ibex: data['^IBEX'],
+    ftmib: data['^FTMIB'],
     brent: data['BZ=F'],
     eurUsd: data['EURUSD=X'],
   }
 }
 
-function deriveTags(aex, brent, eurUsd) {
+function deriveTags(aex, brent, eurUsd, dax, cac, ftse, ibex, ftmib) {
   const tags = []
-  if (aex) {
-    if (aex.changePct > 0.5) tags.push({ label: 'AEX', variant: 'green' })
-    else if (aex.changePct < -0.5) tags.push({ label: 'AEX', variant: 'red' })
+  // Pick the index with the largest absolute move for a tag
+  const indexMoves = [
+    { label: 'AEX', data: aex }, { label: 'DAX', data: dax }, { label: 'CAC 40', data: cac },
+    { label: 'FTSE 100', data: ftse }, { label: 'IBEX 35', data: ibex }, { label: 'FTSE MIB', data: ftmib },
+  ].filter(x => x.data).sort((a, b) => Math.abs(b.data.changePct) - Math.abs(a.data.changePct))
+  if (indexMoves.length > 0) {
+    const top = indexMoves[0]
+    if (top.data.changePct > 0.5) tags.push({ label: top.label, variant: 'green' })
+    else if (top.data.changePct < -0.5) tags.push({ label: top.label, variant: 'red' })
   }
   if (brent && brent.changePct > 1.0) tags.push({ label: 'Energy', variant: 'red' })
   if (brent && brent.changePct < -1.5) tags.push({ label: 'Energy', variant: 'green' })
@@ -232,7 +272,7 @@ async function main() {
   console.log(`  Got data for ${symbolCount}/${YAHOO_SYMBOLS.length} symbols`)
   if (symbolCount < 4) throw new Error('Insufficient market data — aborting')
 
-  const { indicesSummary, fxSummary, commoditySummary, stocksSummary, aex, brent, eurUsd } = formatMarketSummary(data)
+  const { indicesSummary, fxSummary, commoditySummary, stocksSummary, aex, dax, cac, ftse, ibex, ftmib, brent, eurUsd } = formatMarketSummary(data)
 
   const client = new Anthropic()
   const edition = await getNextEdition()
@@ -265,10 +305,10 @@ Connect the data to European equities impact.`,
   // Call 3: Key stock move
   console.log('  Claude call 3/6: Key stock move...')
   const stockSection = await callClaude(client,
-    `Write 1-2 sentences on the key AEX stock move today for a European market brief.
+    `Write 1-2 sentences on the key European stock move today for a market brief covering AEX, DAX, CAC 40, FTSE 100, IBEX 35, FTSE MIB, and OMX Nordic.
 Data: ${stocksSummary}
-Name the biggest mover and give brief context.`,
-    'stocks', 150
+Name the biggest mover and give brief context. Include exchange in parentheses if not obvious.`,
+    'stocks', 160
   )
   await delay(3500)
 
@@ -311,8 +351,9 @@ Format: exactly 3-4 entries. Each entry is ONE line only:
 
 Example format (do not copy these):
 **Crude −1.2%** → Shell (SHELL.AS), TotalEnergies (TTE.PA): lower feedstock cost improves refining margins near-term
-**EUR/USD +0.3% at 1.166** → ASML (ASML.AS), Adyen (ADYEN.AS): euro strength trims dollar-revenue on repatriation
-**ECB hold** → ING (INGA.AS), ABN AMRO (ABN.AS): flat short-end yield limits NII expansion this quarter
+**EUR/USD +0.3% at 1.166** → ASML (ASML.AS), SAP (SAP.DE): euro strength trims dollar-revenue on repatriation
+**ECB hold** → UniCredit (UCG.MI), ING (INGA.AS): flat short-end yield limits NII expansion this quarter
+**IBEX +1.1%** → Inditex (ITX.MC), Iberdrola (IBE.MC): Spain outperforms as domestic consumer data beats
 
 Use ONLY today's actual data — do not invent moves:
 Indices: ${indicesSummary}
@@ -320,7 +361,7 @@ FX: ${fxSummary}
 Commodities: ${commoditySummary}
 Key stocks: ${stocksSummary}
 
-Rules: name real Euronext/LSE tickers in parentheses. Give the MECHANISM not just direction. Bold the signal. Each entry on its own line. No intro or outro text — entries only.`,
+Rules: name real tickers in parentheses — can include AEX (.AS), DAX (.DE), CAC (.PA), FTSE (.L), IBEX (.MC), FTSE MIB (.MI), OMX (.ST) stocks. Give the MECHANISM not just direction. Bold the signal. Each entry on its own line. No intro or outro text — entries only.`,
     'bridge', 400
   )
   await delay(3500)
@@ -337,7 +378,7 @@ Respond with ONLY the sentence — nothing else.`,
   const excerpt = excerptRaw.slice(0, 200).trim() + (excerptRaw.length > 200 ? '…' : '')
 
   // Derive tags from market data (rule engine — no Claude)
-  const tags = deriveTags(aex, brent, eurUsd)
+  const tags = deriveTags(aex, brent, eurUsd, dax, cac, ftse, ibex, ftmib)
   const readTime = 4
 
   // Date-based slug with word-boundary truncation
