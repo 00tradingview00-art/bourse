@@ -4,6 +4,15 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import type { MarketData } from '@/types'
 
+const INDEX_SLUG: Record<string, string> = {
+  'AEX':      'aex',
+  'DAX':      'dax',
+  'CAC 40':   'cac-40',
+  'FTSE 100': 'ftse-100',
+  'IBEX 35':  'ibex-35',
+  'FTSE MIB': 'ftse-mib',
+}
+
 interface Props {
   markets: MarketData[]       // dashboard markets (AEX, DAX, CAC, FTSE, IBEX, FTSE MIB)
   timestamp: string
@@ -76,36 +85,47 @@ export default function MarketPulse({ markets, timestamp, ecbRate, eurUsd, brent
             const isUp    = m.direction === 'up'
             const isDown  = m.direction === 'down'
             const pct     = Math.abs(parseFloat(m.changePct) || 0)
+            const slug    = INDEX_SLUG[m.name]
 
             return (
-              <div
+              <Link
                 key={m.name}
-                style={{ background: 'var(--paper)', padding: '16px 14px 14px', cursor: 'default', transition: 'background 0.15s' }}
+                href={slug ? `/indices/${slug}` : '#'}
+                style={{ textDecoration: 'none', display: 'block', background: 'var(--paper)', padding: '14px 14px 12px', transition: 'background 0.15s' }}
                 onMouseEnter={e => (e.currentTarget.style.background = '#fff')}
                 onMouseLeave={e => (e.currentTarget.style.background = 'var(--paper)')}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <div style={{ fontSize: '10px', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)' }}>
-                    {m.flag} {m.name}
+                {/* Header: flag + name left, status badge right — fixed height so all cards align */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '6px', marginBottom: '10px', minHeight: '18px' }}>
+                  <div style={{ fontSize: '10px', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-3)', fontWeight: 500, whiteSpace: 'nowrap', lineHeight: '16px' }}>
+                    {m.flag}&nbsp;{m.name}
                   </div>
                   <StatusBadge status={status} />
                 </div>
-                <div style={{ fontSize: '18px', fontWeight: 600, color: 'var(--ink)', fontVariantNumeric: 'tabular-nums', lineHeight: 1, marginBottom: '6px' }}>
+                {/* Value */}
+                <div style={{ fontSize: '17px', fontWeight: 700, color: 'var(--ink)', fontVariantNumeric: 'tabular-nums', lineHeight: 1, marginBottom: '5px' }}>
                   {m.value}
                 </div>
-                <div style={{ fontSize: '12px', fontWeight: 500, color: isUp ? '#16a34a' : isDown ? 'var(--red)' : 'var(--ink-4)', marginBottom: '10px' }}>
-                  {m.change} &nbsp; {m.changePct}
+                {/* Change */}
+                <div style={{ fontSize: '12px', fontWeight: 500, color: isUp ? '#16a34a' : isDown ? '#dc2626' : 'var(--ink-4)', marginBottom: '10px', fontVariantNumeric: 'tabular-nums' }}>
+                  {m.change}&nbsp;&nbsp;{m.changePct}
                 </div>
                 {/* Direction bar */}
                 <div style={{ height: '2px', borderRadius: '1px', background: 'var(--border)', overflow: 'hidden' }}>
                   <div style={{
                     height: '100%',
                     width: `${Math.min(pct * 80, 100)}%`,
-                    background: isUp ? '#16a34a' : isDown ? 'var(--red)' : 'var(--border)',
+                    background: isUp ? '#16a34a' : isDown ? '#dc2626' : 'var(--border)',
                     borderRadius: '1px',
                   }} />
                 </div>
-              </div>
+                {/* Tap hint */}
+                {slug && (
+                  <div style={{ marginTop: '8px', fontSize: '10px', color: 'var(--ink-4)', letterSpacing: '0.04em' }}>
+                    View composition →
+                  </div>
+                )}
+              </Link>
             )
           })}
         </div>
