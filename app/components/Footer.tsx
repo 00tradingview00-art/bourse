@@ -4,7 +4,8 @@ import Link from 'next/link'
 
 const NAV_LINKS = [
   { label: 'Daily Brief', href: '/briefs' },
-  { label: 'Screener', href: '#screener' },
+  { label: 'Screener', href: '/screener' },
+  { label: 'Guides', href: '/guides' },
   { label: 'About', href: '#about' },
 ]
 

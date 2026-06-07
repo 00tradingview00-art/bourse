@@ -88,6 +88,7 @@ export default function Navbar() {
               <div style={DROPDOWN_STYLE}>
                 <DropdownItem href="/"       label="Today's Brief" />
                 <DropdownItem href="/briefs" label="Brief Archive" />
+                <DropdownItem href="/guides" label="Investor Guides" />
               </div>
             )}
           </div>
@@ -142,6 +143,7 @@ export default function Navbar() {
             { label: 'ECB Watch', href: '/ecb-watch' },
             { label: 'Today\'s Brief', href: '/' },
             { label: 'Brief Archive', href: '/briefs' },
+            { label: 'Investor Guides', href: '/guides' },
           ].map(link => (
             <Link
               key={link.href}
