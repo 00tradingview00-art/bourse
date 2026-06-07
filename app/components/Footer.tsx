@@ -5,7 +5,10 @@ import Link from 'next/link'
 const NAV_LINKS = [
   { label: 'Daily Brief', href: '/briefs' },
   { label: 'Screener', href: '/screener' },
+  { label: 'Sectors', href: '/sectors' },
+  { label: 'Bond Yields', href: '/bonds' },
   { label: 'Guides', href: '/guides' },
+  { label: 'Calculators', href: '/calculators' },
   { label: 'About', href: '#about' },
 ]
 

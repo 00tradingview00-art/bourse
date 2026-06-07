@@ -67,6 +67,8 @@ export default function Navbar() {
               <div style={DROPDOWN_STYLE}>
                 <DropdownItem href="/#markets"    label="Market Overview" />
                 <DropdownItem href="/screener"    label="Stock Screener" />
+                <DropdownItem href="/sectors"     label="Sector Heatmap" />
+                <DropdownItem href="/bonds"       label="Bond Yields" />
                 <DropdownItem href="/macro-bridge" label="Macro–Equity Bridge" />
                 <DropdownItem href="/brokers"     label="Broker Comparison" />
               </div>
@@ -87,9 +89,10 @@ export default function Navbar() {
             </button>
             {researchOpen && (
               <div style={DROPDOWN_STYLE}>
-                <DropdownItem href="/"       label="Today's Brief" />
-                <DropdownItem href="/briefs" label="Brief Archive" />
-                <DropdownItem href="/guides" label="Investor Guides" />
+                <DropdownItem href="/"            label="Today's Brief" />
+                <DropdownItem href="/briefs"      label="Brief Archive" />
+                <DropdownItem href="/guides"      label="Investor Guides" />
+                <DropdownItem href="/calculators" label="Tax Calculators" />
               </div>
             )}
           </div>
@@ -151,13 +154,16 @@ export default function Navbar() {
           {[
             { label: 'Market Overview', href: '/#markets' },
             { label: 'Stock Screener', href: '/screener' },
+            { label: 'Sector Heatmap', href: '/sectors' },
+            { label: 'Bond Yields', href: '/bonds' },
             { label: 'Macro–Equity Bridge', href: '/macro-bridge' },
             { label: 'Broker Comparison', href: '/brokers' },
             { label: 'ECB Watch', href: '/ecb-watch' },
             { label: 'Search', href: '/search' },
-            { label: 'Today\'s Brief', href: '/' },
+            { label: "Today's Brief", href: '/' },
             { label: 'Brief Archive', href: '/briefs' },
             { label: 'Investor Guides', href: '/guides' },
+            { label: 'Tax Calculators', href: '/calculators' },
           ].map(link => (
             <Link
               key={link.href}

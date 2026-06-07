@@ -260,8 +260,21 @@ export default function GermanVorabpauschaleGuide() {
             </Link>
           </div>
 
+          {/* Calculator CTA */}
+          <div style={{ marginTop: '32px', background: 'var(--accent-light)', border: '1px solid var(--accent-mid)', borderRadius: '6px', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+            <div>
+              <div style={{ fontFamily: 'var(--serif)', fontSize: '16px', fontWeight: 700, color: 'var(--ink)', marginBottom: '4px' }}>
+                Try the Vorabpauschale calculator
+              </div>
+              <p style={{ fontSize: '13px', color: 'var(--ink-3)', margin: 0 }}>Enter your fund value, type, and Freistellungsauftrag to calculate your exact 2026 VP tax — including Teilfreistellung.</p>
+            </div>
+            <Link href="/calculators/german-vorabpauschale" style={{ background: 'var(--accent)', color: '#fff', padding: '10px 20px', borderRadius: '4px', textDecoration: 'none', fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap' }}>
+              Open calculator →
+            </Link>
+          </div>
+
           {/* Disclaimer */}
-          <div style={{ marginTop: '40px', padding: '16px 20px', background: 'var(--paper-2)', border: '1px solid var(--border)', borderLeft: '3px solid var(--border)', borderRadius: '3px', fontSize: '12px', color: 'var(--ink-3)', lineHeight: 1.65 }}>
+          <div style={{ marginTop: '24px', padding: '16px 20px', background: 'var(--paper-2)', border: '1px solid var(--border)', borderLeft: '3px solid var(--border)', borderRadius: '3px', fontSize: '12px', color: 'var(--ink-3)', lineHeight: 1.65 }}>
             This guide is for informational purposes only. Not personalised tax advice. Base rate sourced from BMF publications. Tax rules can change — verify current rates with your broker or a qualified German tax adviser (Steuerberater). Kirchensteuer not included in example calculations.
           </div>
         </div>

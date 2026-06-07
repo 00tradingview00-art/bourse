@@ -226,8 +226,21 @@ export default function DutchBox3Guide() {
             </Link>
           </div>
 
+          {/* Calculator CTA */}
+          <div style={{ marginTop: '32px', background: 'var(--accent-light)', border: '1px solid var(--accent-mid)', borderRadius: '6px', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+            <div>
+              <div style={{ fontFamily: 'var(--serif)', fontSize: '16px', fontWeight: 700, color: 'var(--ink)', marginBottom: '4px' }}>
+                Try the Box 3 calculator
+              </div>
+              <p style={{ fontSize: '13px', color: 'var(--ink-3)', margin: 0 }}>Enter your savings, investments, and property to get an instant estimate of your 2025 Box 3 liability.</p>
+            </div>
+            <Link href="/calculators/dutch-box-3" style={{ background: 'var(--accent)', color: '#fff', padding: '10px 20px', borderRadius: '4px', textDecoration: 'none', fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap' }}>
+              Open calculator →
+            </Link>
+          </div>
+
           {/* Disclaimer */}
-          <div style={{ marginTop: '40px', padding: '16px 20px', background: 'var(--paper-2)', border: '1px solid var(--border)', borderLeft: '3px solid var(--border)', borderRadius: '3px', fontSize: '12px', color: 'var(--ink-3)', lineHeight: 1.65 }}>
+          <div style={{ marginTop: '24px', padding: '16px 20px', background: 'var(--paper-2)', border: '1px solid var(--border)', borderLeft: '3px solid var(--border)', borderRadius: '3px', fontSize: '12px', color: 'var(--ink-3)', lineHeight: 1.65 }}>
             This guide is for informational purposes only. Not personalised tax advice. Tax rules and rates change — verify current figures with the Belastingdienst or a qualified Dutch tax adviser. Rates shown are for 2025 tax year.
           </div>
         </div>
