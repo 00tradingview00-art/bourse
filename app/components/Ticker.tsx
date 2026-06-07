@@ -10,20 +10,14 @@ export default function Ticker({ tickerItems }: Props) {
   const doubled = [...tickerItems, ...tickerItems]
 
   return (
-    <div
-      style={{ background: 'var(--ink)', color: '#fff', height: '36px' }}
-      className="flex items-center overflow-hidden"
-    >
-      <div
-        style={{ background: 'var(--accent)', flexShrink: 0 }}
-        className="h-full px-4 flex items-center text-[10px] font-medium tracking-widest uppercase text-white z-10"
-      >
-        Live
+    <div style={{ background: 'var(--ink)', color: '#fff', height: '36px', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+      <div style={{ background: 'var(--accent)', flexShrink: 0, height: '100%', padding: '0 16px', display: 'flex', alignItems: 'center' }}>
+        <span style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff' }}>Live</span>
       </div>
-      <div className="overflow-hidden flex-1">
-        <div className="ticker-animate flex items-center whitespace-nowrap pl-6">
+      <div style={{ overflow: 'hidden', flex: 1 }}>
+        <div className="ticker-animate" style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap', paddingLeft: '24px', willChange: 'transform' }}>
           {doubled.map((item, i) => (
-            <span key={i} className="inline-flex items-center gap-1.5 mr-10 text-xs">
+            <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginRight: '40px', fontSize: '12px' }}>
               <span style={{ color: '#999', fontSize: '10px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                 {item.name}
               </span>

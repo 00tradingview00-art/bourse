@@ -11,7 +11,7 @@ const DROPDOWN_STYLE: React.CSSProperties = {
 }
 
 const ITEM_STYLE: React.CSSProperties = {
-  display: 'block', padding: '9px 16px', fontSize: '13px',
+  display: 'block', padding: '9px 16px', fontSize: '14px',
   color: 'var(--ink-2)', textDecoration: 'none', transition: 'background 0.1s',
 }
 
@@ -53,7 +53,7 @@ export default function Navbar() {
 
           {/* Markets dropdown */}
           <div
-            style={{ position: 'relative' }}
+            style={{ position: 'relative', paddingBottom: '12px' }}
             onMouseEnter={() => setMarketsOpen(true)}
             onMouseLeave={() => setMarketsOpen(false)}
           >
@@ -77,7 +77,7 @@ export default function Navbar() {
 
           {/* Research dropdown */}
           <div
-            style={{ position: 'relative' }}
+            style={{ position: 'relative', paddingBottom: '12px' }}
             onMouseEnter={() => setResearchOpen(true)}
             onMouseLeave={() => setResearchOpen(false)}
           >
