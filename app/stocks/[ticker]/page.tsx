@@ -11,253 +11,273 @@ const EXCHANGE_FLAG: Record<string, string> = {
   AEX: '🇳🇱', DAX: '🇩🇪', CAC: '🇫🇷', FTSE: '🇬🇧', IBEX: '🇪🇸', FTSE_MIB: '🇮🇹', OMX: '🇸🇪',
 }
 const EXCHANGE_LABEL: Record<string, string> = {
-  AEX: 'Euronext Amsterdam', DAX: 'Xetra', CAC: 'Euronext Paris', FTSE: 'LSE',
-  IBEX: 'BME Madrid', FTSE_MIB: 'Borsa Italiana', OMX: 'Nasdaq Nordic',
+  AEX: 'Euronext Amsterdam', DAX: 'Xetra Frankfurt', CAC: 'Euronext Paris',
+  FTSE: 'London Stock Exchange', IBEX: 'BME Madrid', FTSE_MIB: 'Borsa Italiana', OMX: 'Nasdaq Nordic',
+}
+const EXCHANGE_INDEX: Record<string, string> = {
+  AEX: 'AEX', DAX: 'DAX 40', CAC: 'CAC 40', FTSE: 'FTSE 100',
+  IBEX: 'IBEX 35', FTSE_MIB: 'FTSE MIB', OMX: 'OMX 30',
 }
 
-function getAllStocks() {
+type Stock = {
+  type?: string; ticker: string; name: string; exchange: string; sector: string
+  price: number; change: number | null; changePct: number | null
+  peRatio?: number | null; dividendYield?: number | null; marketCapB?: number | null
+  week52High?: number | null; week52Low?: number | null
+  relativeStrength?: number | null; rsi?: number | null; rsiSignal?: string
+  volumeSignal?: string; volumeRatio?: number | null
+}
+
+function getAllStocks(): Stock[] {
   const d = screenerData as Record<string, unknown>
-  const all = (d.stocks ?? d.instruments ?? []) as Record<string, unknown>[]
+  const all = (d.stocks ?? d.instruments ?? []) as Stock[]
   return all.filter(s => s.type === 'stock')
 }
 
 export async function generateStaticParams(): Promise<Params[]> {
-  return getAllStocks().map(s => ({ ticker: String(s.ticker) }))
+  return getAllStocks().map(s => ({ ticker: s.ticker }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { ticker } = await params
   const stock = getAllStocks().find(s => s.ticker === ticker)
   if (!stock) return { title: 'Stock Not Found | Boursee' }
-  const name = String(stock.name)
   return {
-    title: `${name} (${ticker}) — Stock Analysis | Boursee`,
-    description: `Technical signals and key metrics for ${name} (${ticker}) on Boursee's European stock screener.`,
+    title: `${stock.name} (${ticker}) — ${stock.exchange} | Boursee`,
+    description: `${stock.name} share price, 52-week range, and sector context on the Boursee European stock screener. ${stock.exchange} · ${stock.sector}.`,
   }
 }
 
-function fmt(n: number | null | undefined, decimals = 2, suffix = ''): string {
-  if (n == null) return '—'
-  return n.toFixed(decimals) + suffix
-}
 function fmtPct(n: number | null | undefined): string {
   if (n == null) return '—'
-  const sign = n >= 0 ? '+' : ''
-  return `${sign}${n.toFixed(2)}%`
+  return `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`
 }
 function fmtCap(n: number | null | undefined): string {
   if (n == null) return '—'
   if (n >= 1000) return `€${(n / 1000).toFixed(1)}T`
-  if (n >= 1) return `€${n.toFixed(1)}B`
+  if (n >= 1)    return `€${n.toFixed(1)}B`
   return `€${(n * 1000).toFixed(0)}M`
 }
 
-function RsiBar({ rsi, signal }: { rsi: number | null; signal: string }) {
-  if (rsi == null) return <span style={{ fontSize: '13px', color: 'var(--ink-4)' }}>—</span>
-  const color = signal === 'overbought' ? '#dc2626' : signal === 'oversold' ? '#16a34a' : 'var(--ink-3)'
-  const pct = Math.min(100, Math.max(0, rsi))
+function RangeBar({ low, high, current }: { low: number; high: number; current: number }) {
+  const pct = Math.min(100, Math.max(0, ((current - low) / (high - low)) * 100))
+  const nearHigh = pct > 75
+  const nearLow  = pct < 25
+  const dotColor = nearHigh ? '#16a34a' : nearLow ? '#dc2626' : 'var(--accent)'
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-        <span style={{ fontSize: '11px', color: 'var(--ink-4)' }}>Oversold &lt;30</span>
-        <span style={{ fontSize: '13px', fontWeight: 700, color }}>{rsi.toFixed(1)}</span>
-        <span style={{ fontSize: '11px', color: 'var(--ink-4)' }}>&gt;70 Overbought</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '12px', color: 'var(--ink-4)' }}>
+        <span>52W Low<br /><strong style={{ fontSize: '13px', color: 'var(--ink-2)' }}>€{low.toFixed(2)}</strong></span>
+        <span style={{ textAlign: 'center', fontSize: '11px', color: 'var(--ink-4)' }}>
+          {nearHigh ? '▲ Near 52-week high' : nearLow ? '▼ Near 52-week low' : 'Mid-range'}
+        </span>
+        <span style={{ textAlign: 'right' }}>52W High<br /><strong style={{ fontSize: '13px', color: 'var(--ink-2)' }}>€{high.toFixed(2)}</strong></span>
       </div>
-      <div style={{ height: '6px', background: 'var(--border)', borderRadius: '3px', position: 'relative' }}>
-        <div style={{ position: 'absolute', left: `${pct}%`, top: '-2px', width: '10px', height: '10px', background: color, borderRadius: '50%', transform: 'translateX(-50%)', border: '2px solid #fff', boxShadow: '0 0 0 1px ' + color }} />
+      <div style={{ height: '6px', background: 'var(--border)', borderRadius: '3px', position: 'relative', margin: '0 4px' }}>
+        <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: `${pct}%`, background: dotColor, borderRadius: '3px', opacity: 0.25 }} />
+        <div style={{ position: 'absolute', left: `${pct}%`, top: '-4px', width: '14px', height: '14px', background: dotColor, borderRadius: '50%', transform: 'translateX(-50%)', border: '2px solid #fff', boxShadow: `0 0 0 1px ${dotColor}` }} />
+      </div>
+      <div style={{ marginTop: '8px', fontSize: '11px', color: 'var(--ink-4)', textAlign: 'center' }}>
+        Current price is in the <strong>{pct.toFixed(0)}th percentile</strong> of its 52-week range
       </div>
     </div>
   )
 }
 
-function RangeBar({ low, high, current }: { low: number | null; high: number | null; current: number }) {
-  if (!low || !high || low >= high) return null
-  const pct = Math.min(100, Math.max(0, ((current - low) / (high - low)) * 100))
+function RsiGauge({ rsi, signal }: { rsi: number; signal: string }) {
+  const color  = signal === 'overbought' ? '#dc2626' : signal === 'oversold' ? '#16a34a' : 'var(--accent)'
+  const label  = signal === 'overbought' ? 'Overbought — momentum stretched' : signal === 'oversold' ? 'Oversold — potential value zone' : 'Neutral momentum'
+  const pct    = Math.min(100, Math.max(0, rsi))
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '11px', color: 'var(--ink-4)' }}>
-        <span>52W Low: €{low.toFixed(2)}</span>
-        <span>52W High: €{high.toFixed(2)}</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '10px' }}>
+        <span style={{ fontSize: '24px', fontWeight: 700, color }}>{rsi.toFixed(0)}</span>
+        <span style={{ fontSize: '12px', color: 'var(--ink-4)' }}>out of 100</span>
       </div>
-      <div style={{ height: '4px', background: 'var(--border)', borderRadius: '2px', position: 'relative' }}>
-        <div style={{ position: 'absolute', left: `${pct}%`, top: '-4px', width: '12px', height: '12px', background: 'var(--accent)', borderRadius: '50%', transform: 'translateX(-50%)', border: '2px solid #fff', boxShadow: '0 0 0 1px var(--accent)' }} />
+      <div style={{ height: '4px', background: 'var(--border)', borderRadius: '2px', position: 'relative', marginBottom: '8px' }}>
+        <div style={{ position: 'absolute', left: `${pct}%`, top: '-5px', width: '14px', height: '14px', background: color, borderRadius: '50%', transform: 'translateX(-50%)', border: '2px solid #fff' }} />
       </div>
+      <div style={{ fontSize: '12px', color }}>{label}</div>
+      <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '4px' }}>RSI below 30 = oversold · above 70 = overbought</div>
     </div>
   )
 }
 
 export default async function StockDetailPage({ params }: { params: Promise<Params> }) {
   const { ticker } = await params
-  const s = getAllStocks().find(st => st.ticker === ticker) as Record<string, unknown> | undefined
+  const allStocks  = getAllStocks()
+  const s          = allStocks.find(st => st.ticker === ticker)
   if (!s) notFound()
 
-  const name = String(s.name)
-  const exchange = String(s.exchange)
-  const sector = String(s.sector ?? '')
-  const price = s.price as number
-  const change = s.change as number | null
-  const changePct = s.changePct as number | null
-  const rsi = s.rsi as number | null
-  const rsiSignal = String(s.rsiSignal ?? 'unknown')
-  const macdTrend = s.macdTrend as string | null
-  const macdCross = s.macdCross as string | null
-  const supertrend = s.supertrend as string | null
-  const volumeSignal = String(s.volumeSignal ?? 'normal')
-  const volumeRatio = s.volumeRatio as number | null
-  const peRatio = s.peRatio as number | null
-  const dividendYield = s.dividendYield as number | null
-  const marketCapB = s.marketCapB as number | null
-  const analystGrade = s.analystGrade as string | null
-  const week52High = s.week52High as number | null
-  const week52Low = s.week52Low as number | null
-  const relativeStrength = s.relativeStrength as number | null
+  const { name, exchange, sector, price, change, changePct, peRatio, dividendYield,
+          marketCapB, week52High, week52Low, relativeStrength, rsi, rsiSignal,
+          volumeSignal, volumeRatio } = s
 
   const changePositive = (change ?? 0) >= 0
 
-  const GRADE_COLOR: Record<string, string> = {
-    'Strong Buy': '#16a34a', Buy: '#4ade80', Hold: '#ca8a04', Sell: '#dc2626',
-  }
-  const TREND_COLOR = (t: string | null) => t === 'bullish' ? '#16a34a' : t === 'bearish' ? '#dc2626' : '#94a3b8'
-  const VOL_LABEL: Record<string, string> = { surge: 'Volume Surge', high: 'High Volume', normal: 'Normal', low: 'Low Volume' }
-  const VOL_COLOR: Record<string, string> = { surge: '#dc2626', high: '#ca8a04', normal: 'var(--ink-4)', low: 'var(--ink-4)' }
+  // Sector peers — same sector, different ticker, up to 5
+  const peers = allStocks
+    .filter(p => p.sector === sector && p.ticker !== ticker)
+    .sort((a, b) => Math.abs(b.changePct ?? 0) - Math.abs(a.changePct ?? 0))
+    .slice(0, 5)
 
   return (
     <>
       <Navbar />
       <main style={{ background: 'var(--paper)', minHeight: '80vh' }}>
 
-        {/* Breadcrumb + header */}
-        <div style={{ borderBottom: '1px solid var(--border)' }}>
-          <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 32px 32px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', fontSize: '13px', color: 'var(--ink-4)' }}>
-              <Link href="/screener" style={{ color: 'var(--accent)', textDecoration: 'none' }}>← Screener</Link>
-              <span>·</span>
-              <span>{exchange}</span>
-              {sector && <><span>·</span><span>{sector}</span></>}
+        {/* Header */}
+        <div style={{ borderBottom: '1px solid var(--border)', background: '#fff' }}>
+          <div style={{ maxWidth: '960px', margin: '0 auto', padding: '36px 32px 32px' }}>
+
+            {/* Breadcrumb */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px', fontSize: '13px', color: 'var(--ink-4)' }}>
+              <Link href="/screener" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 500 }}>Screener</Link>
+              <span>›</span>
+              <Link href={`/screener?exchange=${exchange}`} style={{ color: 'var(--ink-4)', textDecoration: 'none' }}>
+                {EXCHANGE_FLAG[exchange]} {exchange}
+              </Link>
+              <span>›</span>
+              <Link href={`/sectors`} style={{ color: 'var(--ink-4)', textDecoration: 'none' }}>{sector}</Link>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap' }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '24px' }}>{EXCHANGE_FLAG[exchange] ?? '🌍'}</span>
-                  <span style={{ fontFamily: 'var(--sans)', fontSize: '12px', fontWeight: 500, color: 'var(--ink-4)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                    {ticker} · {EXCHANGE_LABEL[exchange] ?? exchange}
-                  </span>
+                <div style={{ fontSize: '12px', fontWeight: 500, color: 'var(--ink-4)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>
+                  {ticker} · {EXCHANGE_LABEL[exchange] ?? exchange}
                 </div>
-                <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--ink)', lineHeight: 1.1 }}>
+                <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(22px, 3vw, 34px)', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--ink)', lineHeight: 1.1, marginBottom: '8px' }}>
                   {name}
                 </h1>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '12px', background: 'var(--paper-2)', color: 'var(--ink-4)', padding: '3px 8px', borderRadius: '2px', fontWeight: 500 }}>{sector}</span>
+                  <span style={{ fontSize: '12px', background: 'var(--paper-2)', color: 'var(--ink-4)', padding: '3px 8px', borderRadius: '2px' }}>{EXCHANGE_INDEX[exchange]}</span>
+                </div>
               </div>
 
-              {/* Price */}
               <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                <div style={{ fontFamily: 'var(--sans)', fontSize: '28px', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.02em' }}>
+                <div style={{ fontSize: '32px', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.02em', lineHeight: 1 }}>
                   €{price.toFixed(2)}
                 </div>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: changePositive ? '#16a34a' : '#dc2626' }}>
-                  {changePositive ? '▲' : '▼'} {Math.abs(change ?? 0).toFixed(2)} ({fmtPct(changePct)})
+                <div style={{ fontSize: '15px', fontWeight: 600, color: changePositive ? '#16a34a' : '#dc2626', marginTop: '4px' }}>
+                  {changePositive ? '▲' : '▼'} €{Math.abs(change ?? 0).toFixed(2)} ({fmtPct(changePct)})
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '4px' }}>Prices may be delayed up to 15 min</div>
+                <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '6px' }}>Prices may be delayed up to 15 min</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Content */}
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 32px 96px' }}>
+        <div style={{ maxWidth: '960px', margin: '0 auto', padding: '32px 32px 96px' }}>
 
-          {/* Fundamentals row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', marginBottom: '40px' }}>
+          {/* Key metrics strip */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px', marginBottom: '28px' }}>
             {[
-              { label: 'P/E Ratio', value: fmt(peRatio, 1) },
-              { label: 'Dividend Yield', value: peRatio == null && dividendYield == null ? '—' : fmt(dividendYield, 2, '%') },
-              { label: 'Market Cap', value: fmtCap(marketCapB) },
-              { label: 'Analyst Grade', value: analystGrade ?? '—', color: analystGrade ? GRADE_COLOR[analystGrade] : undefined },
-              { label: 'Rel. Strength (30d)', value: relativeStrength != null ? fmtPct(relativeStrength) : '—', color: relativeStrength != null ? (relativeStrength >= 0 ? '#16a34a' : '#dc2626') : undefined },
-            ].map(item => (
-              <div key={item.label} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '4px', padding: '14px 16px' }}>
-                <div style={{ fontSize: '11px', color: 'var(--ink-4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px', fontWeight: 500 }}>{item.label}</div>
-                <div style={{ fontSize: '16px', fontWeight: 700, color: item.color ?? 'var(--ink)' }}>{item.value}</div>
+              { label: 'P/E Ratio',        value: peRatio        != null ? peRatio.toFixed(1) : '—' },
+              { label: 'Dividend Yield',   value: dividendYield  != null ? `${dividendYield.toFixed(2)}%` : '—' },
+              { label: 'Market Cap',       value: fmtCap(marketCapB) },
+              { label: 'vs ' + (EXCHANGE_INDEX[exchange] ?? 'Index') + ' (30d)',
+                value: fmtPct(relativeStrength),
+                color: relativeStrength != null ? (relativeStrength >= 0 ? '#16a34a' : '#dc2626') : undefined },
+              { label: 'Today',
+                value: fmtPct(changePct),
+                color: (changePct ?? 0) >= 0 ? '#16a34a' : '#dc2626' },
+            ].map(m => (
+              <div key={m.label} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '4px', padding: '14px 16px' }}>
+                <div style={{ fontSize: '11px', color: 'var(--ink-4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px', fontWeight: 500 }}>{m.label}</div>
+                <div style={{ fontSize: '17px', fontWeight: 700, color: m.color ?? 'var(--ink)' }}>{m.value}</div>
               </div>
             ))}
           </div>
 
           {/* 52-week range */}
-          {(week52Low || week52High) && (
-            <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '4px', padding: '16px 20px', marginBottom: '16px' }}>
-              <div style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: '12px' }}>52-Week Range</div>
+          {week52High && week52Low && week52High > week52Low && (
+            <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '4px', padding: '20px 24px', marginBottom: '16px' }}>
+              <div style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: '16px' }}>52-Week Range</div>
               <RangeBar low={week52Low} high={week52High} current={price} />
             </div>
           )}
 
-          {/* Technical signals */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
-
-            {/* RSI */}
-            <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '4px', padding: '16px 20px' }}>
-              <div style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: '12px' }}>RSI (14)</div>
-              <RsiBar rsi={rsi} signal={rsiSignal} />
-              <div style={{ fontSize: '12px', color: 'var(--ink-4)', marginTop: '8px', textTransform: 'capitalize' }}>{rsiSignal}</div>
-            </div>
-
-            {/* MACD */}
-            <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '4px', padding: '16px 20px' }}>
-              <div style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: '12px' }}>MACD (12,26,9)</div>
-              {macdTrend ? (
-                <>
-                  <div style={{ fontSize: '16px', fontWeight: 700, color: TREND_COLOR(macdTrend), textTransform: 'capitalize', marginBottom: '4px' }}>
-                    {macdTrend === 'bullish' ? '▲' : '▼'} {macdTrend}
-                  </div>
-                  {macdCross && (
-                    <div style={{ fontSize: '12px', color: macdCross === 'cross-up' ? '#16a34a' : '#dc2626', fontWeight: 500 }}>
-                      {macdCross === 'cross-up' ? '↑ Cross-up signal' : '↓ Cross-down signal'}
-                    </div>
-                  )}
-                  <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '4px' }}>Hist: {fmt(s.macdHist as number | null, 4)}</div>
-                </>
-              ) : <span style={{ fontSize: '13px', color: 'var(--ink-4)' }}>—</span>}
-            </div>
-
-            {/* SuperTrend */}
-            <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '4px', padding: '16px 20px' }}>
-              <div style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: '12px' }}>SuperTrend (10,3)</div>
-              {supertrend ? (
-                <div style={{ fontSize: '16px', fontWeight: 700, color: TREND_COLOR(supertrend), textTransform: 'capitalize' }}>
-                  {supertrend === 'bullish' ? '▲' : '▼'} {supertrend}
+          {/* Sector peers */}
+          {peers.length > 0 && (
+            <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '4px', padding: '20px 24px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '16px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)' }}>
+                  {sector} Peers
                 </div>
-              ) : <span style={{ fontSize: '13px', color: 'var(--ink-4)' }}>—</span>}
-            </div>
-
-            {/* Volume */}
-            <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '4px', padding: '16px 20px' }}>
-              <div style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: '12px' }}>Volume (vs 20d avg)</div>
-              <div style={{ fontSize: '16px', fontWeight: 700, color: VOL_COLOR[volumeSignal] ?? 'var(--ink-4)' }}>
-                {VOL_LABEL[volumeSignal] ?? volumeSignal}
+                <Link href={`/sectors`} style={{ fontSize: '12px', color: 'var(--accent)', textDecoration: 'none', fontWeight: 500 }}>
+                  Sector heatmap →
+                </Link>
               </div>
-              {volumeRatio != null && (
-                <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '4px' }}>{volumeRatio.toFixed(2)}× average</div>
-              )}
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                      {['Company', 'Exchange', 'Price', 'Today', 'vs Index (30d)'].map(h => (
+                        <th key={h} style={{ padding: '6px 10px', textAlign: h === 'Company' ? 'left' : 'right', fontSize: '11px', fontWeight: 600, color: 'var(--ink-4)', textTransform: 'uppercase', letterSpacing: '0.06em', whiteSpace: 'nowrap' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* Current stock row */}
+                    <tr style={{ background: 'var(--paper-2)', borderBottom: '1px solid var(--border)' }}>
+                      <td style={{ padding: '10px 10px', fontWeight: 700, color: 'var(--ink)' }}>{name}</td>
+                      <td style={{ padding: '10px 10px', textAlign: 'right', color: 'var(--ink-4)', fontSize: '12px' }}>{EXCHANGE_FLAG[exchange]} {exchange}</td>
+                      <td style={{ padding: '10px 10px', textAlign: 'right', fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>€{price.toFixed(2)}</td>
+                      <td style={{ padding: '10px 10px', textAlign: 'right', fontWeight: 600, color: (changePct ?? 0) >= 0 ? '#16a34a' : '#dc2626', fontVariantNumeric: 'tabular-nums' }}>{fmtPct(changePct)}</td>
+                      <td style={{ padding: '10px 10px', textAlign: 'right', color: relativeStrength != null ? (relativeStrength >= 0 ? '#16a34a' : '#dc2626') : 'var(--ink-4)', fontVariantNumeric: 'tabular-nums' }}>{fmtPct(relativeStrength)}</td>
+                    </tr>
+                    {peers.map(p => (
+                      <tr key={p.ticker} style={{ borderBottom: '1px solid var(--border)' }}>
+                        <td style={{ padding: '10px 10px' }}>
+                          <Link href={`/stocks/${p.ticker}`} style={{ color: 'var(--ink)', textDecoration: 'none', fontWeight: 500 }}>{p.name}</Link>
+                        </td>
+                        <td style={{ padding: '10px 10px', textAlign: 'right', color: 'var(--ink-4)', fontSize: '12px' }}>{EXCHANGE_FLAG[p.exchange]} {p.exchange}</td>
+                        <td style={{ padding: '10px 10px', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>€{p.price.toFixed(2)}</td>
+                        <td style={{ padding: '10px 10px', textAlign: 'right', color: (p.changePct ?? 0) >= 0 ? '#16a34a' : '#dc2626', fontVariantNumeric: 'tabular-nums' }}>{fmtPct(p.changePct)}</td>
+                        <td style={{ padding: '10px 10px', textAlign: 'right', color: p.relativeStrength != null ? (p.relativeStrength >= 0 ? '#16a34a' : '#dc2626') : 'var(--ink-4)', fontVariantNumeric: 'tabular-nums' }}>{fmtPct(p.relativeStrength)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* RSI + Volume — simplified */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
+            <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '4px', padding: '20px 24px' }}>
+              <div style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: '14px' }}>Momentum (RSI 14)</div>
+              {rsi != null
+                ? <RsiGauge rsi={rsi} signal={rsiSignal ?? 'neutral'} />
+                : <span style={{ fontSize: '14px', color: 'var(--ink-4)' }}>No data</span>}
+            </div>
+            <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '4px', padding: '20px 24px' }}>
+              <div style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: '14px' }}>Trading Volume</div>
+              {volumeSignal ? (
+                <>
+                  <div style={{ fontSize: '20px', fontWeight: 700, color: volumeSignal === 'surge' ? '#dc2626' : volumeSignal === 'high' ? '#ca8a04' : 'var(--ink-3)', marginBottom: '6px', textTransform: 'capitalize' }}>
+                    {volumeSignal === 'surge' ? '⚡ Volume Surge' : volumeSignal === 'high' ? '↑ Above Average' : volumeSignal === 'low' ? '↓ Below Average' : 'Normal'}
+                  </div>
+                  {volumeRatio != null && (
+                    <div style={{ fontSize: '13px', color: 'var(--ink-4)' }}>{volumeRatio.toFixed(2)}× the 20-day average</div>
+                  )}
+                  <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '6px' }}>High volume = stronger price moves</div>
+                </>
+              ) : <span style={{ fontSize: '14px', color: 'var(--ink-4)' }}>No data</span>}
             </div>
           </div>
 
-          {/* Back to screener */}
-          <div style={{ marginTop: '32px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-            <Link href="/screener" style={{ fontSize: '13px', color: 'var(--accent)', textDecoration: 'none', fontWeight: 500 }}>
-              ← Back to Screener
-            </Link>
-            {sector && (
-              <>
-                <span style={{ color: 'var(--border)' }}>·</span>
-                <Link href={`/screener`} style={{ fontSize: '13px', color: 'var(--ink-4)', textDecoration: 'none' }}>
-                  View other {sector} stocks →
-                </Link>
-              </>
-            )}
+          {/* Nav links */}
+          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', fontSize: '13px', marginBottom: '40px' }}>
+            <Link href="/screener" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 500 }}>← Back to Screener</Link>
+            <Link href="/sectors" style={{ color: 'var(--ink-4)', textDecoration: 'none' }}>Sector Heatmap →</Link>
+            <Link href="/guides" style={{ color: 'var(--ink-4)', textDecoration: 'none' }}>Investor Guides →</Link>
           </div>
 
           {/* Disclaimer */}
-          <div style={{ marginTop: '40px', padding: '14px 18px', background: 'var(--paper-2)', border: '1px solid var(--border)', borderLeft: '3px solid var(--border)', borderRadius: '3px', fontSize: '11px', color: 'var(--ink-4)', lineHeight: 1.6 }}>
-            Data for general information only under MiFID II Article 24. Not investment advice. Technical indicators are derived from price history and do not predict future performance. Prices may be delayed up to 15 minutes.
+          <div style={{ padding: '14px 18px', background: 'var(--paper-2)', border: '1px solid var(--border)', borderLeft: '3px solid var(--border)', borderRadius: '3px', fontSize: '11px', color: 'var(--ink-4)', lineHeight: 1.6 }}>
+            For general information only. Not investment advice under MiFID II Article 24. RSI and volume signals are derived from historical price data and do not predict future performance. Prices may be delayed up to 15 minutes.
           </div>
         </div>
       </main>

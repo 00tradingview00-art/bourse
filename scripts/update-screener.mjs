@@ -324,8 +324,10 @@ async function fetchHistory(ticker) {
 
       const valid = timestamps.map((_, i) => closes[i] != null && highs[i] != null && lows[i] != null)
       return {
-        price:     meta.regularMarketPrice,
-        prevClose: meta.chartPreviousClose,
+        price:      meta.regularMarketPrice,
+        prevClose:  meta.chartPreviousClose,
+        week52High: meta.fiftyTwoWeekHigh ?? null,
+        week52Low:  meta.fiftyTwoWeekLow  ?? null,
         closes:  closes.filter((_, i) => valid[i]),
         highs:   highs.filter((_, i)  => valid[i]),
         lows:    lows.filter((_, i)   => valid[i]),
@@ -535,8 +537,8 @@ async function processStock(item, quotes, benchmarkReturns, index, total) {
     dividendYield:    quote.dividendYield ?? null,
     marketCapB:       quote.marketCapB    ?? null,
     analystGrade:     quote.analystGrade  ?? null,
-    week52High:       quote.week52High    ?? null,
-    week52Low:        quote.week52Low     ?? null,
+    week52High:       data.week52High     ?? null,
+    week52Low:        data.week52Low      ?? null,
     relativeStrength,
     rsi,
     rsiSignal,
