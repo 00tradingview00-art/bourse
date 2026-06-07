@@ -98,7 +98,7 @@ export default function Navbar() {
           </div>
 
           {/* Direct links */}
-          {[{ label: 'Screener', href: '/screener' }, { label: 'ECB Watch', href: '/ecb-watch' }].map(link => (
+          {[{ label: 'Screener', href: '/screener' }, { label: 'ECB Watch', href: '/ecb-watch' }, { label: '☆ Watchlist', href: '/watchlist' }].map(link => (
             <Link
               key={link.href}
               href={link.href}

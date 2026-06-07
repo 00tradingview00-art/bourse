@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { label: 'Bond Yields', href: '/bonds' },
   { label: 'Guides', href: '/guides' },
   { label: 'Calculators', href: '/calculators' },
+  { label: 'Watchlist', href: '/watchlist' },
   { label: 'About', href: '#about' },
 ]
 

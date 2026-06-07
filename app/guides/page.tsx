@@ -37,6 +37,24 @@ const GUIDES = [
     tags: ['PEA', 'ETF Eligibility', 'Tax Wrapper'],
     readTime: '5 min',
   },
+  {
+    href: '/guides/dividend-withholding-tax',
+    flag: '🇪🇺',
+    country: 'Europe-wide',
+    title: 'Dividend Withholding Tax in Europe',
+    subtitle: 'Why ETF domicile matters, the two layers of WHT, and how much it actually costs you annually',
+    tags: ['Withholding Tax', 'ETF Domicile', 'Ireland'],
+    readTime: '8 min',
+  },
+  {
+    href: '/guides/broker-comparison',
+    flag: '🏦',
+    country: 'Europe-wide',
+    title: 'DEGIRO vs Trade Republic vs Scalable Capital',
+    subtitle: 'Costs, ETF selection, savings plans, securities lending, and tax reporting compared honestly',
+    tags: ['Brokers', 'DEGIRO', 'Trade Republic'],
+    readTime: '7 min',
+  },
 ]
 
 export default function GuidesIndex() {

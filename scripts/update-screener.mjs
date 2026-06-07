@@ -593,7 +593,7 @@ async function processEtf(item, index, total) {
 
   console.log(`✓  ${price.toFixed(2).padStart(8)}  rsi=${String(rsi ?? '?').padEnd(5)}  quality=${qualityScore}`)
 
-  return {
+  const etfRecord = {
     type:          'etf',
     ticker:        item.ticker,
     name:          item.name,
@@ -615,6 +615,22 @@ async function processEtf(item, index, total) {
     rsi,
     rsiSignal,
   }
+
+  // Save per-ETF OHLCV for price chart
+  if (data.timestamps?.length) {
+    const ohlcv = data.timestamps.map((ts, i) => ({
+      time:   new Date(ts * 1000).toISOString().slice(0, 10),
+      open:   parseFloat((data.opens[i] ?? data.closes[i]).toFixed(2)),
+      high:   parseFloat(data.highs[i].toFixed(2)),
+      low:    parseFloat(data.lows[i].toFixed(2)),
+      close:  parseFloat(data.closes[i].toFixed(2)),
+      volume: data.volumes[i] ?? 0,
+    }))
+    const safe = item.ticker.replace(/[^a-zA-Z0-9._-]/g, '_')
+    await writeFile(join(STOCKS_DIR, `${safe}.json`), JSON.stringify(ohlcv))
+  }
+
+  return etfRecord
 }
 
 // ── Main ──────────────────────────────────────────────────────────

@@ -6,6 +6,7 @@ import { join } from 'path'
 import Navbar from '@/app/components/Navbar'
 import Footer from '@/app/components/Footer'
 import PriceChart, { type OHLCVBar } from '@/app/components/PriceChart'
+import WatchlistButton from '@/app/components/WatchlistButton'
 import screenerData from '@/data/screener.json'
 
 type Params = { ticker: string }
@@ -173,7 +174,8 @@ export default async function StockDetailPage({ params }: { params: Promise<Para
                 <div style={{ fontSize: '15px', fontWeight: 600, color: changePositive ? '#16a34a' : '#dc2626', marginTop: '4px' }}>
                   {changePositive ? '▲' : '▼'} €{Math.abs(change ?? 0).toFixed(2)} ({fmtPct(changePct)})
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '6px' }}>Prices may be delayed up to 15 min</div>
+                <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '6px', marginBottom: '10px' }}>Prices may be delayed up to 15 min</div>
+                <WatchlistButton ticker={ticker} />
               </div>
             </div>
           </div>
