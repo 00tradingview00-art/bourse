@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
+import Link from 'next/link'
 import type { ScreenerStock, ScreenerETF } from './page'
 
 type ActiveTab     = 'stocks' | 'etfs'
@@ -459,8 +460,10 @@ export default function ScreenerClient({
                   return (
                     <tr key={s.ticker} style={{ borderBottom: i < filteredStocks.length - 1 ? '1px solid var(--border)' : 'none', background: rowBg }}>
                       <td style={{ padding: '12px 14px', minWidth: '160px' }}>
-                        <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '13px' }}>{s.name}</div>
-                        <div style={{ fontSize: '11px', color: 'var(--ink-4)', fontFamily: 'monospace', marginTop: '1px' }}>{s.ticker}</div>
+                        <Link href={`/stocks/${s.ticker}`} style={{ textDecoration: 'none' }}>
+                          <div style={{ fontWeight: 600, color: 'var(--accent)', fontSize: '13px' }}>{s.name}</div>
+                          <div style={{ fontSize: '11px', color: 'var(--ink-4)', fontFamily: 'monospace', marginTop: '1px' }}>{s.ticker}</div>
+                        </Link>
                       </td>
                       <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
                         <span style={{ fontSize: '12px' }}>{flag} {exch}</span>
@@ -600,8 +603,10 @@ export default function ScreenerClient({
                   return (
                     <tr key={e.ticker} style={{ borderBottom: i < filteredEtfs.length - 1 ? '1px solid var(--border)' : 'none', background: rowBg }}>
                       <td style={{ padding: '12px 14px', minWidth: '180px' }}>
-                        <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '13px' }}>{e.name}</div>
-                        <div style={{ fontSize: '11px', color: 'var(--ink-4)', fontFamily: 'monospace', marginTop: '1px' }}>{e.ticker}</div>
+                        <Link href={`/etfs/${e.ticker}`} style={{ textDecoration: 'none' }}>
+                          <div style={{ fontWeight: 600, color: 'var(--accent)', fontSize: '13px' }}>{e.name}</div>
+                          <div style={{ fontSize: '11px', color: 'var(--ink-4)', fontFamily: 'monospace', marginTop: '1px' }}>{e.ticker}</div>
+                        </Link>
                       </td>
                       <td style={{ padding: '12px 14px', color: 'var(--ink-2)', fontSize: '12px', maxWidth: '160px' }}>
                         <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block' }}>{e.indexTracked}</span>
