@@ -121,7 +121,9 @@ export default async function ScreenerTeaser() {
               >
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontWeight: 600, fontSize: '14px', color: 'var(--ink)' }}>{s.name}</span>
+                    <Link href={`/stocks/${s.ticker}`} style={{ fontWeight: 600, fontSize: '14px', color: 'var(--ink)', textDecoration: 'none' }}>
+                      {s.name}
+                    </Link>
                     <span style={{ fontSize: '11px', background: 'var(--accent-light)', color: 'var(--accent)', padding: '1px 6px', borderRadius: '2px', fontWeight: 500 }}>{exchangeLabel}</span>
                     <span style={{ fontSize: '10px', fontWeight: 600, padding: '2px 7px', borderRadius: '2px', background: 'transparent', color: zone.border, border: `1px solid ${zone.border}` }}>
                       {zone.label}

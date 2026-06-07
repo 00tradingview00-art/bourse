@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import type { Brief, MarketData } from '@/types'
+import type { Brief } from '@/types'
 
 function useMarketsOpen() {
   const [open, setOpen] = useState(false)
@@ -24,10 +24,9 @@ const TAG_STYLES: Record<string, React.CSSProperties> = {
 
 interface Props {
   brief: Brief
-  markets: MarketData[]
 }
 
-export default function TodaysBrief({ brief, markets }: Props) {
+export default function TodaysBrief({ brief }: Props) {
   const marketsOpen = useMarketsOpen()
 
   return (
@@ -48,20 +47,9 @@ export default function TodaysBrief({ brief, markets }: Props) {
         </div>
       </div>
 
-      {/* Mini market strip */}
-      <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border)', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-        {markets.slice(0, 6).map((m) => (
-          <div key={m.name} style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-            <div style={{ fontSize: '10px', color: 'var(--ink-4)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{m.name}</div>
-            <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--ink)', fontVariantNumeric: 'tabular-nums' }}>{m.value}</div>
-            <div style={{ fontSize: '11px', fontWeight: 500, color: m.direction === 'up' ? '#16a34a' : 'var(--red)' }}>{m.changePct}</div>
-          </div>
-        ))}
-      </div>
-
       {/* Body */}
-      <div style={{ padding: '20px 24px' }}>
-        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '12px' }}>
+      <div style={{ padding: '24px 24px 20px' }}>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '14px' }}>
           {brief.tags.map((tag) => (
             <span
               key={tag.label}
@@ -71,15 +59,15 @@ export default function TodaysBrief({ brief, markets }: Props) {
             </span>
           ))}
         </div>
-        <h3 style={{ fontFamily: 'var(--serif)', fontSize: '18px', fontWeight: 700, lineHeight: 1.3, color: 'var(--ink)', marginBottom: '10px' }}>
+        <h3 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(18px, 2vw, 22px)', fontWeight: 700, lineHeight: 1.28, color: 'var(--ink)', marginBottom: '12px', letterSpacing: '-0.01em' }}>
           {brief.headline}
         </h3>
-        <p style={{ fontSize: '13px', color: 'var(--ink-2)', lineHeight: 1.65, marginBottom: '16px' }}>
+        <p style={{ fontSize: '13px', color: 'var(--ink-2)', lineHeight: 1.7, marginBottom: '20px' }}>
           {brief.excerpt}
         </p>
         <a
           href={`/briefs/${brief.slug}`}
-          style={{ display: 'block', width: '100%', background: 'var(--accent)', color: '#fff', border: 'none', padding: '12px', borderRadius: '3px', fontSize: '13px', fontWeight: 500, letterSpacing: '0.04em', textAlign: 'center', textDecoration: 'none', transition: 'background 0.15s' }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'var(--accent)', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '3px', fontSize: '13px', fontWeight: 500, letterSpacing: '0.03em', textDecoration: 'none', transition: 'background 0.15s' }}
           onMouseEnter={e => (e.currentTarget.style.background = 'var(--ink)')}
           onMouseLeave={e => (e.currentTarget.style.background = 'var(--accent)')}
         >

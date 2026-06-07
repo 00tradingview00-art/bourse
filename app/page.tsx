@@ -52,7 +52,7 @@ export default async function Home() {
             Today's Intelligence
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '28px', alignItems: 'start' }}>
-            <TodaysBrief brief={todaysBrief} markets={dashboardData} />
+            <TodaysBrief brief={todaysBrief} />
             <MarketMovers />
           </div>
         </div>

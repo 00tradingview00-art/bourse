@@ -412,9 +412,9 @@ export default function ScreenerClient({
             </div>
           </div>
 
-          {/* Sector filter */}
-          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '16px', alignItems: 'center' }}>
-            <span style={{ fontSize: '11px', color: 'var(--ink-4)', fontWeight: 500 }}>Sector</span>
+          {/* Sector filter — horizontally scrollable, never wraps */}
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'nowrap', overflowX: 'auto', marginBottom: '16px', alignItems: 'center', paddingBottom: '2px' }}>
+            <span style={{ fontSize: '11px', color: 'var(--ink-4)', fontWeight: 500, flexShrink: 0 }}>Sector</span>
             {sectors.map(s => (
               <Chip key={s} label={s === 'ALL' ? 'All sectors' : s} active={sector === s} onClick={() => setSector(s)} />
             ))}
@@ -459,44 +459,44 @@ export default function ScreenerClient({
                   const flag  = EXCHANGE_FLAGS[s.exchange] ?? ''
                   return (
                     <tr key={s.ticker} style={{ borderBottom: i < filteredStocks.length - 1 ? '1px solid var(--border)' : 'none', background: rowBg }}>
-                      <td style={{ padding: '12px 14px', minWidth: '160px' }}>
+                      <td style={{ padding: '8px 12px', minWidth: '160px' }}>
                         <Link href={`/stocks/${s.ticker}`} style={{ textDecoration: 'none' }}>
                           <div style={{ fontWeight: 600, color: 'var(--accent)', fontSize: '13px' }}>{s.name}</div>
                           <div style={{ fontSize: '11px', color: 'var(--ink-4)', fontFamily: 'monospace', marginTop: '1px' }}>{s.ticker}</div>
                         </Link>
                       </td>
-                      <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
+                      <td style={{ padding: '8px 12px', whiteSpace: 'nowrap' }}>
                         <span style={{ fontSize: '12px' }}>{flag} {exch}</span>
                       </td>
-                      <td style={{ padding: '12px 14px', color: 'var(--ink-3)', fontSize: '12px', whiteSpace: 'nowrap' }}>{s.sector}</td>
-                      <td style={{ padding: '12px 14px', fontWeight: 600, color: 'var(--ink)', fontVariantNumeric: 'tabular-nums' }}>
+                      <td style={{ padding: '8px 12px', color: 'var(--ink-3)', fontSize: '12px', whiteSpace: 'nowrap' }}>{s.sector}</td>
+                      <td style={{ padding: '8px 12px', fontWeight: 600, color: 'var(--ink)', fontVariantNumeric: 'tabular-nums' }}>
                         {s.price.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>
-                      <td style={{ padding: '12px 14px', fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: s.changePct >= 0 ? '#16a34a' : '#dc2626', whiteSpace: 'nowrap' }}>
+                      <td style={{ padding: '8px 12px', fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: s.changePct >= 0 ? '#16a34a' : '#dc2626', whiteSpace: 'nowrap' }}>
                         {s.changePct >= 0 ? '+' : ''}{s.changePct.toFixed(2)}%
                       </td>
-                      <td style={{ padding: '12px 14px', fontVariantNumeric: 'tabular-nums', color: 'var(--ink-2)', whiteSpace: 'nowrap' }}>
+                      <td style={{ padding: '8px 12px', fontVariantNumeric: 'tabular-nums', color: 'var(--ink-2)', whiteSpace: 'nowrap' }}>
                         {s.marketCapB != null ? `€${s.marketCapB.toFixed(1)}B` : <span style={{ color: 'var(--ink-4)' }}>—</span>}
                       </td>
-                      <td style={{ padding: '12px 14px', fontVariantNumeric: 'tabular-nums', color: 'var(--ink-2)' }}>
+                      <td style={{ padding: '8px 12px', fontVariantNumeric: 'tabular-nums', color: 'var(--ink-2)' }}>
                         {s.peRatio != null ? s.peRatio.toFixed(1) : <span style={{ color: 'var(--ink-4)' }}>—</span>}
                       </td>
-                      <td style={{ padding: '12px 14px', fontVariantNumeric: 'tabular-nums', color: s.dividendYield && s.dividendYield >= 3 ? '#16a34a' : 'var(--ink-2)' }}>
+                      <td style={{ padding: '8px 12px', fontVariantNumeric: 'tabular-nums', color: s.dividendYield && s.dividendYield >= 3 ? '#16a34a' : 'var(--ink-2)' }}>
                         {s.dividendYield != null ? `${s.dividendYield.toFixed(2)}%` : <span style={{ color: 'var(--ink-4)' }}>—</span>}
                       </td>
-                      <td style={{ padding: '12px 14px' }}>
+                      <td style={{ padding: '8px 12px' }}>
                         <Week52Bar price={s.price} high={s.week52High} low={s.week52Low} />
                       </td>
-                      <td style={{ padding: '12px 14px' }}>
+                      <td style={{ padding: '8px 12px' }}>
                         <AnalystBadge grade={s.analystGrade} />
                       </td>
-                      <td style={{ padding: '12px 14px' }}>
+                      <td style={{ padding: '8px 12px' }}>
                         <RelStrength rs={s.relativeStrength} />
                       </td>
-                      <td style={{ padding: '12px 14px' }}>
+                      <td style={{ padding: '8px 12px' }}>
                         <RSICell rsi={s.rsi} />
                       </td>
-                      <td style={{ padding: '12px 14px' }}>
+                      <td style={{ padding: '8px 12px' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                           <TrendBadge trend={s.macdTrend} />
                           {s.macdCross && (
@@ -602,46 +602,46 @@ export default function ScreenerClient({
                   const rowBg = rsiOversold ? '#f6fffb' : i % 2 === 0 ? 'var(--paper)' : '#fff'
                   return (
                     <tr key={e.ticker} style={{ borderBottom: i < filteredEtfs.length - 1 ? '1px solid var(--border)' : 'none', background: rowBg }}>
-                      <td style={{ padding: '12px 14px', minWidth: '180px' }}>
+                      <td style={{ padding: '8px 12px', minWidth: '180px' }}>
                         <Link href={`/etfs/${e.ticker}`} style={{ textDecoration: 'none' }}>
                           <div style={{ fontWeight: 600, color: 'var(--accent)', fontSize: '13px' }}>{e.name}</div>
                           <div style={{ fontSize: '11px', color: 'var(--ink-4)', fontFamily: 'monospace', marginTop: '1px' }}>{e.ticker}</div>
                         </Link>
                       </td>
-                      <td style={{ padding: '12px 14px', color: 'var(--ink-2)', fontSize: '12px', maxWidth: '160px' }}>
+                      <td style={{ padding: '8px 12px', color: 'var(--ink-2)', fontSize: '12px', maxWidth: '160px' }}>
                         <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block' }}>{e.indexTracked}</span>
                       </td>
-                      <td style={{ padding: '12px 14px', color: 'var(--ink-3)', fontSize: '11px', whiteSpace: 'nowrap' }}>{e.category}</td>
-                      <td style={{ padding: '12px 14px' }}>
+                      <td style={{ padding: '8px 12px', color: 'var(--ink-3)', fontSize: '11px', whiteSpace: 'nowrap' }}>{e.category}</td>
+                      <td style={{ padding: '8px 12px' }}>
                         <QualityScore score={e.qualityScore} />
                       </td>
-                      <td style={{ padding: '12px 14px' }}>
+                      <td style={{ padding: '8px 12px' }}>
                         <TerCell ter={e.ter} />
                       </td>
-                      <td style={{ padding: '12px 14px', fontVariantNumeric: 'tabular-nums', color: 'var(--ink-2)', whiteSpace: 'nowrap' }}>
+                      <td style={{ padding: '8px 12px', fontVariantNumeric: 'tabular-nums', color: 'var(--ink-2)', whiteSpace: 'nowrap' }}>
                         €{e.aumB.toFixed(1)}B
                       </td>
-                      <td style={{ padding: '12px 14px' }}>
+                      <td style={{ padding: '8px 12px' }}>
                         <DomicileCell domicile={e.domicile} />
                       </td>
-                      <td style={{ padding: '12px 14px' }}>
+                      <td style={{ padding: '8px 12px' }}>
                         <span style={{ fontSize: '11px', fontWeight: 600, padding: '2px 8px', borderRadius: '3px', background: e.accumulating ? '#dbeafe' : '#fef9c3', color: e.accumulating ? '#1e40af' : '#854d0e' }}>
                           {e.accumulating ? 'Acc' : 'Dist'}
                         </span>
                       </td>
-                      <td style={{ padding: '12px 14px' }}>
+                      <td style={{ padding: '8px 12px' }}>
                         <SfdrBadge sfdr={e.sfdr} />
                       </td>
-                      <td style={{ padding: '12px 14px' }}>
+                      <td style={{ padding: '8px 12px' }}>
                         <BrokerBadges badges={e.brokerBadges} />
                       </td>
-                      <td style={{ padding: '12px 14px', fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: e.changePct >= 0 ? '#16a34a' : '#dc2626', whiteSpace: 'nowrap' }}>
+                      <td style={{ padding: '8px 12px', fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: e.changePct >= 0 ? '#16a34a' : '#dc2626', whiteSpace: 'nowrap' }}>
                         {e.changePct >= 0 ? '+' : ''}{e.changePct.toFixed(2)}%
                       </td>
-                      <td style={{ padding: '12px 14px' }}>
+                      <td style={{ padding: '8px 12px' }}>
                         <Week52Bar price={e.price} high={e.week52High} low={e.week52Low} />
                       </td>
-                      <td style={{ padding: '12px 14px' }}>
+                      <td style={{ padding: '8px 12px' }}>
                         <RSICell rsi={e.rsi} />
                       </td>
                     </tr>
