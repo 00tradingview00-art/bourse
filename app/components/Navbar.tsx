@@ -107,6 +107,17 @@ export default function Navbar() {
             </Link>
           ))}
 
+          {/* Search */}
+          <Link
+            href="/search"
+            style={{ ...navLinkStyle, display: 'flex', alignItems: 'center', gap: '4px' }}
+            onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = 'var(--ink)')}
+            onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = 'var(--ink-3)')}
+            title="Search stocks & ETFs"
+          >
+            <span style={{ fontSize: '15px' }}>⌕</span>
+          </Link>
+
           {/* CTA */}
           <a
             href="#subscribe"
@@ -143,6 +154,7 @@ export default function Navbar() {
             { label: 'Macro–Equity Bridge', href: '/macro-bridge' },
             { label: 'Broker Comparison', href: '/brokers' },
             { label: 'ECB Watch', href: '/ecb-watch' },
+            { label: 'Search', href: '/search' },
             { label: 'Today\'s Brief', href: '/' },
             { label: 'Brief Archive', href: '/briefs' },
             { label: 'Investor Guides', href: '/guides' },
