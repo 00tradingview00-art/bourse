@@ -14,7 +14,8 @@ import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT       = join(__dirname, '..')
-const OUTPUT     = join(ROOT, 'data', 'screener.json')
+const OUTPUT      = join(ROOT, 'data', 'screener.json')
+const STOCKS_DIR  = join(ROOT, 'data', 'stocks')
 
 // ── Stock universe ────────────────────────────────────────────────
 const STOCKS = [
@@ -317,6 +318,7 @@ async function fetchHistory(ticker) {
       const meta       = result.meta
       const timestamps = result.timestamp ?? []
       const quote      = result.indicators?.quote?.[0] ?? {}
+      const opens      = (quote.open   ?? []).map(v => v ?? null)
       const closes     = (quote.close  ?? []).map(v => v ?? null)
       const highs      = (quote.high   ?? []).map(v => v ?? null)
       const lows       = (quote.low    ?? []).map(v => v ?? null)
@@ -328,9 +330,11 @@ async function fetchHistory(ticker) {
         prevClose:  meta.chartPreviousClose,
         week52High: meta.fiftyTwoWeekHigh ?? null,
         week52Low:  meta.fiftyTwoWeekLow  ?? null,
-        closes:  closes.filter((_, i) => valid[i]),
-        highs:   highs.filter((_, i)  => valid[i]),
-        lows:    lows.filter((_, i)   => valid[i]),
+        timestamps: timestamps.filter((_, i) => valid[i]),
+        opens:   opens.filter((_, i)   => valid[i]),
+        closes:  closes.filter((_, i)  => valid[i]),
+        highs:   highs.filter((_, i)   => valid[i]),
+        lows:    lows.filter((_, i)    => valid[i]),
         volumes: volumes.filter((_, i) => valid[i]),
       }
     } catch (err) {
@@ -524,7 +528,7 @@ async function processStock(item, quotes, benchmarkReturns, index, total) {
 
   console.log(`✓  ${price.toFixed(1).padStart(8)}  rsi=${String(rsi ?? '?').padEnd(5)}  pe=${String(quote.peRatio ?? '—').padEnd(6)}  ${quote.analystGrade ?? '—'}`)
 
-  return {
+  const record = {
     type:             'stock',
     ticker:           item.ticker,
     name:             item.name,
@@ -549,6 +553,22 @@ async function processStock(item, quotes, benchmarkReturns, index, total) {
     volumeSignal:     vol.signal,
     volumeRatio:      vol.ratio,
   }
+
+  // Save per-stock OHLCV for price chart
+  if (data.timestamps?.length) {
+    const ohlcv = data.timestamps.map((ts, i) => ({
+      time:   new Date(ts * 1000).toISOString().slice(0, 10),
+      open:   parseFloat((data.opens[i] ?? data.closes[i]).toFixed(2)),
+      high:   parseFloat(data.highs[i].toFixed(2)),
+      low:    parseFloat(data.lows[i].toFixed(2)),
+      close:  parseFloat(data.closes[i].toFixed(2)),
+      volume: data.volumes[i] ?? 0,
+    }))
+    const safe = item.ticker.replace(/[^a-zA-Z0-9._-]/g, '_')
+    await writeFile(join(STOCKS_DIR, `${safe}.json`), JSON.stringify(ohlcv))
+  }
+
+  return record
 }
 
 async function processEtf(item, index, total) {
@@ -602,6 +622,9 @@ async function processEtf(item, index, total) {
 async function main() {
   console.log(`Boursee Screener Update — ${STOCKS.length} stocks · ${ETFS.length} ETFs`)
 
+  if (!existsSync(join(ROOT, 'data'))) await mkdir(join(ROOT, 'data'), { recursive: true })
+  if (!existsSync(STOCKS_DIR)) await mkdir(STOCKS_DIR, { recursive: true })
+
   console.log('\nFetching benchmark returns...')
   const benchmarkReturns = await fetchBenchmarkReturns()
   const benchmarkSummary = Object.entries(benchmarkReturns).map(([k, v]) => `${k}=${v != null ? v.toFixed(1)+'%' : '?'}`).join(' · ')
@@ -642,6 +665,7 @@ async function main() {
   }
 
   if (!existsSync(join(ROOT, 'data'))) await mkdir(join(ROOT, 'data'), { recursive: true })
+  if (!existsSync(STOCKS_DIR)) await mkdir(STOCKS_DIR, { recursive: true })
   await writeFile(OUTPUT, JSON.stringify(output, null, 2), 'utf8')
   console.log(`\n✓ ${stockResults.length} stocks · ${etfResults.length} ETFs · ${failed} failed → data/screener.json`)
 }

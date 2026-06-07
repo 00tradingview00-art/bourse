@@ -1,8 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { readFile } from 'fs/promises'
+import { join } from 'path'
 import Navbar from '@/app/components/Navbar'
 import Footer from '@/app/components/Footer'
+import PriceChart, { type OHLCVBar } from '@/app/components/PriceChart'
 import screenerData from '@/data/screener.json'
 
 type Params = { ticker: string }
@@ -115,6 +118,14 @@ export default async function StockDetailPage({ params }: { params: Promise<Para
 
   const changePositive = (change ?? 0) >= 0
 
+  // Load per-stock OHLCV for price chart
+  let ohlcv: OHLCVBar[] = []
+  try {
+    const safe = ticker.replace(/[^a-zA-Z0-9._-]/g, '_')
+    const raw  = await readFile(join(process.cwd(), 'data', 'stocks', `${safe}.json`), 'utf8')
+    ohlcv = JSON.parse(raw)
+  } catch { /* no chart data yet */ }
+
   // Sector peers — same sector, different ticker, up to 5
   const peers = allStocks
     .filter(p => p.sector === sector && p.ticker !== ticker)
@@ -169,6 +180,9 @@ export default async function StockDetailPage({ params }: { params: Promise<Para
         </div>
 
         <div style={{ maxWidth: '960px', margin: '0 auto', padding: '32px 32px 96px' }}>
+
+          {/* Price chart */}
+          <PriceChart data={ohlcv} currentPrice={price} />
 
           {/* Key metrics strip */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px', marginBottom: '28px' }}>
