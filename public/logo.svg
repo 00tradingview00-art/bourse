@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 228 44" role="img" aria-label="Boursee">
+  <!-- ── Icon mark ─────────────────────────────────────────────── -->
+  <rect x="0" y="2" width="40" height="40" rx="7" fill="#1a4a2e"/>
+  <!-- Baseline rule -->
+  <line x1="6" y1="34" x2="34" y2="34" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+  <!-- Rising market line -->
+  <polyline
+    points="7,32 11,27 15,29 21,20 29,15"
+    stroke="white"
+    stroke-width="2.2"
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <!-- Live dot: accent green ring + white center -->
+  <circle cx="29" cy="15" r="3" fill="#4ade80"/>
+  <circle cx="29" cy="15" r="1.4" fill="white"/>
+
+  <!-- ── Wordmark ────────────────────────────────────────────── -->
+  <text
+    x="52"
+    y="32"
+    font-family="'Libre Baskerville', Georgia, 'Times New Roman', serif"
+    font-size="23"
+    font-weight="700"
+    fill="#0d1f18"
+    letter-spacing="-0.5"
+  >Boursee<tspan fill="#1a4a2e">.</tspan></text>
+</svg>

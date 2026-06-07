@@ -5,10 +5,21 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'Boursee — European Market Intelligence',
   description: 'Independent daily research on Euronext, DAX, FTSE and the ECB. Delivered at 6:30 AM CET. For the 400 million Europeans who invest.',
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+  },
   openGraph: {
     title: 'Boursee — European Market Intelligence',
-    description: 'Independent daily research on Euronext, DAX, FTSE and the ECB.',
+    description: 'Independent daily research on Euronext, DAX, FTSE and the ECB. For the 400 million Europeans who invest.',
     type: 'website',
+    images: [{ url: '/og-image.svg', width: 1200, height: 630, alt: 'Boursee — European Market Intelligence' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Boursee — European Market Intelligence',
+    description: 'Independent daily research on Euronext, DAX, FTSE and the ECB.',
+    images: ['/og-image.svg'],
   },
 }
 
