@@ -65,7 +65,7 @@ export default function MarketPulse({ markets, timestamp, ecbRate, eurUsd, brent
 
   return (
     <section style={{ background: '#fff', borderBottom: '1px solid var(--border)' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 32px 0' }}>
+      <div className="mob-px" style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 32px 0' }}>
 
         {/* Header row */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '8px' }}>
@@ -79,7 +79,7 @@ export default function MarketPulse({ markets, timestamp, ecbRate, eurUsd, brent
         </div>
 
         {/* Index grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '1px', background: 'var(--border)', border: '1px solid var(--border)', borderRadius: '4px 4px 0 0', overflow: 'hidden' }}>
+        <div className="mob-3col mob-sm-2col" style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '1px', background: 'var(--border)', border: '1px solid var(--border)', borderRadius: '4px 4px 0 0', overflow: 'hidden' }}>
           {markets.map(m => {
             const status  = statuses[m.name] ?? 'closed'
             const isUp    = m.direction === 'up'

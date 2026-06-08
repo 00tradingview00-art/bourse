@@ -46,12 +46,12 @@ export default async function Home() {
 
       {/* Today's intelligence: brief + movers */}
       <section style={{ background: 'var(--paper)', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 32px' }}>
+        <div className="mob-px" style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 32px' }}>
           <div style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.13em', textTransform: 'uppercase', color: 'var(--accent-mid)', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ width: '20px', height: '1px', background: 'var(--accent-mid)', display: 'inline-block' }} />
             Today's Intelligence
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '28px', alignItems: 'start' }}>
+          <div className="mob-stack mob-gap-sm" style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '28px', alignItems: 'start' }}>
             <TodaysBrief brief={todaysBrief} />
             <MarketMovers />
           </div>

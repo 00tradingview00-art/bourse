@@ -5,7 +5,7 @@ import { FEATURES } from '@/lib/data'
 
 export default function FeaturesGrid() {
   return (
-    <section style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 32px' }}>
+    <section className="mob-p-sm" style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 32px' }}>
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '48px', flexWrap: 'wrap', gap: '16px' }}>
         <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(28px, 3vw, 36px)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1, maxWidth: '480px' }}>
           Not just news.<br />Intelligence.
@@ -15,7 +15,7 @@ export default function FeaturesGrid() {
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: 'var(--border)', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden' }}>
+      <div className="mob-stack" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: 'var(--border)', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden' }}>
         {FEATURES.map((f) => {
           const inner = (
             <div

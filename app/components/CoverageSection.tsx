@@ -10,8 +10,8 @@ interface Props {
 
 export default function CoverageSection({ markets, brent }: Props) {
   return (
-    <section id="coverage" style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 32px' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
+    <section id="coverage" className="mob-p-sm" style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 32px' }}>
+      <div className="mob-stack mob-gap-sm" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
         {/* Left */}
         <div>
           <div style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--accent-mid)', marginBottom: '16px' }}>

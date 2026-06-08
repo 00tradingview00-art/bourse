@@ -80,7 +80,7 @@ export default async function ScreenerTeaser() {
 
   return (
     <section style={{ background: 'var(--paper-2)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '48px 0' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 32px' }}>
+      <div className="mob-px" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 32px' }}>
 
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
@@ -99,7 +99,7 @@ export default async function ScreenerTeaser() {
         </div>
 
         {/* Two-column movers grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+        <div className="mob-stack mob-gap-sm" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
 
           {/* Gainers */}
           <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden', borderTop: '3px solid #16a34a' }}>

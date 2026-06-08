@@ -41,7 +41,7 @@ export default function Navbar() {
 
   return (
     <nav style={{ borderBottom: '1px solid var(--border)', background: 'var(--paper)', position: 'sticky', top: 0, zIndex: 50 }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 32px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="mob-nav-px" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 32px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 
         {/* Logo */}
         <Link href="/" style={{ fontFamily: 'var(--serif)', fontSize: '22px', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.02em', textDecoration: 'none' }}>
@@ -143,22 +143,22 @@ export default function Navbar() {
           >
             Subscribe Free
           </a>
-
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMobileOpen(o => !o)}
-            style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: 'var(--ink)' }}
-            aria-label="Toggle menu"
-            className="mobile-hamburger"
-          >
-            {mobileOpen ? '✕' : '☰'}
-          </button>
         </div>
+
+        {/* Mobile hamburger — outside desktop-nav so it is visible when desktop-nav is hidden */}
+        <button
+          onClick={() => setMobileOpen(o => !o)}
+          style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', padding: '8px', color: 'var(--ink)', fontSize: '20px', lineHeight: 1 }}
+          aria-label="Toggle menu"
+          className="mobile-hamburger"
+        >
+          {mobileOpen ? '✕' : '☰'}
+        </button>
       </div>
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div style={{ borderTop: '1px solid var(--border)', background: '#fff', padding: '16px 32px 24px' }}>
+        <div style={{ borderTop: '1px solid var(--border)', background: '#fff', padding: '16px 20px 24px' }}>
           {[
             { label: 'Market Overview', href: '/#markets' },
             { label: 'Stock Screener', href: '/screener' },
