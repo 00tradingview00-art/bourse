@@ -261,6 +261,38 @@ const BENCHMARKS = {
   OMX:      '^OMX',
 }
 
+// ── Yahoo Finance crumb auth ──────────────────────────────────────
+let yahooCrumb  = null
+let yahooCookie = null
+
+async function fetchYahooCrumb() {
+  try {
+    const res1 = await fetch('https://fc.yahoo.com/', {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' },
+      signal: AbortSignal.timeout(10000),
+      redirect: 'follow',
+    })
+    const rawCookie = res1.headers.getSetCookie?.()?.join('; ') ?? res1.headers.get('set-cookie') ?? ''
+    const cookie = rawCookie.split(/;\s*(?=[A-Za-z])/).map(c => c.split(';')[0]).join('; ')
+
+    const res2 = await fetch('https://query1.finance.yahoo.com/v1/test/getcrumb', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        Cookie: cookie,
+        Accept: 'text/plain',
+      },
+      signal: AbortSignal.timeout(10000),
+    })
+    const crumb = (await res2.text()).trim()
+    if (crumb && crumb.length > 0 && !crumb.includes('<')) {
+      yahooCrumb  = crumb
+      yahooCookie = cookie
+      return true
+    }
+  } catch { /* crumb fetch failed — will run without fundamentals */ }
+  return false
+}
+
 // ── Helpers ───────────────────────────────────────────────────────
 const delay = ms => new Promise(r => setTimeout(r, ms))
 
@@ -338,8 +370,12 @@ async function fetchHistory(ticker) {
         prevClose:  n >= 2 ? filteredCloses[n - 2] : meta.chartPreviousClose,
         dailyChange,
         dailyChangePct,
-        week52High: meta.fiftyTwoWeekHigh ?? null,
-        week52Low:  meta.fiftyTwoWeekLow  ?? null,
+        week52High:    meta.fiftyTwoWeekHigh ?? null,
+        week52Low:     meta.fiftyTwoWeekLow  ?? null,
+        // fundamentals from chart meta (fallback when v7/quote is unavailable)
+        trailingPE:    meta.trailingPE  ?? null,
+        marketCapB:    meta.marketCap   ? parseFloat((meta.marketCap / 1e9).toFixed(1)) : null,
+        dividendYield: meta.dividendYield ? parseFloat((meta.dividendYield * 100).toFixed(2)) : null,
         timestamps: timestamps.filter((_, i) => valid[i]),
         opens:   opens.filter((_, i)   => valid[i]),
         closes:  filteredCloses,
@@ -356,24 +392,24 @@ async function fetchHistory(ticker) {
 }
 
 async function fetchQuoteBatch(tickers) {
-  const syms = tickers.map(t => encodeURIComponent(t)).join(',')
-  const url  = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${syms}`
+  const syms       = tickers.map(t => encodeURIComponent(t)).join(',')
+  const crumbParam = yahooCrumb ? `&crumb=${encodeURIComponent(yahooCrumb)}` : ''
+  const url        = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${syms}${crumbParam}`
+  const headers    = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+    Accept: 'application/json',
+  }
+  if (yahooCookie) headers.Cookie = yahooCookie
   try {
-    const res = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        Accept: 'application/json',
-      },
-      signal: AbortSignal.timeout(15000),
-    })
+    const res = await fetch(url, { headers, signal: AbortSignal.timeout(15000) })
     if (!res.ok) return {}
     const json = await res.json()
     const result = {}
     for (const q of (json?.quoteResponse?.result ?? [])) {
       result[q.symbol] = {
-        peRatio:       q.trailingPE       ? parseFloat(q.trailingPE.toFixed(1))            : null,
-        dividendYield: q.dividendYield    ? parseFloat((q.dividendYield * 100).toFixed(2)) : null,
-        marketCapB:    q.marketCap        ? parseFloat((q.marketCap / 1e9).toFixed(1))     : null,
+        peRatio:       q.trailingPE                  ? parseFloat(q.trailingPE.toFixed(1))                           : null,
+        dividendYield: q.trailingAnnualDividendYield ? parseFloat((q.trailingAnnualDividendYield * 100).toFixed(2))  : null,
+        marketCapB:    q.marketCap                   ? parseFloat((q.marketCap / 1e9).toFixed(1))                    : null,
         analystGrade:  mapAnalyst(q.recommendationKey),
         week52High:    q.fiftyTwoWeekHigh ?? null,
         week52Low:     q.fiftyTwoWeekLow  ?? null,
@@ -546,9 +582,9 @@ async function processStock(item, quotes, benchmarkReturns, index, total) {
     price:            parseFloat(price.toFixed(2)),
     change:           parseFloat(change.toFixed(2)),
     changePct,
-    peRatio:          quote.peRatio       ?? null,
-    dividendYield:    quote.dividendYield ?? null,
-    marketCapB:       quote.marketCapB    ?? null,
+    peRatio:          quote.peRatio       ?? data.trailingPE    ?? null,
+    dividendYield:    quote.dividendYield ?? data.dividendYield ?? null,
+    marketCapB:       quote.marketCapB    ?? data.marketCapB    ?? null,
     analystGrade:     quote.analystGrade  ?? null,
     week52High:       data.week52High     ?? null,
     week52Low:        data.week52Low      ?? null,
@@ -648,6 +684,10 @@ async function main() {
 
   if (!existsSync(join(ROOT, 'data'))) await mkdir(join(ROOT, 'data'), { recursive: true })
   if (!existsSync(STOCKS_DIR)) await mkdir(STOCKS_DIR, { recursive: true })
+
+  console.log('\nFetching Yahoo Finance crumb...')
+  const hasCrumb = await fetchYahooCrumb()
+  console.log(`  Crumb: ${hasCrumb ? `✓ (${yahooCrumb?.slice(0, 8)}...)` : '✗ — fundamentals will fall back to chart meta'}`)
 
   console.log('\nFetching benchmark returns...')
   const benchmarkReturns = await fetchBenchmarkReturns()
