@@ -266,35 +266,32 @@ let yahooCrumb  = null
 let yahooCookie = null
 
 const CRUMB_VALID = /^[A-Za-z0-9._/=-]{6,30}$/
+const UA_CHART    = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+const UA_CRUMB    = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 
 async function fetchYahooCrumb() {
-  const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-  // Try multiple cookie sources — fc.yahoo.com is GDPR consent gate, sometimes returns 429 body
-  const cookieSources = ['https://finance.yahoo.com/', 'https://fc.yahoo.com/']
-  for (const src of cookieSources) {
-    try {
-      const res1 = await fetch(src, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(10000), redirect: 'follow' })
-      const rawCookie = res1.headers.getSetCookie?.()?.join('; ') ?? res1.headers.get('set-cookie') ?? ''
-      if (!rawCookie) continue
-      const cookie = rawCookie.split(/;\s*(?=[A-Za-z])/).map(c => c.split(';')[0]).join('; ')
+  // Single lightweight attempt — avoid hitting multiple endpoints which triggers rate limiting
+  try {
+    const res1 = await fetch('https://fc.yahoo.com/', {
+      headers: { 'User-Agent': UA_CRUMB },
+      signal: AbortSignal.timeout(8000),
+      redirect: 'follow',
+    })
+    const rawCookie = res1.headers.getSetCookie?.()?.join('; ') ?? res1.headers.get('set-cookie') ?? ''
+    if (!rawCookie) return false
+    const cookie = rawCookie.split(/;\s*(?=[A-Za-z])/).map(c => c.split(';')[0]).join('; ')
 
-      // Try both query servers
-      for (const host of ['https://query2.finance.yahoo.com', 'https://query1.finance.yahoo.com']) {
-        try {
-          const res2 = await fetch(`${host}/v1/test/getcrumb`, {
-            headers: { 'User-Agent': UA, Cookie: cookie, Accept: 'text/plain' },
-            signal: AbortSignal.timeout(8000),
-          })
-          const crumb = (await res2.text()).trim()
-          if (CRUMB_VALID.test(crumb)) {
-            yahooCrumb  = crumb
-            yahooCookie = cookie
-            return true
-          }
-        } catch { /* try next host */ }
-      }
-    } catch { /* try next source */ }
-  }
+    const res2 = await fetch('https://query1.finance.yahoo.com/v1/test/getcrumb', {
+      headers: { 'User-Agent': UA_CRUMB, Cookie: cookie, Accept: 'text/plain' },
+      signal: AbortSignal.timeout(8000),
+    })
+    const crumb = (await res2.text()).trim()
+    if (CRUMB_VALID.test(crumb)) {
+      yahooCrumb  = crumb
+      yahooCookie = cookie
+      return true
+    }
+  } catch { /* crumb unavailable — proceed without */ }
   return false
 }
 
@@ -341,10 +338,7 @@ async function fetchHistory(ticker) {
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
       const res = await fetch(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-          Accept: 'application/json',
-        },
+        headers: { 'User-Agent': UA_CHART, Accept: 'application/json' },
         signal: AbortSignal.timeout(12000),
       })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
@@ -412,10 +406,7 @@ async function fetchQuoteBatch(tickers) {
   const syms       = tickers.map(t => encodeURIComponent(t)).join(',')
   const crumbParam = yahooCrumb ? `&crumb=${encodeURIComponent(yahooCrumb)}` : ''
   const url        = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${syms}${crumbParam}`
-  const headers    = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-    Accept: 'application/json',
-  }
+  const headers    = { 'User-Agent': UA_CRUMB, Accept: 'application/json' }
   if (yahooCookie) headers.Cookie = yahooCookie
   try {
     const res = await fetch(url, { headers, signal: AbortSignal.timeout(15000) })
@@ -453,10 +444,7 @@ async function fetchAllQuotes(tickers) {
 async function fetchQuoteSummary(ticker) {
   const url = `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(ticker)}?modules=summaryDetail,defaultKeyStatistics`
   const crumbParam = yahooCrumb ? `&crumb=${encodeURIComponent(yahooCrumb)}` : ''
-  const headers = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-    Accept: 'application/json',
-  }
+  const headers = { 'User-Agent': UA_CRUMB, Accept: 'application/json' }
   if (yahooCookie) headers.Cookie = yahooCookie
   try {
     const res = await fetch(url + crumbParam, { headers, signal: AbortSignal.timeout(10000) })
