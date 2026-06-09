@@ -30,6 +30,8 @@ jobs:
 
       - name: Fetch market data and compute indicators
         run: node scripts/update-screener.mjs
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
 
       - name: Commit screener data
         id: commit

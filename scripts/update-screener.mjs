@@ -264,6 +264,7 @@ const BENCHMARKS = {
 // ── Yahoo Finance crumb auth ──────────────────────────────────────
 let yahooCrumb  = null
 let yahooCookie = null
+let fmpQuotes   = {}   // PE + market cap from Financial Modeling Prep
 
 const CRUMB_VALID = /^[A-Za-z0-9._/=-]{6,30}$/
 const UA_CHART    = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
@@ -293,6 +294,30 @@ async function fetchYahooCrumb() {
     }
   } catch { /* crumb unavailable — proceed without */ }
   return false
+}
+
+// ── Financial Modeling Prep — PE + market cap ─────────────────────
+// Free tier: 250 req/day. 182 stocks in batches of 50 = 4 calls/day.
+async function fetchFmpQuotes(tickers, apiKey) {
+  const result = {}
+  for (let i = 0; i < tickers.length; i += 50) {
+    const batch = tickers.slice(i, i + 50).join(',')
+    const url   = `https://financialmodelingprep.com/api/v3/quote/${batch}?apikey=${apiKey}`
+    try {
+      const res  = await fetch(url, { signal: AbortSignal.timeout(15000) })
+      if (!res.ok) { console.warn(`  FMP batch ${i/50+1} HTTP ${res.status}`); continue }
+      const data = await res.json()
+      if (!Array.isArray(data)) { console.warn(`  FMP batch ${i/50+1} unexpected response`); continue }
+      for (const q of data) {
+        result[q.symbol] = {
+          peRatio:    q.pe        != null ? parseFloat(q.pe.toFixed(1))              : null,
+          marketCapB: q.marketCap != null ? parseFloat((q.marketCap / 1e9).toFixed(1)) : null,
+        }
+      }
+    } catch (err) { console.warn(`  FMP batch ${i/50+1} error: ${err.message}`) }
+    if (i + 50 < tickers.length) await delay(400)
+  }
+  return result
 }
 
 // ── Helpers ───────────────────────────────────────────────────────
@@ -599,15 +624,14 @@ async function processStock(item, quotes, benchmarkReturns, index, total) {
 
   const quote = quotes[item.ticker] ?? {}
 
-  // Fallback: if batch quote returned no PE/cap, try per-stock quoteSummary
-  let peRatio   = quote.peRatio    ?? data.trailingPE ?? null
-  let marketCapB = quote.marketCapB ?? data.marketCapB ?? null
-  if ((peRatio == null || marketCapB == null) && !yahooCrumb) {
+  const fmp      = fmpQuotes[item.ticker] ?? {}
+  let peRatio    = quote.peRatio    ?? fmp.peRatio    ?? data.trailingPE ?? null
+  let marketCapB = quote.marketCapB ?? fmp.marketCapB ?? data.marketCapB ?? null
+
+  // Last-resort: per-stock quoteSummary (only if Yahoo crumb worked but FMP also failed)
+  if ((peRatio == null || marketCapB == null) && yahooCrumb) {
     const qs = await fetchQuoteSummary(item.ticker)
-    if (qs) {
-      peRatio    ??= qs.peRatio
-      marketCapB ??= qs.marketCapB
-    }
+    if (qs) { peRatio ??= qs.peRatio; marketCapB ??= qs.marketCapB }
     await delay(200)
   }
 
@@ -729,7 +753,16 @@ async function main() {
 
   console.log('\nFetching Yahoo Finance crumb...')
   const hasCrumb = await fetchYahooCrumb()
-  console.log(`  Crumb: ${hasCrumb ? `✓ (${yahooCrumb?.slice(0, 8)}...)` : '✗ — fundamentals will fall back to chart meta'}`)
+  console.log(`  Crumb: ${hasCrumb ? `✓ (${yahooCrumb?.slice(0, 8)}...)` : '✗ — fundamentals will fall back to FMP + chart meta'}`)
+
+  const fmpKey = process.env.FMP_API_KEY
+  if (fmpKey) {
+    console.log(`\nFetching PE + market cap from Financial Modeling Prep (${STOCKS.length} stocks)...`)
+    fmpQuotes = await fetchFmpQuotes(STOCKS.map(s => s.ticker), fmpKey)
+    console.log(`  Got FMP data for ${Object.keys(fmpQuotes).length}/${STOCKS.length} stocks`)
+  } else {
+    console.log('\nFMP_API_KEY not set — PE and market cap unavailable')
+  }
 
   console.log('\nFetching benchmark returns...')
   const benchmarkReturns = await fetchBenchmarkReturns()
