@@ -62,9 +62,9 @@ export default async function MarketMovers() {
     const sig = signalLabel(s)
     const exchangeLabel = s.exchange === 'FTSE_MIB' ? 'FTSE MIB' : s.exchange
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 0', borderBottom: '1px solid var(--border)' }}>
+      <Link href={`/stocks/${s.ticker}`} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 0', borderBottom: '1px solid var(--border)', textDecoration: 'none', color: 'inherit' }}>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontWeight: 600, fontSize: '14px', color: 'var(--ink)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}</div>
+          <div style={{ fontWeight: 600, fontSize: '14px', color: 'var(--accent)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}</div>
           <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '1px' }}>
             <span style={{ fontFamily: 'monospace' }}>{s.ticker}</span>
             <span style={{ marginLeft: '6px', background: 'var(--accent-light)', color: 'var(--accent)', padding: '1px 5px', borderRadius: '2px', fontFamily: 'inherit' }}>{exchangeLabel}</span>
@@ -78,7 +78,7 @@ export default async function MarketMovers() {
             {sig.text}
           </span>
         </div>
-      </div>
+      </Link>
     )
   }
 

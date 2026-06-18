@@ -63,7 +63,7 @@ export default function TodaysBrief({ brief }: Props) {
           {brief.headline}
         </h3>
         <p style={{ fontSize: '13px', color: 'var(--ink-2)', lineHeight: 1.7, marginBottom: '20px' }}>
-          {brief.excerpt}
+          {brief.excerpt.length > 120 ? brief.excerpt.slice(0, 120).trimEnd() + '…' : brief.excerpt}
         </p>
         <a
           href={`/briefs/${brief.slug}`}

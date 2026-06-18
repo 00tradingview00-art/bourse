@@ -58,6 +58,18 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Compact subscribe strip */}
+      <div style={{ background: 'var(--ink)', borderBottom: '1px solid #222', padding: '14px 32px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '13px', color: '#ccc', fontWeight: 500 }}>
+            Get this brief at 6:30 AM CET — free, every weekday.
+          </span>
+          <a href="#subscribe" style={{ fontSize: '12px', fontWeight: 600, color: '#4ade80', textDecoration: 'none', whiteSpace: 'nowrap' }}>
+            Subscribe free →
+          </a>
+        </div>
+      </div>
+
       {/* RSI signal spotlight */}
       <ScreenerTeaser />
 
