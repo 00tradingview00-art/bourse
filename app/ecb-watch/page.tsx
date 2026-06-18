@@ -8,11 +8,12 @@ export const metadata = {
 }
 
 const CURRENT_RATE  = '2.00%'
-const NEXT_MEETING  = { date: '11 June 2026', daysAway: 6, expected: '+25bp', confidence: '~90%' }
+const NEXT_MEETING  = { date: '23 July 2026', daysAway: 35, expected: '+25bp', confidence: '~70%' }
 
 // Last 8 ECB Governing Council rate decisions + upcoming
 const DECISIONS = [
-  { date: '11 Jun 2026', decision: 'Expected +25bp',  rateAfter: '2.25%',  context: 'Inflation re-accelerating; first hike in 14 months',    upcoming: true  },
+  { date: '23 Jul 2026', decision: 'Expected +25bp',  rateAfter: '2.25%',  context: 'Rate path reassessed after June hold; inflation still above target', upcoming: true  },
+  { date: '11 Jun 2026', decision: 'Hold',             rateAfter: '2.00%',  context: 'Paused amid lower energy prices and global demand uncertainty',       upcoming: false },
   { date: '9 Apr 2026',  decision: 'Hold',             rateAfter: '2.00%',  context: 'Pause to assess 5× cuts since Sep 2025',                upcoming: false },
   { date: '5 Mar 2026',  decision: '−25bp',            rateAfter: '2.00%',  context: 'Fifth consecutive cut; neutral rate approached',         upcoming: false },
   { date: '29 Jan 2026', decision: '−25bp',            rateAfter: '2.25%',  context: 'Cutting cycle continues as HICP cools toward target',    upcoming: false },
@@ -25,19 +26,18 @@ const DECISIONS = [
 
 // Remaining 2026 meeting schedule
 const SCHEDULE_2026 = [
-  { date: '11 Jun 2026', note: 'Press conference · Rate decision expected' },
-  { date: '23 Jul 2026', note: 'Policy review session' },
+  { date: '23 Jul 2026', note: 'Press conference · Rate decision expected' },
   { date: '10 Sep 2026', note: 'Updated staff projections' },
   { date: '22 Oct 2026', note: 'Interim meeting' },
   { date: '10 Dec 2026', note: 'Year-end projections' },
 ]
 
 const WATCH_FACTORS = [
-  { label: 'Eurozone HICP', value: '~2.6%', note: 'Above 2% target; core services elevated' },
-  { label: 'Wage growth', value: '~4.1%', note: 'Slowing but still incompatible with 2% price stability' },
-  { label: 'EUR/USD', value: '1.16+', note: 'Stronger euro provides disinflationary impulse' },
-  { label: 'Brent crude', value: '~$95', note: 'Energy re-acceleration adds upside risk to HICP' },
-  { label: 'PMI Composite', value: '51.2', note: 'Modest expansion; labour market still resilient' },
+  { label: 'Eurozone HICP', value: '~2.4%', note: 'Edging toward target; core services still elevated' },
+  { label: 'Wage growth', value: '~3.8%', note: 'Gradual cooling but still above levels consistent with 2% inflation' },
+  { label: 'EUR/USD', value: '1.16', note: 'Firm euro provides modest disinflationary impulse on imports' },
+  { label: 'Brent crude', value: '~$77', note: 'Energy prices well off peak; dampens HICP upside risk' },
+  { label: 'PMI Composite', value: '51.5', note: 'Steady expansion; no recession signal to deter hike' },
 ]
 
 export default function ECBWatchPage() {
@@ -131,7 +131,7 @@ export default function ECBWatchPage() {
               {/* What to watch */}
               <div>
                 <h2 style={{ fontFamily: 'var(--serif)', fontSize: '20px', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.01em', marginBottom: '16px' }}>
-                  What to Watch — Jun 11
+                  What to Watch — Jul 23
                 </h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {WATCH_FACTORS.map(f => (

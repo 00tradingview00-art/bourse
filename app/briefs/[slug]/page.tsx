@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getBriefSlugs, fetchBriefs } from '@/lib/fetchBriefs'
@@ -9,6 +10,20 @@ export const dynamicParams = false
 export async function generateStaticParams() {
   const slugs = getBriefSlugs()
   return slugs.map(slug => ({ slug }))
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  try {
+    const mod = await import(`@/content/briefs/${slug}.mdx`)
+    const metadata = mod.metadata as BriefMetadata
+    return {
+      title: `${metadata.headline} | Boursee`,
+      description: metadata.excerpt,
+    }
+  } catch {
+    return { title: 'Daily Brief | Boursee' }
+  }
 }
 
 const TAG_STYLES: Record<string, React.CSSProperties> = {

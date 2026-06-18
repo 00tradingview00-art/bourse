@@ -56,6 +56,12 @@ const INDEX_MAP: Record<string, {
     description: 'The 40 most liquid companies on Borsa Italiana.',
     about: 'The FTSE MIB is the principal Italian equity index, representing approximately 80% of total domestic market capitalisation. It covers the 40 most liquid and capitalised companies on Borsa Italiana. Financials and Utilities dominate the index weighting.',
   },
+  'omx': {
+    exchange: 'OMX', name: 'OMX 30', flag: '🇸🇪',
+    country: 'Sweden / Nordic', city: 'Stockholm', venue: 'Nasdaq Nordic',
+    description: 'The 30 most actively traded share classes on Nasdaq Stockholm.',
+    about: 'The OMX Stockholm 30 (OMXS30) is the benchmark index for Nordic equities, comprising the 30 most traded share classes on Nasdaq Stockholm. The index is reviewed twice a year. Industrials, Financials, and Technology dominate, with major constituents including Atlas Copco, Ericsson, and Volvo.',
+  },
 }
 
 export function generateStaticParams() {

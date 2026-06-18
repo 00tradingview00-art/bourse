@@ -27,8 +27,8 @@ export const ECB_STATIC: MarketData = {
   ticker: '',
   value: '2.00%',
   change: 'Jun 11',
-  changePct: '▲ +25bp',
-  direction: 'up',
+  changePct: '↔ Hold',
+  direction: 'flat',
 }
 
 async function fetchYFChart(symbol: string, v7 = false): Promise<Record<string, unknown> | null> {
