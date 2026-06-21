@@ -24,6 +24,11 @@ const GUIDE_SLUGS = [
   'french-pea',
   'dividend-withholding-tax',
   'broker-comparison',
+  'what-is-ucits',
+  'etf-accumulating-vs-distributing',
+  'ecb-interest-rates-explained',
+  'european-indices-explained',
+  'bond-yields-and-stocks',
 ]
 
 const INDEX_SLUGS = ['aex', 'dax', 'cac-40', 'ftse-100', 'ibex-35', 'ftse-mib', 'omx']
