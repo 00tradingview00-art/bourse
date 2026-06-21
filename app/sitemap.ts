@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { getBriefSlugs } from '@/lib/fetchBriefs'
+import { getFlashSlugs } from '@/lib/fetchFlash'
 import screenerData from '@/data/screener.json'
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://boursee.com'
@@ -16,6 +17,7 @@ const STATIC_SECTIONS = [
   { path: '/calculators', priority: 0.7, freq: 'monthly' },
   { path: '/brokers',     priority: 0.6, freq: 'monthly' },
   { path: '/about',       priority: 0.7, freq: 'monthly' },
+  { path: '/flash',       priority: 0.9, freq: 'hourly'  },
 ] as const
 
 const GUIDE_SLUGS = [
@@ -83,6 +85,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.3,
   }))
 
+  const flashUrls: MetadataRoute.Sitemap = getFlashSlugs().map(slug => ({
+    url: `${BASE}/flash/${slug}`,
+    changeFrequency: 'never' as const,
+    priority: 0.7,
+  }))
+
   return [
     { url: BASE, lastModified: new Date(), changeFrequency: 'daily', priority: 1.0 },
     { url: `${BASE}/briefs`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
@@ -90,6 +98,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...indexUrls,
     ...briefUrls,
     ...guideUrls,
+    ...flashUrls,
     ...stockUrls,
     ...legalUrls,
   ]

@@ -95,6 +95,7 @@ export default function Navbar() {
               <>
                 <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, height: '8px' }} />
                 <div style={DROPDOWN_STYLE}>
+                  <DropdownItem href="/flash"       label="Flash Intelligence" />
                   <DropdownItem href="/"            label="Today's Brief" />
                   <DropdownItem href="/briefs"      label="Brief Archive" />
                   <DropdownItem href="/guides"      label="Investor Guides" />
@@ -169,6 +170,7 @@ export default function Navbar() {
             { label: 'Broker Comparison', href: '/brokers' },
             { label: 'ECB Watch', href: '/ecb-watch' },
             { label: 'Search', href: '/search' },
+            { label: 'Flash Intelligence', href: '/flash' },
             { label: "Today's Brief", href: '/' },
             { label: 'Brief Archive', href: '/briefs' },
             { label: 'Investor Guides', href: '/guides' },
