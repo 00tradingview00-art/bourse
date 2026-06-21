@@ -8,6 +8,28 @@ export const metadata: Metadata = {
   description: 'How dividend withholding tax works across Europe: Netherlands 15%, Germany 25%, France 12.8%, Italy 26%, Spain 19%. Impact on UCITS ETFs and which domicile minimises your tax drag.',
 }
 
+const FAQ_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is dividend withholding tax on ETFs?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Dividend withholding tax (WHT) is a tax withheld at source when a company pays a dividend. For ETF investors, it reduces the dividend income passed through by the fund. The rate depends on the country where the dividend-paying company is domiciled, the ETF\'s domicile, and any applicable tax treaties.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which ETF domicile has the lowest withholding tax — Ireland or Luxembourg?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Ireland is generally better for US dividends: Ireland has a 15% WHT treaty with the US (vs 30% for Luxembourg), so Irish-domiciled ETFs holding US stocks (S&P 500, MSCI World) retain more dividend income. For European dividends, the difference is smaller but Ireland still tends to be more tax-efficient due to broader treaty networks.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do accumulating ETFs avoid dividend withholding tax?',
+      acceptedAnswer: { '@type': 'Answer', text: 'No. Accumulating ETFs still receive dividends from the underlying stocks — these are subject to withholding tax at the ETF level. The tax drag is the same whether the ETF distributes or reinvests the income. The advantage of accumulating ETFs is that you avoid personal income tax on distributions in your home country, not the underlying WHT.' },
+    },
+  ],
+}
+
 function Callout({ type, children }: { type: 'insight' | 'warning' | 'tip'; children: React.ReactNode }) {
   const styles = {
     insight: { bg: '#f0f7ff', border: '#bcd6f5', label: 'Key insight', labelColor: '#1a6bc4' },
@@ -38,6 +60,7 @@ const RATES = [
 export default function DividendWithholdingTaxGuide() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_LD) }} />
       <Navbar />
       <main style={{ background: 'var(--paper)', minHeight: '80vh' }}>
 

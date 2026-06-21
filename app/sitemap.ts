@@ -15,6 +15,7 @@ const STATIC_SECTIONS = [
   { path: '/guides',      priority: 0.8, freq: 'monthly' },
   { path: '/calculators', priority: 0.7, freq: 'monthly' },
   { path: '/brokers',     priority: 0.6, freq: 'monthly' },
+  { path: '/about',       priority: 0.7, freq: 'monthly' },
 ] as const
 
 const GUIDE_SLUGS = [

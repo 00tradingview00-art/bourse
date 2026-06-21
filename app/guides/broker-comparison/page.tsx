@@ -8,6 +8,28 @@ export const metadata: Metadata = {
   description: 'Honest comparison of DEGIRO, Trade Republic, and Scalable Capital for European ETF investors. Costs, ETF selection, tax reporting, and which broker suits which investor type.',
 }
 
+const FAQ_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Is DEGIRO good for European ETF investing?',
+      acceptedAnswer: { '@type': 'Answer', text: 'DEGIRO is one of the most cost-effective brokers for European ETF investors. It offers a Core Selection of commission-free ETFs (one free trade per ETF per month) and access to all major European exchanges. DEGIRO charges €1 + 0.038% for trades outside the Core Selection. It does not offer a tax-exempt wrapper like a German Depot with automatic Freistellungsauftrag processing, so German investors should confirm their tax setup.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'How does Trade Republic compare to DEGIRO?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Trade Republic charges €1 flat per trade (stocks and ETFs) and offers a 4% interest rate on uninvested cash (subject to change). It has a simpler interface and is better for beginners and mobile-first investors. DEGIRO has broader ETF selection and exchange access. For German investors, Trade Republic handles Freistellungsauftrag and Vorabpauschale automatically, which is a significant operational advantage.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which broker is best for Dutch investors?',
+      acceptedAnswer: { '@type': 'Answer', text: 'For Dutch investors, DEGIRO (headquartered in the Netherlands, regulated by AFM) and Trade Republic are both strong choices. DEGIRO\'s Core Selection ETFs are commission-free and it offers access to Euronext Amsterdam. Neither broker provides a tax-advantaged wrapper (the Netherlands has no equivalent to the German Depot or French PEA). Box 3 tax applies to all holdings regardless of broker.' },
+    },
+  ],
+}
+
 function Callout({ type, children }: { type: 'insight' | 'warning' | 'tip'; children: React.ReactNode }) {
   const styles = {
     insight: { bg: '#f0f7ff', border: '#bcd6f5', label: 'Key insight', labelColor: '#1a6bc4' },
@@ -70,6 +92,7 @@ const VERDICTS = [
 export default function BrokerComparisonGuide() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_LD) }} />
       <Navbar />
       <main style={{ background: 'var(--paper)', minHeight: '80vh' }}>
 

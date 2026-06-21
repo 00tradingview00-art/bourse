@@ -8,6 +8,33 @@ export const metadata: Metadata = {
   description: 'How the Dutch Box 3 wealth tax works in 2025–2026, what it means for your ETF portfolio, why accumulating and distributing ETFs are taxed identically, and what changes in 2028.',
 }
 
+const FAQ_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is Dutch Box 3 tax?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Box 3 is the Dutch wealth tax on savings and investments. Rather than taxing actual returns, the Dutch tax authority (Belastingdienst) applies a notional (fictitious) return to your net assets above the threshold, and taxes that notional return at 36%. In 2025, the threshold is €57,684 per person.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Are accumulating ETFs taxed differently than distributing ETFs in Box 3?',
+      acceptedAnswer: { '@type': 'Answer', text: 'No. Box 3 taxes the market value of your ETF holdings on 1 January regardless of whether dividends were paid or reinvested. Accumulating and distributing ETFs receive identical Box 3 treatment — the structure of the fund makes no difference.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'When does the Dutch Box 3 reform take effect?',
+      acceptedAnswer: { '@type': 'Answer', text: 'The Dutch government plans to replace the notional return system with an actual return system from 2028. Under the proposed reform, you would pay 36% tax on real investment gains (capital gains + dividends) rather than on a notional rate. The current system remains in force for 2025 and 2026. The reform has been revised multiple times and is not yet law.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does the 30% ruling exclude my ETFs from Box 3?',
+      acceptedAnswer: { '@type': 'Answer', text: 'If you are under the 30% ruling and elect partial non-residency status on your tax return, Box 3 applies only to Dutch-situated assets. Foreign-held ETF portfolios (e.g., VWCE on Xetra, IWDA on Euronext) are excluded from Box 3 entirely. This election is not automatic — it must be made annually on your tax return.' },
+    },
+  ],
+}
+
 function Callout({ type, children }: { type: 'insight' | 'warning' | 'tip'; children: React.ReactNode }) {
   const styles = {
     insight: { bg: '#f0f7ff', border: '#bcd6f5', label: 'Key insight', labelColor: '#1a6bc4' },
@@ -30,6 +57,7 @@ function SectionDivider() {
 export default function DutchBox3Guide() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_LD) }} />
       <Navbar />
       <main style={{ background: 'var(--paper)', minHeight: '80vh' }}>
 
@@ -237,6 +265,16 @@ export default function DutchBox3Guide() {
             <Link href="/calculators/dutch-box-3" style={{ background: 'var(--accent)', color: '#fff', padding: '10px 20px', borderRadius: '4px', textDecoration: 'none', fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap' }}>
               Open calculator →
             </Link>
+          </div>
+
+          {/* Related guides */}
+          <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>
+            <div style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: '12px' }}>Related guides</div>
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', fontSize: '13px' }}>
+              <Link href="/guides/german-vorabpauschale" style={{ color: 'var(--accent)', textDecoration: 'none' }}>German Vorabpauschale →</Link>
+              <Link href="/guides/dividend-withholding-tax" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Dividend Withholding Tax →</Link>
+              <Link href="/guides/broker-comparison" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Broker Comparison →</Link>
+            </div>
           </div>
 
           {/* Disclaimer */}

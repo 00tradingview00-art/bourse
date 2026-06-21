@@ -8,6 +8,33 @@ export const metadata: Metadata = {
   description: 'The German Vorabpauschale for 2026 uses a base rate of 3.20%. Learn how the annual pre-tax on accumulating ETFs is calculated, how much you actually owe, and how to use your Freistellungsauftrag.',
 }
 
+const FAQ_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the German Vorabpauschale?',
+      acceptedAnswer: { '@type': 'Answer', text: 'The Vorabpauschale is a German advance flat-rate tax on accumulating ETFs. Because accumulating ETFs reinvest dividends rather than distributing them, Germany imposes an annual tax based on a notional return (Basisertrag) calculated from the official base rate (Basiszins). The tax is deducted from your broker account in January each year.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'How is the Vorabpauschale calculated for 2026?',
+      acceptedAnswer: { '@type': 'Answer', text: 'The 2026 Vorabpauschale uses a base rate (Basiszins) of 3.20% published by the BMF. The Basisertrag = fund value on 1 January 2025 × 0.70 × 3.20%. For equity ETFs, a 30% Teilfreistellung applies, so the taxable amount is 70% of the Basisertrag. Tax = taxable Basisertrag × 26.375% (capital gains tax + Soli). The taxable amount is capped at the actual fund gain during the year.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the Freistellungsauftrag and how does it reduce Vorabpauschale?',
+      acceptedAnswer: { '@type': 'Answer', text: 'The Freistellungsauftrag is a tax-free allowance of €1,000 per person (€2,000 for couples) for all investment income including Vorabpauschale, dividends, and capital gains. You must submit a Freistellungsauftrag to your German broker to use it. If your total investment income stays below €1,000, you owe no Vorabpauschale or Abgeltungsteuer.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do distributing ETFs pay Vorabpauschale?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Distributing ETFs can also be subject to Vorabpauschale if their distributions in the year are lower than the calculated Basisertrag. If distributions exceed the Basisertrag, no Vorabpauschale is due. In practice, most distributing ETFs with regular dividends avoid Vorabpauschale entirely or pay only a small residual amount.' },
+    },
+  ],
+}
+
 function Callout({ type, children }: { type: 'insight' | 'warning' | 'tip'; children: React.ReactNode }) {
   const styles = {
     insight: { bg: '#f0f7ff', border: '#bcd6f5', label: 'Key insight', labelColor: '#1a6bc4' },
@@ -30,6 +57,7 @@ function SectionDivider() {
 export default function GermanVorabpauschaleGuide() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_LD) }} />
       <Navbar />
       <main style={{ background: 'var(--paper)', minHeight: '80vh' }}>
 
@@ -271,6 +299,16 @@ export default function GermanVorabpauschaleGuide() {
             <Link href="/calculators/german-vorabpauschale" style={{ background: 'var(--accent)', color: '#fff', padding: '10px 20px', borderRadius: '4px', textDecoration: 'none', fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap' }}>
               Open calculator →
             </Link>
+          </div>
+
+          {/* Related guides */}
+          <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>
+            <div style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: '12px' }}>Related guides</div>
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', fontSize: '13px' }}>
+              <Link href="/guides/dutch-box-3" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Dutch Box 3 →</Link>
+              <Link href="/guides/dividend-withholding-tax" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Dividend Withholding Tax →</Link>
+              <Link href="/guides/broker-comparison" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Broker Comparison →</Link>
+            </div>
           </div>
 
           {/* Disclaimer */}

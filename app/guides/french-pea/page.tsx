@@ -8,6 +8,33 @@ export const metadata: Metadata = {
   description: 'The French PEA requires 75% EU/EEA exposure. IWDA and VWCE are not PEA-eligible. IMEU and MEUD are. Learn the rules, how to build a global portfolio inside the PEA, and when to use a CTO instead.',
 }
 
+const FAQ_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is a French PEA?',
+      acceptedAnswer: { '@type': 'Answer', text: 'The Plan d\'Épargne en Actions (PEA) is a French tax-advantaged account for investing in European equities and eligible ETFs. After 5 years, withdrawals are free of income tax — only social contributions (17.2%) apply. The lifetime contribution limit is €150,000 per person.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is IWDA or VWCE PEA eligible?',
+      acceptedAnswer: { '@type': 'Answer', text: 'No. IWDA (iShares Core MSCI World) and VWCE (Vanguard FTSE All-World) are not PEA-eligible because they hold global (non-EU) equities. The PEA requires at least 75% of the fund\'s assets to be invested in EU/EEA companies. IWDA\'s global exposure to US and Asian stocks disqualifies it.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which ETFs are PEA eligible for global exposure?',
+      acceptedAnswer: { '@type': 'Answer', text: 'ETFs that use synthetic replication (swap-based) can be PEA-eligible even if the underlying index is global. Examples include AMUNDI MSCI WORLD UCITS ETF (CW8 or LCWD) and BNP Paribas Easy S&P 500 UCITS ETF (ESE). These funds hold EU-eligible securities directly but swap into global index performance. Always verify eligibility with your French broker.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'What happens if I withdraw from a PEA before 5 years?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Withdrawing before the 5-year mark closes the PEA and triggers 30% flat tax (PFU) on the entire gain. After 5 years, only 17.2% social contributions apply on gains. Because of this, open a PEA as early as possible — even with a small amount — to start the 5-year clock.' },
+    },
+  ],
+}
+
 function Callout({ type, children }: { type: 'insight' | 'warning' | 'tip'; children: React.ReactNode }) {
   const styles = {
     insight: { bg: '#f0f7ff', border: '#bcd6f5', label: 'Key insight', labelColor: '#1a6bc4' },
@@ -37,6 +64,7 @@ const CrossIcon = () => (
 export default function FrenchPEAGuide() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_LD) }} />
       <Navbar />
       <main style={{ background: 'var(--paper)', minHeight: '80vh' }}>
 
@@ -231,8 +259,18 @@ export default function FrenchPEAGuide() {
             </Link>
           </div>
 
+          {/* Related guides */}
+          <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>
+            <div style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: '12px' }}>Related guides</div>
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', fontSize: '13px' }}>
+              <Link href="/guides/dividend-withholding-tax" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Dividend Withholding Tax →</Link>
+              <Link href="/guides/broker-comparison" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Broker Comparison →</Link>
+              <Link href="/guides/dutch-box-3" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Dutch Box 3 →</Link>
+            </div>
+          </div>
+
           {/* Disclaimer */}
-          <div style={{ marginTop: '40px', padding: '16px 20px', background: 'var(--paper-2)', border: '1px solid var(--border)', borderLeft: '3px solid var(--border)', borderRadius: '3px', fontSize: '12px', color: 'var(--ink-3)', lineHeight: 1.65 }}>
+          <div style={{ marginTop: '24px', padding: '16px 20px', background: 'var(--paper-2)', border: '1px solid var(--border)', borderLeft: '3px solid var(--border)', borderRadius: '3px', fontSize: '12px', color: 'var(--ink-3)', lineHeight: 1.65 }}>
             This guide is for informational purposes only. Not personalised tax advice. PEA eligibility is determined by French law (CGI art. 163 quinquies D) and your provider's approved securities list. Rules can change — verify with your French broker or a qualified tax adviser (expert-comptable).
           </div>
         </div>
