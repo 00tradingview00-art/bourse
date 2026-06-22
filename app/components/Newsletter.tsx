@@ -88,7 +88,7 @@ export default function Newsletter() {
         ) : (
           <div style={{ maxWidth: '420px', margin: '0 auto 16px', padding: '16px', background: 'rgba(192,57,43,0.1)', border: '1px solid rgba(192,57,43,0.3)', borderRadius: '3px', color: 'var(--red)', fontSize: '14px' }}>
             Something went wrong. Please try again or email{' '}
-            <a href="mailto:hello@bourse.io" style={{ color: 'inherit', textDecoration: 'underline' }}>hello@bourse.io</a>.
+            <a href="mailto:hello@boursee.com" style={{ color: 'inherit', textDecoration: 'underline' }}>hello@boursee.com</a>.
           </div>
         )}
 

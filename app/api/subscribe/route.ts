@@ -15,11 +15,11 @@ export async function POST(req: NextRequest) {
 
   const apiKey = process.env.BREVO_API_KEY
   const listId = process.env.BREVO_LIST_ID
-  const templateId = process.env.BREVO_DOI_TEMPLATE_ID
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bourse.io'
+  const templateId = process.env.BREVO_DOI_TEMPLATE_ID ?? process.env.BREVO_WELCOME_TEMPLATE_ID
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://boursee.com'
 
   if (!apiKey || !listId || !templateId) {
-    return NextResponse.json({ success: true }, noStore)
+    return NextResponse.json({ error: 'Service unavailable. Please try again.' }, { status: 502, ...noStore })
   }
 
   try {
