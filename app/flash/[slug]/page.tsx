@@ -123,7 +123,7 @@ export default async function FlashArticlePage({ params }: { params: Promise<{ s
           </div>
 
           {/* Article content */}
-          <article>
+          <article className="flash-body">
             <FlashContent />
           </article>
 

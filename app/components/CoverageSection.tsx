@@ -15,13 +15,13 @@ export default function CoverageSection({ markets, brent }: Props) {
         {/* Left */}
         <div>
           <div style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--accent-mid)', marginBottom: '16px' }}>
-            What we cover
+            European exchanges we track
           </div>
           <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(28px, 3vw, 34px)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: '20px' }}>
             Every major<br />European exchange.
           </h2>
           <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.7, marginBottom: '32px' }}>
-            From Amsterdam to Milan, Paris to Oslo — Boursee covers the full breadth of European capital markets in one daily brief and a unified screener. No exchange left behind.
+            From Amsterdam to Milan, Paris to Oslo — Boursee covers the full breadth of European capital markets in one daily brief and a unified screener.
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
             {EXCHANGES.map((ex) => (

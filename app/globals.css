@@ -83,6 +83,22 @@ article p { font-size: 16px; color: var(--ink-2); line-height: 1.75; margin-bott
 article strong { color: var(--ink); font-weight: 600; }
 article a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
 
+/* ── Flash article section labels ───────────────────────────── */
+/* Flash articles use ## What Happened etc. as h2 headings.
+   Override the large serif h2 style with small mono accent labels. */
+.flash-body h2 {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border-top: none;
+  padding-top: 0;
+  margin: 1.75rem 0 6px;
+}
+.flash-body h2:first-of-type { margin-top: 0; }
+
 /* ── Macro–Equity Bridge entries ────────────────────────────── */
 /* Each entry is a <p> inside the bridge section.
    The signal (bold) gets a green pill; the arrow → gets accent colour. */

@@ -8,7 +8,7 @@ export default function FeaturesGrid() {
     <section className="mob-p-sm" style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 32px' }}>
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '48px', flexWrap: 'wrap', gap: '16px' }}>
         <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(28px, 3vw, 36px)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1, maxWidth: '480px' }}>
-          Not just news.<br />Intelligence.
+          Data and context,<br />not just headlines.
         </h2>
         <p style={{ fontSize: '14px', color: 'var(--ink-3)', maxWidth: '280px', lineHeight: 1.6 }}>
           We connect what happens in the world to what moves in your portfolio.

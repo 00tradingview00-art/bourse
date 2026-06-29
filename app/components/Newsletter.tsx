@@ -43,7 +43,7 @@ export default function Newsletter() {
           Your European markets.<br />Every morning.
         </h2>
         <p style={{ fontSize: '15px', color: '#888', lineHeight: 1.6, marginBottom: '32px' }}>
-          Join investors across Europe getting the Boursee Brief — independent market intelligence delivered at 6:30 AM CET before the opening bell.
+          The Boursee Brief — European market intelligence at 6:30 AM CET, before the opening bell.
         </p>
 
         {state === 'idle' || state === 'loading' ? (

@@ -66,7 +66,7 @@ export default function AboutPage() {
           {/* Three pillars */}
           <div style={{ borderTop: '1px solid var(--border)', paddingTop: '40px', marginBottom: '48px' }}>
             <div style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: '28px' }}>
-              What Boursee is built on
+              How Boursee works
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {PRINCIPLES.map(p => (

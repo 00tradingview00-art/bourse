@@ -45,7 +45,7 @@ export default function CalculatorsPage() {
               Tax Calculators
             </h1>
             <p style={{ fontSize: '15px', color: 'var(--ink-3)', maxWidth: '560px', lineHeight: 1.6 }}>
-              Free tools for European investors. All calculations run in your browser — no data is sent to any server.
+              Tax and portfolio tools for European investors. Runs locally — no data leaves your browser.
             </p>
           </div>
         </div>
