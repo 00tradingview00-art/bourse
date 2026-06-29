@@ -265,6 +265,7 @@ const BENCHMARKS = {
 let yahooCrumb  = null
 let yahooCookie = null
 let fmpQuotes   = {}   // PE + market cap from Financial Modeling Prep
+let yahooQuoteSummaryAvailable = false  // probed in main() — quoteSummary works without crumb
 
 const CRUMB_VALID = /^[A-Za-z0-9._/=-]{6,30}$/
 const UA_CHART    = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
@@ -465,22 +466,25 @@ async function fetchAllQuotes(tickers) {
   return result
 }
 
-// Per-stock quoteSummary fallback for PE + market cap when batch quote fails
+// Per-stock quoteSummary fallback for PE + market cap — works without crumb via query2
 async function fetchQuoteSummary(ticker) {
-  const url = `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(ticker)}?modules=summaryDetail,defaultKeyStatistics`
-  const crumbParam = yahooCrumb ? `&crumb=${encodeURIComponent(yahooCrumb)}` : ''
+  let url = `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(ticker)}?modules=price,summaryDetail`
+  if (yahooCrumb) url += `&crumb=${encodeURIComponent(yahooCrumb)}`
   const headers = { 'User-Agent': UA_CRUMB, Accept: 'application/json' }
   if (yahooCookie) headers.Cookie = yahooCookie
   try {
-    const res = await fetch(url + crumbParam, { headers, signal: AbortSignal.timeout(10000) })
+    const res = await fetch(url, { headers, signal: AbortSignal.timeout(8000) })
     if (!res.ok) return null
-    const json  = await res.json()
-    const res0  = json?.quoteSummary?.result?.[0]
-    const sd    = res0?.summaryDetail
-    const ks    = res0?.defaultKeyStatistics
+    const json = await res.json()
+    const res0 = json?.quoteSummary?.result?.[0]
+    const pr   = res0?.price
+    const sd   = res0?.summaryDetail
     return {
-      peRatio:    sd?.trailingPE?.raw       ?? ks?.trailingEps?.raw    ?? null,
-      marketCapB: sd?.marketCap?.raw        ? parseFloat((sd.marketCap.raw / 1e9).toFixed(1)) : null,
+      peRatio:    pr?.trailingPE?.raw    ?? sd?.trailingPE?.raw    ?? null,
+      marketCapB: pr?.marketCap?.raw
+        ? parseFloat((pr.marketCap.raw / 1e9).toFixed(1))
+        : sd?.marketCap?.raw
+          ? parseFloat((sd.marketCap.raw / 1e9).toFixed(1)) : null,
     }
   } catch { return null }
 }
@@ -628,8 +632,8 @@ async function processStock(item, quotes, benchmarkReturns, index, total) {
   let peRatio    = quote.peRatio    ?? fmp.peRatio    ?? data.trailingPE ?? null
   let marketCapB = quote.marketCapB ?? fmp.marketCapB ?? data.marketCapB ?? null
 
-  // Last-resort: per-stock quoteSummary (only if Yahoo crumb worked but FMP also failed)
-  if ((peRatio == null || marketCapB == null) && yahooCrumb) {
+  // Last-resort: per-stock quoteSummary (query2 works without crumb; probed in main)
+  if ((peRatio == null || marketCapB == null) && (yahooCrumb || yahooQuoteSummaryAvailable)) {
     const qs = await fetchQuoteSummary(item.ticker)
     if (qs) { peRatio ??= qs.peRatio; marketCapB ??= qs.marketCapB }
     await delay(200)
@@ -761,8 +765,16 @@ async function main() {
     fmpQuotes = await fetchFmpQuotes(STOCKS.map(s => s.ticker), fmpKey)
     console.log(`  Got FMP data for ${Object.keys(fmpQuotes).length}/${STOCKS.length} stocks`)
   } else {
-    console.log('\nFMP_API_KEY not set — PE and market cap unavailable')
+    console.log('\nFMP_API_KEY not set — skipping FMP')
   }
+
+  // Probe Yahoo quoteSummary without crumb (query2 often works without it)
+  console.log('\nProbing Yahoo quoteSummary (per-stock PE/cap fallback)...')
+  try {
+    const probe = await fetchQuoteSummary(STOCKS[0].ticker)
+    yahooQuoteSummaryAvailable = probe?.peRatio != null || probe?.marketCapB != null
+  } catch {}
+  console.log(`  quoteSummary: ${yahooQuoteSummaryAvailable ? '✓ will use as PE/cap fallback' : '✗ unavailable — PE/cap will be blank'}`)
 
   console.log('\nFetching benchmark returns...')
   const benchmarkReturns = await fetchBenchmarkReturns()
