@@ -48,3 +48,13 @@ export interface BriefMetadata {
   humanReviewed?: boolean
   generatedAt?: string
 }
+
+export interface ArticleMetadata {
+  title: string
+  description: string
+  date: string
+  slug: string
+  keywords: string[]
+  tags: string[]
+  topic: string
+}
