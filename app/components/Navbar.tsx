@@ -99,6 +99,7 @@ export default function Navbar() {
                   <DropdownItem href="/"            label="Today's Brief" />
                   <DropdownItem href="/briefs"      label="Brief Archive" />
                   <DropdownItem href="/guides"      label="Investor Guides" />
+                  <DropdownItem href="/articles"    label="Market Explainers" />
                   <DropdownItem href="/calculators" label="Tax Calculators" />
                   <DropdownItem href="/about"       label="About" />
                 </div>
@@ -174,6 +175,7 @@ export default function Navbar() {
             { label: "Today's Brief", href: '/' },
             { label: 'Brief Archive', href: '/briefs' },
             { label: 'Investor Guides', href: '/guides' },
+            { label: 'Market Explainers', href: '/articles' },
             { label: 'Tax Calculators', href: '/calculators' },
             { label: 'About', href: '/about' },
           ].map(link => (

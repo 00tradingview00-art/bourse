@@ -8,6 +8,7 @@ const NAV_LINKS = [
   { label: 'Sectors', href: '/sectors' },
   { label: 'Bond Yields', href: '/bonds' },
   { label: 'Guides', href: '/guides' },
+  { label: 'Explainers', href: '/articles' },
   { label: 'Calculators', href: '/calculators' },
   { label: 'Watchlist', href: '/watchlist' },
   { label: 'About', href: '#about' },
