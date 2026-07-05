@@ -35,6 +35,8 @@ const GUIDE_SLUGS = [
 
 const INDEX_SLUGS = ['aex', 'dax', 'cac-40', 'ftse-100', 'ibex-35', 'ftse-mib', 'omx']
 
+const CALCULATOR_SLUGS = ['dutch-box-3', 'german-vorabpauschale']
+
 const LEGAL_PATHS = ['/disclaimer', '/privacy', '/terms', '/cookies']
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -79,6 +81,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: s.priority,
   }))
 
+  const calculatorUrls: MetadataRoute.Sitemap = CALCULATOR_SLUGS.map(slug => ({
+    url: `${BASE}/calculators/${slug}`,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }))
+
   const legalUrls: MetadataRoute.Sitemap = LEGAL_PATHS.map(p => ({
     url: `${BASE}${p}`,
     changeFrequency: 'yearly' as const,
@@ -98,6 +106,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...indexUrls,
     ...briefUrls,
     ...guideUrls,
+    ...calculatorUrls,
     ...flashUrls,
     ...stockUrls,
     ...legalUrls,
