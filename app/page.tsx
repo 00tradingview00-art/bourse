@@ -5,6 +5,7 @@ import MarketMovers from './components/MarketMovers'
 import TodaysBrief from './components/TodaysBrief'
 import FeaturesGrid from './components/FeaturesGrid'
 import BriefsArchive from './components/BriefsArchive'
+import ExplainersTeaser from './components/ExplainersTeaser'
 import ScreenerTeaser from './components/ScreenerTeaser'
 import CoverageSection from './components/CoverageSection'
 import Newsletter from './components/Newsletter'
@@ -75,6 +76,9 @@ export default async function Home() {
 
       {/* Brief archive */}
       <BriefsArchive briefs={briefs} />
+
+      {/* Market explainers */}
+      <ExplainersTeaser />
 
       {/* Intelligence feature grid */}
       <FeaturesGrid />
