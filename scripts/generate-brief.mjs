@@ -16,13 +16,32 @@ import Anthropic from '@anthropic-ai/sdk'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const BRIEFS_DIR = join(__dirname, '..', 'content', 'briefs')
 
+// ─── European market holiday guard ───────────────────────────────
+// European markets are closed on these fixed dates. Briefs are skipped.
+const EU_HOLIDAYS = [
+  '01-01', // New Year's Day
+  '05-01', // Labour Day
+  '12-25', // Christmas Day
+  '12-26', // Boxing Day
+]
+
+function isEuHoliday(d) {
+  const mmdd = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  return EU_HOLIDAYS.includes(mmdd)
+}
+
 // ─── Duplicate guard ─────────────────────────────────────────────
 // Replaces the old UTC time-window guard. GitHub Actions can run
 // 30–60+ minutes late, so a rigid time window causes false failures.
 // Instead: skip if a brief for today's CET date already exists.
 async function checkAlreadyRun() {
   if (process.env.FORCE_RUN === '1') return
-  const todayStr = toDateStr(new Date())  // YYYY-MM-DD in CET
+  const today = new Date()
+  if (isEuHoliday(today)) {
+    console.log(`✓ European market holiday — skipping brief.`)
+    process.exit(0)
+  }
+  const todayStr = toDateStr(today)  // YYYY-MM-DD in CET
   let files = []
   try { files = await readdir(BRIEFS_DIR) } catch {}
   if (files.some(f => f.startsWith(todayStr))) {
@@ -270,6 +289,13 @@ async function main() {
   const data = await fetchAllMarkets()
   const symbolCount = Object.keys(data).length
   console.log(`  Got data for ${symbolCount}/${YAHOO_SYMBOLS.length} symbols`)
+  // Require at least 5 indices to have data — guards against US holiday Yahoo Finance gaps
+  const indexSymbols = ['^AEX', '^GDAXI', '^FCHI', '^FTSE', '^IBEX', '^FTMIB', '^OMX']
+  const indexCount = indexSymbols.filter(s => data[s]).length
+  if (indexCount < 3) {
+    console.log(`Only ${indexCount} index symbols returned — likely a market holiday. Skipping.`)
+    process.exit(0)
+  }
   if (symbolCount < 4) throw new Error('Insufficient market data — aborting')
 
   const { indicesSummary, fxSummary, commoditySummary, stocksSummary, aex, dax, cac, ftse, ibex, ftmib, brent, eurUsd } = formatMarketSummary(data)

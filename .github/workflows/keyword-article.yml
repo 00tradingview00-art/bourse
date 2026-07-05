@@ -1,0 +1,68 @@
+name: Weekly Keyword Article
+
+on:
+  schedule:
+    - cron: '0 5 * * 1'   # 6:00 AM CET every Monday
+  workflow_dispatch:
+
+concurrency:
+  group: keyword-article
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate keyword article
+        run: node scripts/generate-keyword-article.mjs
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Commit and push
+        run: |
+          git config user.name "Boursee Bot"
+          git config user.email "bot@boursee.com"
+          git add content/articles/ data/keyword-coverage.json
+          if git diff --staged --quiet; then
+            echo "Nothing to commit"
+          else
+            git commit -m "feat: keyword article $(date +%Y-%m-%d)"
+            git pull --rebase origin main
+            git push origin main
+          fi
+
+      - name: Alert on failure
+        if: failure()
+        continue-on-error: true
+        run: |
+          curl -s -X POST https://api.brevo.com/v3/smtp/email \
+            -H "api-key: ${{ secrets.BREVO_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "sender": { "name": "Boursee Bot", "email": "noreply@boursee.com" },
+              "to": [{ "email": "00tradingview00@gmail.com" }],
+              "subject": "Boursee: Keyword article generation failed",
+              "htmlContent": "<p>Keyword article generation failed on '"$(date +'%d %b %Y')"'. Check <a href=\"https://github.com/00tradingview00-art/bourse/actions\">GitHub Actions</a>.</p>"
+            }' || true
