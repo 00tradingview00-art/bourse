@@ -12,6 +12,7 @@ import Newsletter from './components/Newsletter'
 import Footer from './components/Footer'
 import { fetchMarkets, getStaticMarkets } from '@/lib/fetchMarkets'
 import { fetchBriefs } from '@/lib/fetchBriefs'
+import { fetchEcbRates, ecbRateTile } from '@/lib/fetchEcbRates'
 
 async function getMarkets() {
   try {
@@ -22,18 +23,21 @@ async function getMarkets() {
 }
 
 export default async function Home() {
-  const [{ tickerData, dashboardData, fetchedAt }, briefs] = await Promise.all([
+  const [{ tickerData, dashboardData, fetchedAt }, briefs, ecbRates] = await Promise.all([
     getMarkets(),
     fetchBriefs(),
+    fetchEcbRates(),
   ])
   const todaysBrief = briefs[0]
   const brent   = tickerData.find(m => m.ticker === 'BZ=F')
   const eurUsd  = tickerData.find(m => m.name === 'EUR/USD')
-  const ecbRate = tickerData.find(m => m.name === 'ECB Rate')
+  // ECB rate comes from the ECB Data Portal; omitted (not guessed) if the feed is down
+  const ecbRate = ecbRates ? ecbRateTile(ecbRates) : undefined
+  const tickerItems = ecbRate ? [...tickerData, ecbRate] : tickerData
 
   return (
     <>
-      <Ticker tickerItems={tickerData} />
+      <Ticker tickerItems={tickerItems} />
       <Navbar />
 
       {/* Page heading for search engines and screen readers; the visible hero is the live data below */}
@@ -101,7 +105,7 @@ export default async function Home() {
       <FeaturesGrid />
 
       {/* Exchange coverage */}
-      <CoverageSection markets={dashboardData} brent={brent} />
+      <CoverageSection markets={dashboardData} brent={brent} ecbRate={ecbRate} />
 
       <Newsletter />
       <Footer />

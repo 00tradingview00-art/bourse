@@ -2,6 +2,11 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Navbar from '@/app/components/Navbar'
 import Footer from '@/app/components/Footer'
+import screenerData from '@/data/screener.json'
+
+// Coverage counts come from the screener data so this copy cannot drift from what is tracked.
+const STOCK_COUNT = screenerData.stockCount
+const ETF_COUNT = screenerData.etfCount
 
 export const metadata: Metadata = {
   title: 'About Boursee — Who Built It and Why | European Market Intelligence',
@@ -19,7 +24,7 @@ const PRINCIPLES = [
   },
   {
     title: 'Act with data',
-    body: 'The screener covers 180+ stocks and 20 UCITS ETFs across AEX, DAX, CAC 40, FTSE 100, IBEX 35, and FTSE MIB — with RSI, MACD, SuperTrend signals, analyst grades, dividend yields, and broker availability on DEGIRO and Trade Republic. Data without context is noise. Context without data is opinion.',
+    body: `The screener covers ${STOCK_COUNT} stocks and ${ETF_COUNT} UCITS ETFs across AEX, DAX, CAC 40, FTSE 100, IBEX 35, FTSE MIB and OMX — with RSI, MACD, SuperTrend signals, analyst grades, dividend yields, and broker availability on DEGIRO and Trade Republic. Data without context is noise. Context without data is opinion.`,
   },
 ]
 
@@ -99,7 +104,7 @@ export default function AboutPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '40px' }}>
             {[
               { href: '/', label: "Today's Brief", desc: 'Daily macro-equity intelligence' },
-              { href: '/screener', label: 'Screener', desc: '180+ stocks, 20 UCITS ETFs' },
+              { href: '/screener', label: 'Screener', desc: `${STOCK_COUNT} stocks, ${ETF_COUNT} UCITS ETFs` },
               { href: '/guides', label: 'Investor Guides', desc: 'Box 3, Vorabpauschale, PEA' },
               { href: '/macro-bridge', label: 'Macro–Equity Bridge', desc: 'What moves what, and why' },
             ].map(item => (

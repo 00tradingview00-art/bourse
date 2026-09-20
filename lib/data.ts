@@ -27,8 +27,6 @@ export const TICKER_ITEMS: MarketData[] = [
   { name: 'EUR/USD',       ticker: 'EURUSD',     value: '1.1641',   change: '—',       changePct: '—',      direction: 'flat' },
   { name: 'EUR/GBP',       ticker: 'EURGBP',     value: '0.8412',   change: '—',       changePct: '—',      direction: 'flat' },
   { name: 'EUR/INR',       ticker: 'EURINR',     value: '₹111.40',  change: '—',       changePct: '—',      direction: 'flat' },
-  // Rates
-  { name: 'ECB Rate',      ticker: '',           value: '2.00%',    change: 'Jun 11',  changePct: '▲ +25bp', direction: 'up' },
 ]
 
 export const DASHBOARD_MARKETS: MarketData[] = [

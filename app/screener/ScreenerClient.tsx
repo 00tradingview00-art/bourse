@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import type { ScreenerStock, ScreenerETF } from './page'
+import { priceUnit } from '@/lib/currency'
 
 type ActiveTab     = 'stocks' | 'etfs'
 type StockExchange = 'ALL' | 'AEX' | 'DAX' | 'CAC' | 'FTSE' | 'IBEX' | 'FTSE_MIB' | 'OMX'
@@ -385,7 +386,7 @@ export default function ScreenerClient({
                       </td>
                       <td style={{ padding: '10px 14px', color: 'var(--ink-3)', fontSize: '13px', whiteSpace: 'nowrap' }}>{s.sector}</td>
                       <td style={{ padding: '10px 14px', fontWeight: 600, color: 'var(--ink)', fontVariantNumeric: 'tabular-nums' }}>
-                        {s.price.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        {s.price.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{priceUnit(s.exchange)}
                       </td>
                       <td style={{ padding: '10px 14px', fontVariantNumeric: 'tabular-nums', fontWeight: 700, fontSize: '15px', color: s.changePct >= 0 ? '#16a34a' : '#dc2626', whiteSpace: 'nowrap' }}>
                         {s.changePct >= 0 ? '+' : ''}{s.changePct.toFixed(2)}%

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Navbar from '@/app/components/Navbar'
 import Footer from '@/app/components/Footer'
 import type { ScreenerStock } from '@/app/screener/page'
+import { priceUnit } from '@/lib/currency'
 
 export const revalidate = 3600
 
@@ -315,7 +316,7 @@ export default async function IndexPage({ params }: { params: Promise<{ slug: st
                         </Link>
                       </td>
                       <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 600, color: 'var(--ink)', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
-                        {s.price.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        {s.price.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{priceUnit(s.exchange)}
                       </td>
                       <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 700, fontSize: '14px', color: isUp ? '#16a34a' : '#dc2626', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
                         {isUp ? '+' : ''}{s.changePct.toFixed(2)}%

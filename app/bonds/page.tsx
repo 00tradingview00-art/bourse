@@ -6,7 +6,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'European Government Bond Yields | Boursee',
-  description: 'Live European government bond yields — German Bund, French OAT, Italian BTP, Spanish Bono, UK Gilt — with BTP-Bund spread and equity market context.',
+  description: 'European government bond yields from ECB data — German Bund, French OAT, Italian BTP, Spanish Bono, UK Gilt — with BTP-Bund spread and equity market context.',
 }
 
 export const revalidate = 3600

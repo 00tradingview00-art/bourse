@@ -9,6 +9,7 @@ import PriceChart, { type OHLCVBar } from '@/app/components/PriceChart'
 import WatchlistButton from '@/app/components/WatchlistButton'
 import JsonLd from '@/app/components/JsonLd'
 import { breadcrumbJsonLd } from '@/lib/seo'
+import { formatPrice } from '@/lib/currency'
 import screenerData from '@/data/screener.json'
 
 type Params = { ticker: string }
@@ -65,7 +66,7 @@ function fmtCap(n: number | null | undefined): string {
   return `€${(n * 1000).toFixed(0)}M`
 }
 
-function RangeBar({ low, high, current }: { low: number; high: number; current: number }) {
+function RangeBar({ low, high, current, exchange }: { low: number; high: number; current: number; exchange: string }) {
   const pct = Math.min(100, Math.max(0, ((current - low) / (high - low)) * 100))
   const nearHigh = pct > 75
   const nearLow  = pct < 25
@@ -73,11 +74,11 @@ function RangeBar({ low, high, current }: { low: number; high: number; current: 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '12px', color: 'var(--ink-4)' }}>
-        <span>52W Low<br /><strong style={{ fontSize: '13px', color: 'var(--ink-2)' }}>€{low.toFixed(2)}</strong></span>
+        <span>52W Low<br /><strong style={{ fontSize: '13px', color: 'var(--ink-2)' }}>{formatPrice(low, exchange)}</strong></span>
         <span style={{ textAlign: 'center', fontSize: '11px', color: 'var(--ink-4)' }}>
           {nearHigh ? '▲ Near 52-week high' : nearLow ? '▼ Near 52-week low' : 'Mid-range'}
         </span>
-        <span style={{ textAlign: 'right' }}>52W High<br /><strong style={{ fontSize: '13px', color: 'var(--ink-2)' }}>€{high.toFixed(2)}</strong></span>
+        <span style={{ textAlign: 'right' }}>52W High<br /><strong style={{ fontSize: '13px', color: 'var(--ink-2)' }}>{formatPrice(high, exchange)}</strong></span>
       </div>
       <div style={{ height: '6px', background: 'var(--border)', borderRadius: '3px', position: 'relative', margin: '0 4px' }}>
         <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: `${pct}%`, background: dotColor, borderRadius: '3px', opacity: 0.25 }} />
@@ -178,10 +179,10 @@ export default async function StockDetailPage({ params }: { params: Promise<Para
 
               <div style={{ textAlign: 'right', flexShrink: 0 }}>
                 <div style={{ fontSize: '32px', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.02em', lineHeight: 1 }}>
-                  €{price.toFixed(2)}
+                  {formatPrice(price, exchange)}
                 </div>
                 <div style={{ fontSize: '15px', fontWeight: 600, color: changePositive ? '#16a34a' : '#dc2626', marginTop: '4px' }}>
-                  {changePositive ? '▲' : '▼'} €{Math.abs(change ?? 0).toFixed(2)} ({fmtPct(changePct)})
+                  {changePositive ? '▲' : '▼'} {formatPrice(Math.abs(change ?? 0), exchange)} ({fmtPct(changePct)})
                 </div>
                 <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '6px', marginBottom: '10px' }}>Prices may be delayed up to 15 min</div>
                 <WatchlistButton ticker={ticker} />
@@ -198,9 +199,10 @@ export default async function StockDetailPage({ params }: { params: Promise<Para
           {/* Key metrics strip */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px', marginBottom: '28px' }}>
             {[
-              { label: 'P/E Ratio',        value: peRatio        != null ? peRatio.toFixed(1) : '—' },
-              { label: 'Dividend Yield',   value: dividendYield  != null ? `${dividendYield.toFixed(2)}%` : '—' },
-              { label: 'Market Cap',       value: fmtCap(marketCapB) },
+              // Tiles with no data are omitted rather than shown as "—"
+              ...(peRatio != null ? [{ label: 'P/E Ratio', value: peRatio.toFixed(1), color: undefined as string | undefined }] : []),
+              ...(dividendYield != null ? [{ label: 'Dividend Yield', value: `${dividendYield.toFixed(2)}%`, color: undefined as string | undefined }] : []),
+              ...(marketCapB != null ? [{ label: 'Market Cap', value: fmtCap(marketCapB), color: undefined as string | undefined }] : []),
               { label: 'vs ' + (EXCHANGE_INDEX[exchange] ?? 'Index') + ' (30d)',
                 value: fmtPct(relativeStrength),
                 color: relativeStrength != null ? (relativeStrength >= 0 ? '#16a34a' : '#dc2626') : undefined },
@@ -219,7 +221,7 @@ export default async function StockDetailPage({ params }: { params: Promise<Para
           {week52High && week52Low && week52High > week52Low && (
             <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '4px', padding: '20px 24px', marginBottom: '16px' }}>
               <div style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: '16px' }}>52-Week Range</div>
-              <RangeBar low={week52Low} high={week52High} current={price} />
+              <RangeBar low={week52Low} high={week52High} current={price} exchange={exchange} />
             </div>
           )}
 
@@ -248,7 +250,7 @@ export default async function StockDetailPage({ params }: { params: Promise<Para
                     <tr style={{ background: 'var(--paper-2)', borderBottom: '1px solid var(--border)' }}>
                       <td style={{ padding: '10px 10px', fontWeight: 700, color: 'var(--ink)' }}>{name}</td>
                       <td style={{ padding: '10px 10px', textAlign: 'right', color: 'var(--ink-4)', fontSize: '12px' }}>{EXCHANGE_FLAG[exchange]} {exchange}</td>
-                      <td style={{ padding: '10px 10px', textAlign: 'right', fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>€{price.toFixed(2)}</td>
+                      <td style={{ padding: '10px 10px', textAlign: 'right', fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>{formatPrice(price, exchange)}</td>
                       <td style={{ padding: '10px 10px', textAlign: 'right', fontWeight: 600, color: (changePct ?? 0) >= 0 ? '#16a34a' : '#dc2626', fontVariantNumeric: 'tabular-nums' }}>{fmtPct(changePct)}</td>
                       <td style={{ padding: '10px 10px', textAlign: 'right', color: relativeStrength != null ? (relativeStrength >= 0 ? '#16a34a' : '#dc2626') : 'var(--ink-4)', fontVariantNumeric: 'tabular-nums' }}>{fmtPct(relativeStrength)}</td>
                     </tr>
@@ -258,7 +260,7 @@ export default async function StockDetailPage({ params }: { params: Promise<Para
                           <Link href={`/stocks/${p.ticker}`} style={{ color: 'var(--ink)', textDecoration: 'none', fontWeight: 500 }}>{p.name}</Link>
                         </td>
                         <td style={{ padding: '10px 10px', textAlign: 'right', color: 'var(--ink-4)', fontSize: '12px' }}>{EXCHANGE_FLAG[p.exchange]} {p.exchange}</td>
-                        <td style={{ padding: '10px 10px', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>€{p.price.toFixed(2)}</td>
+                        <td style={{ padding: '10px 10px', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>{formatPrice(p.price, p.exchange)}</td>
                         <td style={{ padding: '10px 10px', textAlign: 'right', color: (p.changePct ?? 0) >= 0 ? '#16a34a' : '#dc2626', fontVariantNumeric: 'tabular-nums' }}>{fmtPct(p.changePct)}</td>
                         <td style={{ padding: '10px 10px', textAlign: 'right', color: p.relativeStrength != null ? (p.relativeStrength >= 0 ? '#16a34a' : '#dc2626') : 'var(--ink-4)', fontVariantNumeric: 'tabular-nums' }}>{fmtPct(p.relativeStrength)}</td>
                       </tr>
