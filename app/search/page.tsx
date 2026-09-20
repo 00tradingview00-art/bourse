@@ -9,6 +9,8 @@ import type { ScreenerStock, ScreenerETF } from '@/app/screener/page'
 export const metadata: Metadata = {
   title: 'Ask Boursee — European Market Intelligence | Boursee',
   description: 'Ask anything about European stocks, UCITS ETFs, tax rules, and market dynamics. AI-powered answers with relevant instruments and guides.',
+  // Interactive tool with no stable content for search: keep it out of the index.
+  robots: { index: false, follow: true },
 }
 
 interface ScreenerData {
