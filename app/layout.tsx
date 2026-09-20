@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: 'Boursee — European Market Intelligence',
   description: 'Independent daily research on Euronext, DAX, FTSE and the ECB. Delivered at 6:30 AM CET. For the 400 million Europeans who invest.',
   // Self-referencing canonical: './' resolves to the current page's own URL against metadataBase.
-  alternates: { canonical: './' },
+  alternates: { canonical: './', types: { 'application/rss+xml': '/feed.xml' } },
   icons: {
     icon: '/icon.svg',
     shortcut: '/icon.svg',
