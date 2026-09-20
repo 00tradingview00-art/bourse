@@ -11,6 +11,8 @@ const nextConfig = {
 
   async redirects() {
     return [
+      // Serve one host only: www.boursee.com -> boursee.com (path and query preserved)
+      { source: '/:path*', has: [{ type: 'host', value: 'www.boursee.com' }], destination: 'https://boursee.com/:path*', permanent: true },
       { source: '/briefs/edition-025', destination: '/briefs/2026-05-26-dollar-weakness-lifts-euro-exporters-ecb', permanent: true },
       { source: '/briefs/edition-026', destination: '/briefs/2026-05-27-adyen-q1-beat-supports-payments-sector', permanent: true },
       { source: '/briefs/edition-027', destination: '/briefs/2026-05-28-venezuela-shock-reverses-european-equities-recover', permanent: true },
