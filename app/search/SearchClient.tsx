@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import type { ScreenerStock, ScreenerETF } from '@/app/screener/page'
+import { formatPrice } from '@/lib/currency'
 
 type Instrument = ScreenerStock | ScreenerETF
 
@@ -73,7 +74,7 @@ function InstrumentCard({ instrument }: { instrument: Instrument }) {
         </div>
         <div style={{ textAlign: 'right', flexShrink: 0 }}>
           <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '14px', fontVariantNumeric: 'tabular-nums' }}>
-            €{(instrument.price ?? 0).toFixed(2)}
+            {instrument.price != null ? formatPrice(instrument.price, instrument.exchange) : '—'}
           </div>
           <div style={{ fontSize: '12px', fontWeight: 600, color: changePos ? '#16a34a' : '#dc2626' }}>
             {changePos ? '+' : ''}{(instrument.changePct ?? 0).toFixed(2)}%

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useWatchlist } from '@/lib/useWatchlist'
+import { formatPrice } from '@/lib/currency'
 
 const EXCHANGE_FLAG: Record<string, string> = {
   AEX: '🇳🇱', DAX: '🇩🇪', CAC: '🇫🇷', FTSE: '🇬🇧', IBEX: '🇪🇸',
@@ -91,7 +92,7 @@ export default function WatchlistClient({ allItems }: { allItems: Record<string,
                               {EXCHANGE_FLAG[s.exchange] ?? ''} {s.exchange}
                             </td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', color: 'var(--ink-4)', fontSize: '12px' }}>{s.sector ?? '—'}</td>
-                            <td style={{ padding: '12px 14px', textAlign: 'right', fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>€{s.price.toFixed(2)}</td>
+                            <td style={{ padding: '12px 14px', textAlign: 'right', fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>{formatPrice(s.price, s.exchange)}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'right', fontWeight: 600, color: (s.changePct ?? 0) >= 0 ? '#16a34a' : '#dc2626', fontVariantNumeric: 'tabular-nums' }}>
                               {fmtPct(s.changePct)}
                             </td>
