@@ -127,7 +127,7 @@ export default async function ScreenerTeaser() {
         {/* Footer */}
         <div style={{ marginTop: '12px', fontSize: '11px', color: 'var(--ink-4)', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px' }}>
           <span>{stockCount} stocks across AEX · DAX · CAC 40 · FTSE 100 · IBEX 35 · FTSE MIB</span>
-          {updatedLabel && <span>Updated {updatedLabel} · prices may be delayed up to 15 min</span>}
+          {updatedLabel && <span>Updated {updatedLabel} · closing prices</span>}
         </div>
       </div>
     </section>

@@ -6,6 +6,7 @@ import Navbar from '@/app/components/Navbar'
 import Footer from '@/app/components/Footer'
 import type { ScreenerStock } from '@/app/screener/page'
 import { priceUnit } from '@/lib/currency'
+import { SCREENER_AS_OF } from '@/lib/dataFreshness'
 
 export const revalidate = 3600
 
@@ -339,7 +340,7 @@ export default async function IndexPage({ params }: { params: Promise<{ slug: st
 
           {/* Footer note */}
           <div style={{ marginTop: '16px', fontSize: '11px', color: 'var(--ink-4)', lineHeight: 1.6 }}>
-            Prices may be delayed up to 15 minutes. Constituent list reflects Boursee's tracked universe and may not include all index members.
+            Closing prices, updated each weekday evening (data as of {SCREENER_AS_OF}). Constituent list reflects Boursee's tracked universe and may not include all index members.
             Not investment advice. <Link href="/screener" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Open full screener →</Link>
           </div>
         </div>

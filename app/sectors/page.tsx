@@ -246,7 +246,7 @@ export default async function SectorsPage() {
           {/* Footnote */}
           <div style={{ marginTop: '10px', fontSize: '11px', color: 'var(--ink-4)', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px' }}>
             <span>{stocks.length} stocks across 6 exchanges · click a cell to open screener filter</span>
-            {updatedLabel && <span>Data updated {updatedLabel} · prices may be delayed up to 15 min</span>}
+            {updatedLabel && <span>Data updated {updatedLabel} · closing prices</span>}
           </div>
 
           {/* Sector breakdown bars */}

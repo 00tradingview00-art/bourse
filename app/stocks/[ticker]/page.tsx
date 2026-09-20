@@ -10,6 +10,9 @@ import WatchlistButton from '@/app/components/WatchlistButton'
 import JsonLd from '@/app/components/JsonLd'
 import { breadcrumbJsonLd } from '@/lib/seo'
 import { formatPrice } from '@/lib/currency'
+import { SCREENER_AS_OF } from '@/lib/dataFreshness'
+import { buildStockCopy } from '@/lib/stockCopy'
+import StockAbout from '@/app/components/StockAbout'
 import screenerData from '@/data/screener.json'
 
 type Params = { ticker: string }
@@ -136,6 +139,13 @@ export default async function StockDetailPage({ params }: { params: Promise<Para
     .sort((a, b) => Math.abs(b.changePct ?? 0) - Math.abs(a.changePct ?? 0))
     .slice(0, 5)
 
+  const sectorStocks = allStocks.filter(st => st.sector === sector)
+  const copy = buildStockCopy(s, sectorStocks, {
+    exchangeLabel: EXCHANGE_LABEL[exchange] ?? exchange,
+    indexName: EXCHANGE_INDEX[exchange] ?? exchange,
+    asOf: SCREENER_AS_OF,
+  })
+
   return (
     <>
       <Navbar />
@@ -184,7 +194,7 @@ export default async function StockDetailPage({ params }: { params: Promise<Para
                 <div style={{ fontSize: '15px', fontWeight: 600, color: changePositive ? '#16a34a' : '#dc2626', marginTop: '4px' }}>
                   {changePositive ? '▲' : '▼'} {formatPrice(Math.abs(change ?? 0), exchange)} ({fmtPct(changePct)})
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '6px', marginBottom: '10px' }}>Prices may be delayed up to 15 min</div>
+                <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '6px', marginBottom: '10px' }}>Closing price · data as of {SCREENER_AS_OF}</div>
                 <WatchlistButton ticker={ticker} />
               </div>
             </div>
@@ -295,16 +305,20 @@ export default async function StockDetailPage({ params }: { params: Promise<Para
             </div>
           </div>
 
+          {/* Data-derived description and FAQ */}
+          <StockAbout name={name} copy={copy} />
+
           {/* Nav links */}
           <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', fontSize: '13px', marginBottom: '40px' }}>
             <Link href="/screener" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 500 }}>← Back to Screener</Link>
             <Link href="/sectors" style={{ color: 'var(--ink-4)', textDecoration: 'none' }}>Sector Heatmap →</Link>
             <Link href="/guides" style={{ color: 'var(--ink-4)', textDecoration: 'none' }}>Investor Guides →</Link>
+            <Link href="/methodology" style={{ color: 'var(--ink-4)', textDecoration: 'none' }}>Where our data comes from →</Link>
           </div>
 
           {/* Disclaimer */}
           <div style={{ padding: '14px 18px', background: 'var(--paper-2)', border: '1px solid var(--border)', borderLeft: '3px solid var(--border)', borderRadius: '3px', fontSize: '11px', color: 'var(--ink-4)', lineHeight: 1.6 }}>
-            For general information only. Not investment advice under MiFID II Article 24. RSI and volume signals are derived from historical price data and do not predict future performance. Prices may be delayed up to 15 minutes.
+            For general information only. Not investment advice under MiFID II Article 24. RSI and volume signals are derived from historical price data and do not predict future performance. Prices are end-of-day closing prices.
           </div>
         </div>
       </main>
