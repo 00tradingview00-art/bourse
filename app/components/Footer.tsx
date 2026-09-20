@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { label: 'Calculators', href: '/calculators' },
   { label: 'Brokers', href: '/brokers' },
   { label: 'Watchlist', href: '/watchlist' },
+  { label: 'Methodology', href: '/methodology' },
   { label: 'About', href: '/about' },
 ]
 
@@ -57,7 +58,7 @@ export default function Footer() {
         <p style={{ fontSize: '11px', color: '#2a2a2a', lineHeight: 1.6, maxWidth: '560px' }}>
           Content produced for general information purposes only under Article 24 MiFID II. Not personalised investment advice.
           Not regulated by the AFM or FCA. Past performance is not indicative of future results.
-          Prices may be delayed up to 15 minutes.
+          Market data can be delayed by up to 15 minutes; stock and ETF prices are end-of-day closes.
         </p>
         <ul style={{ display: 'flex', gap: '20px', listStyle: 'none', flexWrap: 'wrap' }}>
           {LEGAL_LINKS.map(link => (

@@ -17,6 +17,7 @@ const STATIC_SECTIONS = [
   { path: '/calculators', priority: 0.7, freq: 'monthly' },
   { path: '/brokers',     priority: 0.6, freq: 'monthly' },
   { path: '/about',       priority: 0.7, freq: 'monthly' },
+  { path: '/methodology', priority: 0.6, freq: 'monthly' },
   { path: '/flash',       priority: 0.9, freq: 'hourly'  },
 ] as const
 
