@@ -30,7 +30,7 @@ export const ECB_DECISION_DAYS = ['2026-10-29', '2026-12-17', '2027-02-04']
 
 export async function fetchEcbRates(): Promise<EcbRates | null> {
   try {
-    const res = await fetch(DFR_URL, { headers: { Accept: 'text/csv' }, next: { revalidate: 21600 } })
+    const res = await fetch(DFR_URL, { headers: { Accept: 'text/csv' }, next: { revalidate: 21600 }, signal: AbortSignal.timeout(8000) })
     if (!res.ok) return null
     const lines = (await res.text()).trim().split(/\r?\n/)
     const header = (lines[0]?.split(',') ?? []).map(h => h.trim())

@@ -33,6 +33,7 @@ async function fetchYFChart(symbol: string, v7 = false): Promise<Record<string, 
         'Accept': 'application/json',
       },
       cache: 'no-store',
+      signal: AbortSignal.timeout(8000),
     })
     if (!res.ok) return null
     const json = await res.json()
@@ -71,7 +72,7 @@ function yfToMarketData(meta: Record<string, unknown>, symbol: string): MarketDa
 
 async function fetchFXRates(): Promise<MarketData[]> {
   try {
-    const res = await fetch('https://api.frankfurter.app/latest?from=EUR&to=USD,INR', { cache: 'no-store' })
+    const res = await fetch('https://api.frankfurter.app/latest?from=EUR&to=USD,INR', { cache: 'no-store', signal: AbortSignal.timeout(8000) })
     if (!res.ok) return []
     const data = await res.json() as { rates: Record<string, number> }
     const fx: MarketData[] = []
