@@ -50,7 +50,14 @@ export default function PrivacyPage() {
                     Legal basis: Consent. Only if you accept analytics cookies, we use Google Analytics 4 to count visits and see
                     which pages are useful. It sets cookies and sends information about your visit (pages viewed, approximate location,
                     device and browser type, referrer) to Google, which may process it outside the European Economic Area. If you
-                    decline, no analytics data is collected. You can withdraw consent at any time via “Cookie settings” in the footer.
+                    decline, no Google Analytics data is collected. You can withdraw consent at any time via “Cookie settings” in the footer.
+                  </p>
+                </div>
+                <div style={{ background: 'var(--paper-2)', padding: '16px 20px', borderRadius: '4px', borderLeft: '3px solid var(--accent)' }}>
+                  <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', marginBottom: '4px' }}>Aggregate page-view counts</p>
+                  <p style={{ fontSize: '14px', color: 'var(--ink-3)', lineHeight: 1.7 }}>
+                    Legal basis: Legitimate interest. We use Vercel Web Analytics, provided by our hosting provider, to count page views,
+                    referrers, countries and device types in aggregate. It sets no cookies and is not used to identify individual visitors.
                   </p>
                 </div>
               </div>
