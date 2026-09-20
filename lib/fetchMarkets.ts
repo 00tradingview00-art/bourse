@@ -22,15 +22,6 @@ const DASHBOARD_SYMBOLS = ['^AEX', '^GDAXI', '^FCHI', '^FTSE', '^IBEX', 'FTSEMIB
 const YF_TICKER_SYMBOLS = ['^AEX', '^FCHI', '^GDAXI', '^FTSE', '^IBEX', 'ASML.AS', 'ADYEN.AS', 'SHELL.AS', 'BZ=F', 'GC=F']
 const ALL_YF = [...new Set([...DASHBOARD_SYMBOLS, ...YF_TICKER_SYMBOLS])]
 
-export const ECB_STATIC: MarketData = {
-  name: 'ECB Rate',
-  ticker: '',
-  value: '2.00%',
-  change: 'Jun 11',
-  changePct: '↔ Hold',
-  direction: 'flat',
-}
-
 async function fetchYFChart(symbol: string, v7 = false): Promise<Record<string, unknown> | null> {
   const host = v7 ? 'query2' : 'query1'
   const ver  = v7 ? 'v7'     : 'v8'
@@ -105,7 +96,6 @@ async function _fetchMarkets(): Promise<{ tickerData: MarketData[]; dashboardDat
   const tickerData: MarketData[] = [
     ...YF_TICKER_SYMBOLS.map(sym => yfToMarketData(bySymbol[sym] ?? {}, sym)).filter((x): x is MarketData => x !== null),
     ...fxRates,
-    ECB_STATIC,
   ]
   const dashboardData: MarketData[] = DASHBOARD_SYMBOLS
     .map(sym => yfToMarketData(bySymbol[sym] ?? {}, sym))

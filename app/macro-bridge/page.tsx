@@ -4,6 +4,7 @@ import Navbar from '@/app/components/Navbar'
 import Footer from '@/app/components/Footer'
 import { fetchMarkets, getStaticMarkets } from '@/lib/fetchMarkets'
 import { fetchBriefs } from '@/lib/fetchBriefs'
+import { fetchEcbRates, ecbRateTile } from '@/lib/fetchEcbRates'
 
 export const metadata: Metadata = {
   title: 'Macro–Equity Bridge: How Oil, FX and the ECB Move European Stocks | Boursee',
@@ -119,8 +120,9 @@ function DirectionBadge({ direction, pct }: { direction: 'up' | 'down' | 'flat';
 }
 
 export default async function MacroBridgePage() {
-  const [{ tickerData }, briefs] = await Promise.all([getMarkets(), fetchBriefs()])
+  const [{ tickerData }, briefs, ecbRates] = await Promise.all([getMarkets(), fetchBriefs(), fetchEcbRates()])
   const latestBrief = briefs[0]
+  const ecbRate = ecbRates ? ecbRateTile(ecbRates) : undefined
 
   // Index live ticker data by ticker symbol for fast lookup
   const liveByTicker = new Map(tickerData.map(m => [m.ticker, m]))
@@ -172,7 +174,7 @@ export default async function MacroBridgePage() {
             {brent && <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '13px' }}><span style={{ color: 'var(--ink-3)' }}>Brent</span><span style={{ fontWeight: 600, color: 'var(--ink)' }}>{brent.value}</span><DirectionBadge direction={brent.direction} pct={brent.changePct} /></div>}
             {eurUsd && <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '13px' }}><span style={{ color: 'var(--ink-3)' }}>EUR/USD</span><span style={{ fontWeight: 600, color: 'var(--ink)' }}>{eurUsd.value}</span><DirectionBadge direction={eurUsd.direction} pct={eurUsd.changePct} /></div>}
             {gold && <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '13px' }}><span style={{ color: 'var(--ink-3)' }}>Gold</span><span style={{ fontWeight: 600, color: 'var(--ink)' }}>{gold.value}</span><DirectionBadge direction={gold.direction} pct={gold.changePct} /></div>}
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '13px' }}><span style={{ color: 'var(--ink-3)' }}>ECB Rate</span><span style={{ fontWeight: 600, color: 'var(--ink)' }}>2.00%</span><span style={{ fontSize: '11px', color: 'var(--gold)', background: 'var(--gold-light)', padding: '2px 8px', borderRadius: '3px' }}>Jun 11 watch</span></div>
+            {ecbRate && <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '13px' }}><span style={{ color: 'var(--ink-3)' }}>ECB Rate</span><span style={{ fontWeight: 600, color: 'var(--ink)' }}>{ecbRate.value}</span><span style={{ fontSize: '11px', color: 'var(--gold)', background: 'var(--gold-light)', padding: '2px 8px', borderRadius: '3px' }}>{ecbRate.changePct}</span></div>}
           </div>
         </div>
 

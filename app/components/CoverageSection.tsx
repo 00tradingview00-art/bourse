@@ -17,9 +17,10 @@ const EXCHANGE_INDEX_SLUG: Record<string, string> = {
 interface Props {
   markets: MarketData[]
   brent?: MarketData
+  ecbRate?: MarketData
 }
 
-export default function CoverageSection({ markets, brent }: Props) {
+export default function CoverageSection({ markets, brent, ecbRate }: Props) {
   return (
     <section id="coverage" className="mob-p-sm" style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 32px' }}>
       <div className="mob-stack mob-gap-sm" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
@@ -91,10 +92,12 @@ export default function CoverageSection({ markets, brent }: Props) {
                 <span style={{ fontSize: '12px' }}>{brent?.changePct ?? ''}</span>
               </div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: '11px', color: '#444' }}>ECB Rate (Jun 11)</div>
-              <div style={{ fontSize: '14px', fontWeight: 500, color: '#b8922a' }}>+25bp <span style={{ fontSize: '11px', color: '#666' }}>90% priced in</span></div>
-            </div>
+            {ecbRate && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ fontSize: '11px', color: '#444' }}>ECB Deposit Rate</div>
+                <div style={{ fontSize: '14px', fontWeight: 500, color: '#b8922a' }}>{ecbRate.value} <span style={{ fontSize: '11px', color: '#666' }}>{ecbRate.changePct}</span></div>
+              </div>
+            )}
           </div>
         </div>
       </div>
