@@ -32,6 +32,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Restore seen-events list
+        uses: actions/cache@v4
+        with:
+          path: scripts/seen-european.json
+          key: seen-european-${{ github.run_id }}
+          restore-keys: seen-european-
+
       - name: Monitor European events
         continue-on-error: true
         run: node scripts/monitor-european-events.mjs
@@ -42,12 +49,13 @@ jobs:
         run: |
           git config user.name "Boursee Bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add content/flash/ scripts/seen-european.json
-          if git diff --staged --quiet; then
-            echo "Nothing new to commit"
+          git add content/flash/
+          FLASH=$(git diff --staged --name-only -- content/flash/ | grep -c '\.mdx$' || true)
+          if [ "$FLASH" -eq 0 ]; then
+            echo "No new flash articles - not committing (the seen-events list lives in the Actions cache)"
             exit 0
           fi
-          FLASH=$(git diff --staged --name-only -- content/flash/ | grep -c '\.mdx$' || true)
+          git add scripts/seen-european.json
           git stash
           git pull --rebase origin main
           git stash pop || true
