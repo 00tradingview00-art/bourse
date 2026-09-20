@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
+import Analytics from '@/app/components/Analytics'
+import CookieConsent from '@/app/components/CookieConsent'
 import { SITE_URL, organizationJsonLd, safeJsonLd } from '@/lib/seo'
 import './globals.css'
 
@@ -49,20 +51,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             strategy="afterInteractive"
           />
         )}
-        {process.env.NEXT_PUBLIC_GA_ID && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="ga-init" strategy="afterInteractive">{`
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
-            `}</Script>
-          </>
-        )}
+        <Analytics />
+        <CookieConsent />
       </body>
     </html>
   )

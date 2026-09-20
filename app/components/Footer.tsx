@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { writeConsent } from '@/lib/consent'
 
 const NAV_LINKS = [
   { label: 'Daily Brief', href: '/briefs' },
@@ -71,6 +72,19 @@ export default function Footer() {
               </Link>
             </li>
           ))}
+          {process.env.NEXT_PUBLIC_GA_ID && (
+            <li>
+              <button
+                type="button"
+                onClick={() => writeConsent(null)}
+                style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: '11px', color: '#2a2a2a' }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#555')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#2a2a2a')}
+              >
+                Cookie settings
+              </button>
+            </li>
+          )}
         </ul>
       </div>
     </footer>

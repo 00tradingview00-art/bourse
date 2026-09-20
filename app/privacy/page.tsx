@@ -47,8 +47,10 @@ export default function PrivacyPage() {
                 <div style={{ background: 'var(--paper-2)', padding: '16px 20px', borderRadius: '4px', borderLeft: '3px solid var(--accent)' }}>
                   <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', marginBottom: '4px' }}>Analytics (page visits)</p>
                   <p style={{ fontSize: '14px', color: 'var(--ink-3)', lineHeight: 1.7 }}>
-                    Legal basis: Legitimate interest. We use Plausible Analytics, a cookieless analytics tool that does not
-                    track individuals and does not use cookies. No personal data is collected. Data is stored in the EU (Germany).
+                    Legal basis: Consent. Only if you accept analytics cookies, we use Google Analytics 4 to count visits and see
+                    which pages are useful. It sets cookies and sends information about your visit (pages viewed, approximate location,
+                    device and browser type, referrer) to Google, which may process it outside the European Economic Area. If you
+                    decline, no analytics data is collected. You can withdraw consent at any time via “Cookie settings” in the footer.
                   </p>
                 </div>
               </div>
@@ -93,7 +95,7 @@ export default function PrivacyPage() {
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
                 Email addresses are retained for as long as your newsletter subscription is active.
                 Upon unsubscription, your email address is deleted within 30 days. Analytics data
-                collected by Plausible is anonymised and aggregated — no individual retention period applies.
+                collected through Google Analytics, if you consent, is kept according to the retention setting in our Google Analytics account.
               </p>
             </section>
 
@@ -132,8 +134,8 @@ export default function PrivacyPage() {
                 7. Cookies
               </h2>
               <p style={{ fontSize: '15px', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                Boursee does not use cookies for tracking or analytics. We use Plausible Analytics, which is
-                cookieless by design. See our{' '}
+                Boursee sets analytics cookies (Google Analytics) only if you accept them, and no advertising or
+                cross-site tracking cookies. See our{' '}
                 <a href="/cookies" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Cookie Policy</a>{' '}
                 for full details.
               </p>
