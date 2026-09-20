@@ -10,6 +10,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import Anthropic from '@anthropic-ai/sdk'
+import { checkFlash } from './lib/contentChecks.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..')
@@ -345,6 +346,14 @@ async function main() {
         continue
       }
       const { headline, excerpt, tagsRaw, body } = result
+      // Content gate. The model only sees the headline, so figures it adds are invented:
+      // reject rather than publish. A crash here lands in the catch below and publishes nothing.
+      const gate = checkFlash({ headline, excerpt, body, sourceText: event.title })
+      for (const w of gate.warnings) console.warn(`::warning::flash gate: ${w}`)
+      if (gate.errors.length) {
+        console.log(`    ✗ Rejected by content gate: ${gate.errors.join('; ')}`)
+        continue
+      }
       const fname = saveFlashArticle(event, headline, excerpt, tagsRaw, body, category)
       if (fname) {
         console.log(`    ✓ Published: ${fname}`)
