@@ -12,6 +12,7 @@ import { existsSync, mkdirSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import Anthropic from '@anthropic-ai/sdk'
+import { checkBrief } from './lib/contentChecks.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const BRIEFS_DIR = join(__dirname, '..', 'content', 'briefs')
@@ -409,6 +410,30 @@ Respond with ONLY the sentence — nothing else.`,
 
   // Date-based slug with word-boundary truncation
   const slug = makeSlug(toDateStr(today), headlineTrunc)
+
+  // Content gate. Exit codes: 1 = output rejected (nothing is published, failure alert fires),
+  // 2 = the gate itself crashed. Figure checks only warn until real runs show they are reliable.
+  const inputText = [indicesSummary, fxSummary, commoditySummary, stocksSummary].join(' | ')
+  let gate
+  try {
+    gate = checkBrief({
+      headline: headlineTrunc,
+      excerpt,
+      dateLabel: date,
+      isoDate: toDateStr(today),
+      sections: { opening, commodities: commoditySection, keyStock: stockSection, bridge: bridgeSection, watch: watchSection },
+      inputText,
+    })
+  } catch (e) {
+    console.error('✗ Content gate crashed:', e.message)
+    process.exit(2)
+  }
+  for (const w of gate.warnings) console.warn(`::warning::brief gate: ${w}`)
+  if (gate.errors.length) {
+    for (const err of gate.errors) console.error(`::error::brief rejected by content gate: ${err}`)
+    console.error('✗ Brief not written. Fix the cause or re-run; do not bypass the gate.')
+    process.exit(1)
+  }
 
   // Write .edition_tmp for the commit message step in CI
   await writeFile(join(__dirname, '..', '.edition_tmp'), String(edition))

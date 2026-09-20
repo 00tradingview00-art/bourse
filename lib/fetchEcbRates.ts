@@ -28,42 +28,47 @@ export interface EcbRates {
  */
 export const ECB_DECISION_DAYS = ['2026-10-29', '2026-12-17', '2027-02-04']
 
+/** Parse the ECB Data Portal CSV for the deposit facility rate. Returns null if it has no usable rows. */
+export function parseEcbCsv(csv: string): EcbRates | null {
+  const lines = csv.trim().split(/\r?\n/)
+  const header = (lines[0]?.split(',') ?? []).map(h => h.trim())
+  const iDate = header.indexOf('TIME_PERIOD')
+  const iVal = header.indexOf('OBS_VALUE')
+  if (iDate < 0 || iVal < 0) return null
+
+  const obs = lines
+    .slice(1)
+    .map(l => {
+      const c = l.split(',')
+      return { date: c[iDate]?.trim(), value: parseFloat(c[iVal]) }
+    })
+    .filter(o => o.date && Number.isFinite(o.value))
+    .sort((a, b) => a.date.localeCompare(b.date))
+  if (!obs.length) return null
+
+  const changes: EcbRateChange[] = []
+  for (let i = 1; i < obs.length; i++) {
+    if (obs[i].value !== obs[i - 1].value) {
+      changes.push({
+        effective: obs[i].date,
+        rateAfter: obs[i].value,
+        changeBp: Math.round((obs[i].value - obs[i - 1].value) * 100),
+      })
+    }
+  }
+  const last = changes[changes.length - 1]
+  return {
+    current: obs[obs.length - 1].value,
+    since: last ? last.effective : obs[0].date,
+    changes,
+  }
+}
+
 export async function fetchEcbRates(): Promise<EcbRates | null> {
   try {
     const res = await fetch(DFR_URL, { headers: { Accept: 'text/csv' }, next: { revalidate: 21600 }, signal: AbortSignal.timeout(8000) })
     if (!res.ok) return null
-    const lines = (await res.text()).trim().split(/\r?\n/)
-    const header = (lines[0]?.split(',') ?? []).map(h => h.trim())
-    const iDate = header.indexOf('TIME_PERIOD')
-    const iVal = header.indexOf('OBS_VALUE')
-    if (iDate < 0 || iVal < 0) return null
-
-    const obs = lines
-      .slice(1)
-      .map(l => {
-        const c = l.split(',')
-        return { date: c[iDate]?.trim(), value: parseFloat(c[iVal]) }
-      })
-      .filter(o => o.date && Number.isFinite(o.value))
-      .sort((a, b) => a.date.localeCompare(b.date))
-    if (!obs.length) return null
-
-    const changes: EcbRateChange[] = []
-    for (let i = 1; i < obs.length; i++) {
-      if (obs[i].value !== obs[i - 1].value) {
-        changes.push({
-          effective: obs[i].date,
-          rateAfter: obs[i].value,
-          changeBp: Math.round((obs[i].value - obs[i - 1].value) * 100),
-        })
-      }
-    }
-    const last = changes[changes.length - 1]
-    return {
-      current: obs[obs.length - 1].value,
-      since: last ? last.effective : obs[0].date,
-      changes,
-    }
+    return parseEcbCsv(await res.text())
   } catch {
     return null
   }
