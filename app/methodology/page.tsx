@@ -37,6 +37,21 @@ const SOURCES = [
   },
 ]
 
+const CONTENT = [
+  {
+    what: 'Daily Brief',
+    how: 'Written each weekday morning by an AI language model from that morning’s market data, and published automatically. It is not reviewed by an editor before it goes live.',
+  },
+  {
+    what: 'Flash Intelligence',
+    how: 'Short items written by an AI language model when automated monitoring picks up a European news headline. The model works from the headline, and every item is labelled “AI-generated”.',
+  },
+  {
+    what: 'Explainer articles',
+    how: 'Drafted weekly by an AI language model from a planned list of topics, and published without an editor’s review.',
+  },
+]
+
 const INDICATORS = [
   { name: 'RSI', meaning: 'A momentum gauge. It reads high after a run of unusually strong gains and low after unusually weak ones. Boursee labels the extremes “overbought” and “oversold”; both describe recent price action, not a forecast.' },
   { name: 'MACD', meaning: 'A trend-and-momentum indicator built from moving averages. The screener shows whether the trend is bullish or bearish and when the signal lines have just crossed.' },
@@ -81,6 +96,22 @@ export default function MethodologyPage() {
                 </div>
               ))}
             </div>
+          </section>
+
+          <section>
+            <h2 style={h2}>How content is produced</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {CONTENT.map(c => (
+                <div key={c.what} style={card}>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', marginBottom: '6px' }}>{c.what}</div>
+                  <div style={{ fontSize: '13px', color: 'var(--ink-3)', lineHeight: 1.65 }}>{c.how}</div>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontSize: '14px', lineHeight: 1.75, color: 'var(--ink-2)', margin: '16px 0 0' }}>
+              AI-written text can contain mistakes, including in how it describes a number. The figures on stock, ETF, ECB and bond pages are pulled directly from the sources above rather than written by a model.
+              Treat the written pieces as market context and check the original source before relying on a detail.
+            </p>
           </section>
 
           <section>
