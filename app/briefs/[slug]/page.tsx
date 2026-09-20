@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getBriefSlugs, fetchBriefs } from '@/lib/fetchBriefs'
 import ReadingProgress from './ReadingProgress'
+import JsonLd from '@/app/components/JsonLd'
+import { breadcrumbJsonLd, newsArticleJsonLd } from '@/lib/seo'
 import type { BriefMetadata } from '@/types'
 
 export const dynamicParams = false
@@ -57,6 +59,21 @@ export default async function BriefPage({ params }: { params: Promise<{ slug: st
     <>
       <ReadingProgress />
       <main style={{ background: 'var(--paper)', minHeight: '70vh' }}>
+        <JsonLd
+          data={[
+            newsArticleJsonLd({
+              headline: metadata.headline,
+              description: metadata.excerpt,
+              path: `/briefs/${slug}`,
+              datePublished: metadata.generatedAt ?? slug.slice(0, 10),
+            }),
+            breadcrumbJsonLd([
+              { name: 'Boursee', path: '/' },
+              { name: 'Daily Brief', path: '/briefs' },
+              { name: metadata.headline, path: `/briefs/${slug}` },
+            ]),
+          ]}
+        />
         <div style={{ maxWidth: '760px', margin: '0 auto', padding: '48px 32px 96px' }}>
 
           {/* Breadcrumb */}
