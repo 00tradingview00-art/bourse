@@ -1,7 +1,18 @@
 'use client'
 
+import Link from 'next/link'
 import { EXCHANGES } from '@/lib/data'
 import type { MarketData } from '@/types'
+
+// Each exchange tile links to its headline index page (crawlable route into /indices/*).
+const EXCHANGE_INDEX_SLUG: Record<string, string> = {
+  'Euronext Amsterdam': 'aex',
+  'Xetra / Frankfurt': 'dax',
+  'Euronext Paris': 'cac-40',
+  'London Stock Exchange': 'ftse-100',
+  'Euronext Milan': 'ftse-mib',
+  'Nasdaq Nordic': 'omx',
+}
 
 interface Props {
   markets: MarketData[]
@@ -25,16 +36,17 @@ export default function CoverageSection({ markets, brent }: Props) {
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
             {EXCHANGES.map((ex) => (
-              <div
+              <Link
                 key={ex.name}
-                style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', background: 'var(--paper-2)', border: '1px solid var(--border)', borderRadius: '4px' }}
+                href={`/indices/${EXCHANGE_INDEX_SLUG[ex.name] ?? 'aex'}`}
+                style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', background: 'var(--paper-2)', border: '1px solid var(--border)', borderRadius: '4px', textDecoration: 'none' }}
               >
                 <span style={{ fontSize: '20px' }}>{ex.flag}</span>
                 <div>
                   <div style={{ fontSize: '12px', fontWeight: 500, color: 'var(--ink)' }}>{ex.name}</div>
                   <div style={{ fontSize: '10px', color: 'var(--ink-4)', letterSpacing: '0.04em' }}>{ex.index}</div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

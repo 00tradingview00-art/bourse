@@ -1,8 +1,14 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Navbar from '@/app/components/Navbar'
 import Footer from '@/app/components/Footer'
 import { fetchMarkets, getStaticMarkets } from '@/lib/fetchMarkets'
 import { fetchBriefs } from '@/lib/fetchBriefs'
+
+export const metadata: Metadata = {
+  title: 'Macro–Equity Bridge: How Oil, FX and the ECB Move European Stocks | Boursee',
+  description: 'How crude oil, EUR/USD, the ECB rate and energy prices flow through to specific European equities, alongside today’s live values.',
+}
 
 // Permanent macro→equity connections for European markets.
 // Shown alongside today's live values.
