@@ -4,14 +4,16 @@ import Link from 'next/link'
 
 const NAV_LINKS = [
   { label: 'Daily Brief', href: '/briefs' },
+  { label: 'Flash Intelligence', href: '/flash' },
   { label: 'Screener', href: '/screener' },
   { label: 'Sectors', href: '/sectors' },
   { label: 'Bond Yields', href: '/bonds' },
   { label: 'Guides', href: '/guides' },
   { label: 'Explainers', href: '/articles' },
   { label: 'Calculators', href: '/calculators' },
+  { label: 'Brokers', href: '/brokers' },
   { label: 'Watchlist', href: '/watchlist' },
-  { label: 'About', href: '#about' },
+  { label: 'About', href: '/about' },
 ]
 
 const LEGAL_LINKS = [

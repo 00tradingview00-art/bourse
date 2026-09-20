@@ -36,6 +36,23 @@ export default async function Home() {
       <Ticker tickerItems={tickerData} />
       <Navbar />
 
+      {/* Page heading for search engines and screen readers; the visible hero is the live data below */}
+      <h1
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          margin: '-1px',
+          padding: 0,
+          overflow: 'hidden',
+          clip: 'rect(0 0 0 0)',
+          whiteSpace: 'nowrap',
+          border: 0,
+        }}
+      >
+        Boursee — European market intelligence: daily briefs, stock screener and ECB watch
+      </h1>
+
       {/* Live market pulse — above the fold, data first */}
       <MarketPulse
         markets={dashboardData}

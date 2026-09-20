@@ -7,6 +7,8 @@ import screenerData from '@/data/screener.json'
 export const metadata: Metadata = {
   title: 'My Watchlist | Boursee',
   description: 'Track European stocks and ETFs you are monitoring on Boursee.',
+  // Personal, client-side list with no unique content for search: keep it out of the index.
+  robots: { index: false, follow: true },
 }
 
 export default function WatchlistPage() {

@@ -5,6 +5,8 @@ import { getFlashSlugs } from '@/lib/fetchFlash'
 import type { FlashMetadata } from '@/lib/fetchFlash'
 import Navbar from '@/app/components/Navbar'
 import Footer from '@/app/components/Footer'
+import JsonLd from '@/app/components/JsonLd'
+import { breadcrumbJsonLd, clipTitle, newsArticleJsonLd } from '@/lib/seo'
 
 export const dynamicParams = false
 
@@ -19,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const mod = await import(`@/content/flash/${slug}.mdx`)
     const metadata = mod.metadata as FlashMetadata
     return {
-      title: `${metadata.headline} | Boursee Flash`,
+      title: `${clipTitle(metadata.headline, 50)} | Boursee`,
       description: metadata.excerpt,
     }
   } catch {
@@ -64,6 +66,21 @@ export default async function FlashArticlePage({ params }: { params: Promise<{ s
     <>
       <Navbar />
       <main style={{ background: 'var(--paper)', minHeight: '70vh' }}>
+        <JsonLd
+          data={[
+            newsArticleJsonLd({
+              headline: metadata.headline,
+              description: metadata.excerpt,
+              path: `/flash/${slug}`,
+              datePublished: metadata.generatedAt ?? slug.slice(0, 10),
+            }),
+            breadcrumbJsonLd([
+              { name: 'Boursee', path: '/' },
+              { name: 'Flash Intelligence', path: '/flash' },
+              { name: metadata.headline, path: `/flash/${slug}` },
+            ]),
+          ]}
+        />
         <div style={{ maxWidth: '760px', margin: '0 auto', padding: '48px 32px 96px' }}>
 
           {/* Breadcrumb */}

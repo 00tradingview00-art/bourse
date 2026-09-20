@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getArticleSlugs } from '@/lib/fetchArticles'
+import JsonLd from '@/app/components/JsonLd'
+import { breadcrumbJsonLd, newsArticleJsonLd } from '@/lib/seo'
 import type { ArticleMetadata } from '@/types'
 
 export const dynamicParams = false
@@ -46,6 +48,21 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   return (
     <main style={{ background: 'var(--paper)', minHeight: '70vh' }}>
+      <JsonLd
+        data={[
+          newsArticleJsonLd({
+            headline: metadata.title,
+            description: metadata.description,
+            path: `/articles/${slug}`,
+            datePublished: metadata.date,
+          }),
+          breadcrumbJsonLd([
+            { name: 'Boursee', path: '/' },
+            { name: 'Explainers', path: '/articles' },
+            { name: metadata.title, path: `/articles/${slug}` },
+          ]),
+        ]}
+      />
       <div style={{ maxWidth: '760px', margin: '0 auto', padding: '48px 32px 96px' }}>
 
         {/* Breadcrumb */}

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { readFile } from 'fs/promises'
 import { join } from 'path'
 import Navbar from '@/app/components/Navbar'
@@ -5,6 +6,11 @@ import Footer from '@/app/components/Footer'
 import ScreenerClient from './ScreenerClient'
 
 export const revalidate = 3600
+
+export const metadata: Metadata = {
+  title: 'European Stock & ETF Screener — AEX, DAX, CAC 40, FTSE | Boursee',
+  description: 'Screen European stocks and UCITS ETFs across AEX, DAX, CAC 40, FTSE 100, IBEX 35, FTSE MIB and OMX by sector, price momentum and 52-week range.',
+}
 
 export interface ScreenerStock {
   type: 'stock'

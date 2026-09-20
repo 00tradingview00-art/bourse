@@ -7,6 +7,8 @@ import Navbar from '@/app/components/Navbar'
 import Footer from '@/app/components/Footer'
 import PriceChart, { type OHLCVBar } from '@/app/components/PriceChart'
 import WatchlistButton from '@/app/components/WatchlistButton'
+import JsonLd from '@/app/components/JsonLd'
+import { breadcrumbJsonLd } from '@/lib/seo'
 import screenerData from '@/data/screener.json'
 
 type Params = { ticker: string }
@@ -137,6 +139,13 @@ export default async function StockDetailPage({ params }: { params: Promise<Para
     <>
       <Navbar />
       <main style={{ background: 'var(--paper)', minHeight: '80vh' }}>
+        <JsonLd
+          data={breadcrumbJsonLd([
+            { name: 'Boursee', path: '/' },
+            { name: 'Screener', path: '/screener' },
+            { name: `${name} (${ticker})`, path: `/stocks/${ticker}` },
+          ])}
+        />
 
         {/* Header */}
         <div style={{ borderBottom: '1px solid var(--border)', background: '#fff' }}>
