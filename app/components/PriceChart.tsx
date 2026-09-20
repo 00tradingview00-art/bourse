@@ -95,7 +95,7 @@ export default function PriceChart({ data, currentPrice }: Props) {
           1-Year Price
         </div>
         <div style={{ fontSize: '11px', color: 'var(--ink-4)' }}>
-          Prices may be delayed up to 15 min
+          Daily closing prices
         </div>
       </div>
       <div ref={containerRef} style={{ width: '100%', height: '260px' }} />

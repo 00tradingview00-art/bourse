@@ -8,6 +8,7 @@ import Footer from '@/app/components/Footer'
 import PriceChart, { type OHLCVBar } from '@/app/components/PriceChart'
 import WatchlistButton from '@/app/components/WatchlistButton'
 import screenerData from '@/data/screener.json'
+import { SCREENER_AS_OF } from '@/lib/dataFreshness'
 
 type Params = { ticker: string }
 
@@ -162,7 +163,7 @@ export default async function EtfDetailPage({ params }: { params: Promise<Params
                 <div style={{ fontSize: '15px', fontWeight: 600, color: changePositive ? '#16a34a' : '#dc2626', marginTop: '4px' }}>
                   {changePositive ? '▲' : '▼'} {fmtPct(changePct)}
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '6px', marginBottom: '10px' }}>Prices may be delayed up to 15 min</div>
+                <div style={{ fontSize: '11px', color: 'var(--ink-4)', marginTop: '6px', marginBottom: '10px' }}>Closing price · data as of {SCREENER_AS_OF}</div>
                 <WatchlistButton ticker={ticker} />
               </div>
             </div>
@@ -308,7 +309,7 @@ export default async function EtfDetailPage({ params }: { params: Promise<Params
           </div>
 
           <div style={{ padding: '14px 18px', background: 'var(--paper-2)', border: '1px solid var(--border)', borderLeft: '3px solid var(--border)', borderRadius: '3px', fontSize: '11px', color: 'var(--ink-4)', lineHeight: 1.6 }}>
-            For general information only under MiFID II Article 24. Not investment advice. Quality score is an editorial metric — not a regulated rating. Prices may be delayed up to 15 minutes.
+            For general information only under MiFID II Article 24. Not investment advice. Quality score is an editorial metric — not a regulated rating. Prices are end-of-day closing prices.
           </div>
         </div>
       </main>

@@ -548,7 +548,7 @@ export default function ScreenerClient({
 
       {/* Footer */}
       <div style={{ marginTop: '20px', padding: '12px 16px', background: 'var(--paper-2)', border: '1px solid var(--border)', borderRadius: '3px', fontSize: '12px', color: 'var(--ink-4)', lineHeight: 1.6 }}>
-        Prices may be delayed up to 15 minutes. General information only under Article 24 MiFID II — not investment advice. Not regulated by the AFM or FCA.
+        Closing prices, updated each weekday evening. General information only under Article 24 MiFID II — not investment advice. Not regulated by the AFM or FCA.
       </div>
     </div>
   )
