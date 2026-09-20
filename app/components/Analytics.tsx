@@ -37,6 +37,12 @@ export default function Analytics() {
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', '${GA_ID}');
+        try {
+          var h = document.referrer ? new URL(document.referrer).hostname : '';
+          if (/(^|\\.)(chatgpt\\.com|chat\\.openai\\.com|perplexity\\.ai|claude\\.ai|gemini\\.google\\.com|copilot\\.microsoft\\.com)$/.test(h)) {
+            gtag('event', 'ai_referral', { ai_source: h });
+          }
+        } catch (e) {}
       `}</Script>
     </>
   )
