@@ -62,6 +62,15 @@ export default function CookiesPage() {
             </section>
 
             <section>
+              <h2 style={h2}>Analytics without cookies: Vercel Web Analytics</h2>
+              <p style={body}>
+                Boursee also uses Vercel Web Analytics, our hosting provider’s page-view counter. It sets no cookies and does not
+                build a profile of individual visitors. It counts page views, referrers, countries and device types in aggregate,
+                and it works whether or not you accept analytics cookies.
+              </p>
+            </section>
+
+            <section>
               <h2 style={h2}>Cookie inventory</h2>
               <div style={{ border: '1px solid var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
                 <div style={{ background: 'var(--paper-2)', padding: '12px 16px', borderBottom: '1px solid var(--border)', display: 'grid', gridTemplateColumns: '1fr 2fr 1fr', gap: '8px' }}>
