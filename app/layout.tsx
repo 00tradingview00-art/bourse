@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
+import { Analytics as VercelAnalytics } from '@vercel/analytics/next'
 import Analytics from '@/app/components/Analytics'
 import CookieConsent from '@/app/components/CookieConsent'
 import { SITE_URL, organizationJsonLd, safeJsonLd } from '@/lib/seo'
@@ -52,6 +53,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           />
         )}
         <Analytics />
+        {/* Cookieless, bot-filtered page-view counts; works without consent, so it is the reliable traffic figure */}
+        <VercelAnalytics />
         <CookieConsent />
       </body>
     </html>
