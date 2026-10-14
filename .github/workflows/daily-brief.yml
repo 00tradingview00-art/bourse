@@ -56,6 +56,7 @@ jobs:
           fi
 
       - name: Send newsletter
+        id: send-newsletter
         if: steps.commit.outputs.published == 'true'
         continue-on-error: true
         run: node scripts/send-newsletter.mjs
@@ -64,8 +65,12 @@ jobs:
           BREVO_LIST_ID: ${{ secrets.BREVO_LIST_ID }}
           NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
 
+      # continue-on-error above means a failed send never fails the job, so this used
+      # to key off failure() and silently never fire — a newsletter send could (and did)
+      # fail on every run with zero alert. Key off the newsletter step's own outcome
+      # instead, independent of whether continue-on-error is kept on that step.
       - name: Alert on failure
-        if: failure()
+        if: steps.send-newsletter.outcome == 'failure'
         continue-on-error: true
         run: |
           curl -s -X POST https://api.brevo.com/v3/smtp/email \
