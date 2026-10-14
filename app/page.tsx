@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Ticker from './components/Ticker'
 import Navbar from './components/Navbar'
 import MarketPulse from './components/MarketPulse'
@@ -13,6 +14,15 @@ import Footer from './components/Footer'
 import { fetchMarkets, getStaticMarkets } from '@/lib/fetchMarkets'
 import { fetchBriefs } from '@/lib/fetchBriefs'
 import { fetchEcbRates, ecbRateTile } from '@/lib/fetchEcbRates'
+
+// Root layout's relative `alternates: { canonical: './' }` resolves correctly for
+// every nested route but resolves to `/index` for this exact root route in
+// production (confirmed live: curling https://boursee.com/ returned a canonical of
+// https://boursee.com/index) — an absolute path override here is the fix, since
+// Google treats a mismatched canonical as a reason to not index the homepage.
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+}
 
 async function getMarkets() {
   try {
