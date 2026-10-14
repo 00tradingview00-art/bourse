@@ -86,7 +86,7 @@ function buildEmailHtml(meta, siteUrl) {
 async function main() {
   const apiKey = process.env.BREVO_API_KEY
   const listId = process.env.BREVO_LIST_ID
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bourse.io'
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://boursee.com'
 
   if (!apiKey || !listId) throw new Error('BREVO_API_KEY and BREVO_LIST_ID are required')
 
@@ -104,7 +104,12 @@ async function main() {
     body: JSON.stringify({
       name: `Boursee Brief #${meta.edition} - ${meta.dateShort}`,
       subject,
-      sender: { name: 'Boursee', email: 'brief@bourse.io' },
+      // brief@bourse.io was a leftover placeholder domain from before boursee.com was
+      // registered — Brevo has never had it (or boursee.com) as a verified sender, so
+      // every send from this address was rejected outright. brief@boursee.com needs
+      // the domain authenticated (DKIM/DMARC) in Brevo's dashboard before this works,
+      // the same way brief@bhaavbrief.in already is.
+      sender: { name: 'Boursee', email: 'brief@boursee.com' },
       type: 'classic',
       htmlContent: html,
       recipients: { listIds: [parseInt(listId, 10)] },
